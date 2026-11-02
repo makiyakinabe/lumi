@@ -1,0 +1,66 @@
+/* teamgames.css: the shared frame for the two-player games (teamgames.js) and the games themselves.
+   Each age group's games add their own section below, prefixed with the game id (.tg-more, .tg-copy...). */
+
+/* ---------- hubs ---------- */
+.play-tabs { display: flex; gap: 6px; padding: 5px; height: 60px; }
+.play-tabs .seg-opt { display: flex; align-items: center; gap: 8px; padding: 0 20px; font-size: 18px; }
+.tg-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.tg-grid.n4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.tg-card .game-kind { font-size: 15px; }
+.together-grid.many { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.together-grid.many .together-card { flex-direction: column; justify-content: center; text-align: center; gap: 8px; padding: 10px; }
+.together-grid.many .together-card .game-name { font-size: 22px; }
+.together-grid.many .together-card .small { font-size: 14px; }
+
+/* ---------- the frame ---------- */
+.tg-stage { position: relative; display: flex; align-items: center; justify-content: center; background: linear-gradient(#FFFDF8, var(--tg-tint, #F6E7D3)); overflow: hidden; }
+.tg-av { display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background: #FFF4D6; overflow: hidden; flex: none; line-height: 1; }
+.tg-av.lumi { background: #FFE9CF; }
+.tg-av.lumi svg { margin-top: 12%; }
+.tg-av.partner { background: #FBE3E8; font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; }
+.tg-av.photo img { width: 100%; height: 100%; object-fit: cover; }
+.tg-pair .pair-who .tg-av { border: 3px solid transparent; }
+.tg-pair .pair-who.on .tg-av { border-color: var(--teal); }
+.tg-turn { position: absolute; left: 18px; top: 16px; z-index: 6; display: flex; align-items: center; gap: 10px; padding: 6px 18px 6px 6px; border-radius: 30px; background: #fff; font-size: 20px; font-weight: 800; color: var(--ink); box-shadow: 0 4px 0 rgba(90, 60, 40, 0.08); }
+.tg-turn.child { border: 3px solid var(--teal); }
+.tg-turn.other { border: 3px solid #E58BA6; }
+.tg-rounds { display: flex; gap: 6px; margin-left: 6px; }
+.tg-round { width: 16px; height: 16px; border-radius: 50%; border: 3px solid #D9C9B4; background: #fff; }
+.tg-round.done { background: var(--green); border-color: var(--green); }
+.tg-win-heart { line-height: 0; }
+.tg-win-sub { font-size: 20px; font-weight: 700; color: var(--muted); text-align: center; max-width: 560px; }
+
+/* ---------- shared pieces the games can use ---------- */
+/* a row of big picture choices */
+.tg-choices { display: flex; flex-wrap: wrap; gap: 18px; justify-content: center; }
+.tg-choice { min-width: 150px; min-height: 150px; padding: 12px 16px; border-radius: 26px; border: 4px solid #fff; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; font-size: 20px; font-weight: 800; color: var(--ink); box-shadow: 0 6px 0 rgba(90, 60, 40, 0.1); }
+.tg-choice.on { border-color: var(--teal); }
+.tg-choice.right { border-color: var(--green); background: #EEF8EA; }
+.tg-choice:active { transform: scale(0.97); }
+.tg-choice[disabled] { opacity: 0.45; }
+/* a speech bubble from Lumi or the partner */
+.tg-say { position: absolute; padding: 12px 20px; border-radius: 22px; background: #fff; font-size: 22px; font-weight: 800; color: var(--ink); box-shadow: 0 4px 0 rgba(90, 60, 40, 0.08); z-index: 5; max-width: 420px; line-height: 1.25; }
+/* a small talk strip (core words the child can tap) */
+.tg-talk { display: flex; gap: 12px; }
+.tg-word { width: 120px; height: 104px; border-radius: 22px; border: 4px solid #fff; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 19px; font-weight: 800; color: var(--ink); box-shadow: 0 5px 0 rgba(90, 60, 40, 0.1); }
+.tg-word:active { transform: scale(0.96); }
+/* "we did it" style button in the bar */
+.tg-bar-note { font-size: 20px; font-weight: 800; color: var(--muted); }
+
+/* ======================================================================= Little ones: More, please! */
+.tg-more .tg-stage { flex-direction: column; justify-content: flex-end; padding-bottom: 20px; }
+.more-show { position: relative; width: 100%; flex: 1; display: flex; align-items: flex-end; justify-content: center; }
+.more-lumi { position: relative; line-height: 0; margin-bottom: 10px; transform-origin: 50% 100%; }
+.more-lumi.go-bounce { animation: moreBounce 0.6s ease-in-out infinite; }
+.more-lumi.go-spin > svg { animation: moreSpin 1.2s linear infinite; }
+.more-lumi.go-drum { animation: moreDrum 0.35s ease-in-out infinite; }
+@keyframes moreBounce { 0%, 100% { transform: translateY(0) scale(1.04, 0.96); } 50% { transform: translateY(-70px) scale(0.97, 1.03); } }
+@keyframes moreSpin { to { transform: rotate(360deg); } }
+@keyframes moreDrum { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+.more-drum { position: absolute; right: -120px; bottom: 0; line-height: 0; }
+.more-bub { position: absolute; bottom: 160px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff 0 18%, rgba(190, 225, 245, 0.75) 40%, rgba(160, 205, 240, 0.35) 100%); border: 2px solid rgba(255, 255, 255, 0.9); animation: moreBub 3s ease-out forwards; pointer-events: none; }
+@keyframes moreBub { from { transform: translate(0, 0) scale(0.3); opacity: 0; } 15% { opacity: 1; } to { transform: translate(var(--dx), -360px) scale(1); opacity: 0; } }
+.more-pick { display: flex; gap: 18px; }
+.more-wait { position: absolute; top: 80px; left: 50%; transform: translateX(-50%); }
+.more-bottom { display: flex; align-items: center; gap: 22px; }
+.more-count { display: flex; gap: 8px; }

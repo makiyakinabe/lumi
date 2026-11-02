@@ -1,0 +1,112 @@
+/* learn-life.css: Learn with Lumi, everyday life (learn-life.js): school canteen, sandwich, laundry */
+
+/* shared */
+.ll-dash { display: block; width: 100%; height: 100%; border-radius: 22px; border: 4px dashed rgba(47, 126, 121, 0.6); background: rgba(255, 255, 255, 0.3); box-sizing: border-box; }
+.ll-round { border-radius: 50%; }
+.ll-tip { display: flex; align-items: center; gap: 8px; white-space: nowrap; line-height: 1.2; }
+.ll-tip svg { flex: none; }
+.ll-tipsmall { font-size: 17px; padding: 8px 12px; }
+
+/* washing hands up close */
+.ll-hands { touch-action: none; cursor: grab; border-radius: 40px; }
+.ll-rubme { animation: lnGlow 1.6s ease-in-out infinite; }
+.ll-handsart { width: 100%; height: 100%; line-height: 0; pointer-events: none; }
+.ll-handsart > svg { width: 100%; height: 100%; display: block; }
+.ll-hands.rubbing .wash-hands .wh-a { animation-play-state: running; }
+.reduce-motion .ll-rubme { animation: none; box-shadow: 0 0 0 6px rgba(244, 211, 94, 0.55); }
+
+/* ---------------- the school canteen */
+.ll-front { pointer-events: none; }
+.ll-joinhit { background: none; }
+.ll-spot { position: absolute; left: 8px; right: 8px; bottom: 0; height: 56px; border-radius: 50%; border: 5px dashed #D9A920; background: rgba(244, 211, 94, 0.45); box-sizing: border-box; animation: llPulse 1.6s ease-in-out infinite; }
+@keyframes llPulse { 50% { transform: scale(1.06); background: rgba(244, 211, 94, 0.7); } }
+.ll-count { position: absolute; z-index: 8; display: flex; align-items: center; gap: 8px; height: 80px; padding: 0 16px 0 10px; border-radius: 24px; background: #fff; border: 3px solid #EFE6D8; box-shadow: 0 5px 0 rgba(90, 60, 40, 0.12); font-size: 19px; font-weight: 800; color: var(--ink); line-height: 1.1; white-space: nowrap; }
+.ll-count::after { content: ''; position: absolute; left: 96px; bottom: -13px; width: 20px; height: 20px; background: #fff; border: 3px solid #EFE6D8; border-top: 0; border-left: 0; transform: rotate(45deg); }
+.ll-count:active { transform: scale(0.97); }
+.ll-slide { animation: llSlide 1.1s ease-out both; }
+@keyframes llSlide { from { transform: translateX(var(--dx, 170px)); } to { transform: none; } }
+.ll-leave { animation: llLeave 1.2s ease-in forwards; pointer-events: none; }
+@keyframes llLeave { to { transform: translate(-40px, 60px); opacity: 0; } }
+
+.ll-menu { position: absolute; z-index: 6; width: 500px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 52px 14px 14px; border-radius: 22px; background: #3B2F2F; box-shadow: 0 8px 0 rgba(60, 40, 30, 0.25); line-height: 1.15; box-sizing: border-box; }
+.ll-menu-title { position: absolute; left: 0; right: 0; top: 10px; text-align: center; font-size: 26px; font-weight: 900; color: #FFE6A8; letter-spacing: 2px; line-height: 1.2; }
+.ll-mitem { position: relative; display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; align-items: center; gap: 0 8px; min-height: 96px; padding: 8px 10px; border-radius: 16px; border: 4px solid transparent; background: #FFF8EC; text-align: left; color: var(--ink); box-sizing: border-box; }
+button.ll-mitem { cursor: pointer; }
+button.ll-mitem:active { transform: scale(0.97); }
+.ll-mitem .ll-dish { grid-row: span 2; }
+.ll-mitem.on { border-color: var(--teal); background: #E9F7F4; }
+.ll-menu.locked .ll-mitem:not(.on) { opacity: 0.55; }
+.ll-mname { font-size: 18px; font-weight: 800; align-self: end; line-height: 1.15; }
+.ll-mprice { font-size: 21px; font-weight: 900; color: #B5543B; align-self: start; line-height: 1.2; }
+.ll-dish { display: flex; align-items: flex-end; line-height: 0; }
+.ll-dish > span + span { margin-left: -20px; }
+.ll-pointhand { position: absolute; right: -10px; top: -26px; line-height: 0; filter: drop-shadow(0 4px 4px rgba(59, 47, 47, 0.25)); animation: llTapHand 1s ease-in-out infinite; }
+@keyframes llTapHand { 50% { transform: translateY(6px); } }
+.ll-point { position: absolute; z-index: 9; width: 124px; height: 96px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 24px; border: 4px solid #fff; background: rgba(255, 255, 255, 0.96); box-shadow: 0 6px 0 rgba(90, 60, 40, 0.12); font-size: 19px; font-weight: 800; color: var(--ink); line-height: 1.1; }
+.ll-point.on { border-color: var(--teal); background: #F1FAF8; }
+.ll-point:active { transform: scale(0.96); }
+.sx-llpay [data-k="change"] { width: 150px !important; height: 72px !important; margin: -4px 0 0 -43px; border-radius: 30px; } /* covers every coin of the change */
+.sx-llpay [data-k="change"] > svg, .sx-llpay [data-k="change"] .sx-change { opacity: 0; }
+.ll-change { pointer-events: none; }
+.ll-seat { border-radius: 40px; }
+.ll-seatmark { position: absolute; inset: 8px 16px; border-radius: 50%; border: 5px dashed rgba(47, 126, 121, 0.65); background: rgba(255, 255, 255, 0.4); box-sizing: border-box; }
+.ll-plate { display: flex; align-items: center; justify-content: center; }
+.ll-empty > svg { width: 170px; height: 85px; }
+.ll-left { display: inline-flex; line-height: 0; transition: opacity 0.3s, transform 0.3s; }
+.ll-station { border-radius: 20px; }
+
+/* ---------------- the sandwich */
+.ll-slotL { border-radius: 30px; }
+.ll-cutline { position: absolute; z-index: 6; height: 0; border-top: 5px dashed #E5534B; pointer-events: none; filter: drop-shadow(0 0 2px #fff); }
+.ll-cutzone { border-radius: 30px; }
+.ll-crumbs { border-radius: 30px; }
+.ll-crumbin { width: 100%; height: 100%; line-height: 0; transition: opacity 0.2s; }
+.ll-bite { border-radius: 30px; }
+.ll-fills .sx-ch-art > svg { height: 62px; }
+
+/* ---------------- the laundry */
+.ll-tag { position: absolute; z-index: 7; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 16px; background: #fff; box-shadow: 0 4px 0 rgba(90, 60, 40, 0.12); font-size: 20px; font-weight: 900; color: var(--ink); line-height: 1.2; white-space: nowrap; }
+.ll-sw { display: inline-block; width: 22px; height: 22px; border-radius: 50%; border: 3px solid #C9D1D9; box-sizing: border-box; }
+.ll-sw.light { background: #FFFFFF; }
+.ll-sw.dark { background: #3A3F4A; border-color: #3A3F4A; }
+.ll-basket { border-radius: 26px; }
+.ll-zoom { border-radius: 34px; background: radial-gradient(circle at 50% 40%, #FFFFFF, #F1F6F9); border: 4px solid #fff; box-shadow: 0 8px 0 rgba(60, 70, 80, 0.12), 0 0 0 2px #DDE5EA; box-sizing: border-box; }
+.ll-pocket { border-radius: 24px; }
+.ll-hold { cursor: pointer; touch-action: none; }
+.ll-holdme { filter: drop-shadow(0 0 10px rgba(255, 210, 63, 0.95)); }
+.ll-bottle-in { width: 100%; height: 100%; line-height: 0; transform-origin: 80% 92%; transition: transform 0.35s ease; }
+.ll-pouring .ll-bottle-in { transform: rotate(34deg); }
+.ll-pour { position: absolute; z-index: 7; width: 10px; border-radius: 5px; background: linear-gradient(#7FC4E8, #3E8FD0); opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+.ll-pouring .ll-pour { opacity: 0.9; }
+.ll-drawer { border-radius: 16px; }
+.ll-doorhit { border-radius: 50%; }
+.ll-spin { transform-origin: 120px 160px; animation: llSpin 2.4s linear infinite; }
+@keyframes llSpin { to { transform: rotate(360deg); } }
+.ll-panel { position: absolute; z-index: 9; width: 510px; padding: 16px; border-radius: 30px; background: linear-gradient(#FFFFFF, #E9EEF2); border: 4px solid #fff; box-shadow: 0 8px 0 rgba(60, 70, 80, 0.15), 0 0 0 2px #D5DDE5; box-sizing: border-box; line-height: 1.15; }
+.ll-panel-top { display: flex; justify-content: center; margin-bottom: 14px; }
+.ll-screen { min-width: 300px; padding: 10px 16px; border-radius: 14px; background: #2F3B48; color: #8FF0B0; font-size: 26px; font-weight: 900; text-align: center; letter-spacing: 1px; white-space: pre; }
+.ll-progs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 14px; }
+.ll-prog { height: 124px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 22px; border: 4px solid #DDE3E9; background: #fff; color: var(--ink); }
+.ll-prog b { font-size: 21px; line-height: 1.15; }
+.ll-prog small { font-size: 16px; font-weight: 800; color: var(--muted); line-height: 1.15; }
+.ll-prog.on { border-color: var(--teal); background: #E9F7F4; }
+.ll-prog.nudge { animation: llNudge 0.5s ease-in-out 2; }
+@keyframes llNudge { 50% { transform: translateY(-4px); } }
+.ll-prog:active, .ll-start:active { transform: scale(0.97); }
+.ll-start { width: 100%; height: 86px; display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: 43px; background: #C5D0D8; color: #fff; font-size: 28px; font-weight: 900; line-height: 1; }
+.ll-start.ready { background: #3FA66B; box-shadow: 0 6px 0 #2E7D4F; animation: lnGlow 1.6s ease-in-out infinite; }
+.ll-start.going { background: #3FA66B; }
+.ll-clock { position: absolute; z-index: 6; width: 150px; display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; line-height: 1.1; }
+.ll-clock > svg { width: 136px; height: 136px; filter: drop-shadow(0 6px 6px rgba(59, 47, 47, 0.15)); }
+.ll-clock-l { display: flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 16px; background: #fff; box-shadow: 0 4px 0 rgba(90, 60, 40, 0.12); font-size: 18px; font-weight: 900; color: var(--teal); white-space: nowrap; }
+.ll-clock .ll-hh, .ll-clock .ll-hm { transform-origin: 50px 50px; }
+.ll-clock.spin .ll-hm { animation: llSpin 0.6s linear 4; }
+.ll-clock.spin .ll-hh { animation: llSpin 2.4s linear 1; }
+.ll-caption { position: absolute; z-index: 9; padding: 12px 24px; border-radius: 26px; background: rgba(59, 47, 47, 0.85); color: #fff; font-size: 26px; font-weight: 900; line-height: 1.2; white-space: nowrap; animation: llFadeIn 0.6s ease-out both; }
+@keyframes llFadeIn { from { opacity: 0; transform: translateY(8px); } }
+.ll-hangspot { border-radius: 22px; }
+.ll-feel { border-radius: 26px; animation: lnGlow 1.6s ease-in-out infinite; }
+.ll-sunwash { position: absolute; z-index: 1; left: 640px; top: 0; width: 474px; height: 330px; background: radial-gradient(ellipse at 30% 20%, rgba(255, 236, 160, 0.55), rgba(255, 236, 160, 0)); pointer-events: none; }
+
+.reduce-motion .ll-spot, .reduce-motion .ll-slide, .reduce-motion .ll-pointhand, .reduce-motion .ll-spin, .reduce-motion .ll-clock.spin .ll-hm, .reduce-motion .ll-clock.spin .ll-hh, .reduce-motion .ll-start.ready, .reduce-motion .ll-feel, .reduce-motion .ll-prog.nudge { animation: none; }
+.reduce-motion .ll-leave { animation: none; opacity: 0; }

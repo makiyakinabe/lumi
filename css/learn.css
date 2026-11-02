@@ -1,0 +1,54 @@
+/* learn.css: Learn with Lumi lessons played as real-life scenes (story engine), "Show me", "Do it with me" */
+
+/* the help button in the story bar: Show me, then Do it with me */
+.sx-help { flex: none; width: 126px; height: 92px; border-radius: 26px; border: 3px solid #CFE3F2; background: #F2F8FD; color: #3E6E9A; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-weight: 900; font-size: 16px; line-height: 1.1; text-align: center; }
+.sx-help span { max-width: 112px; }
+.sx-help.together { border-color: #F4C7D5; background: #FFF1F5; color: #A8457A; }
+.sx-help:active { transform: scale(0.96); }
+
+/* the see-through hand that shows how */
+.sx-ghost { position: absolute; left: 0; top: 0; z-index: 40; pointer-events: none; width: 84px; height: 84px; margin: -6px 0 0 -30px; opacity: 0; filter: drop-shadow(0 6px 10px rgba(59, 47, 47, 0.25)); }
+.sx-ghost svg { display: block; opacity: 0.85; }
+.sx-ghost-item { position: absolute; z-index: 39; pointer-events: none; opacity: 0; filter: saturate(0.8) drop-shadow(0 8px 10px rgba(59, 47, 47, 0.2)); }
+.sx-ghost-item * { pointer-events: none !important; }
+
+/* the end of a lesson: Try it for real */
+.learn-end { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr auto; gap: 18px 28px; padding: 28px 36px; align-items: center; justify-items: center; }
+.learn-end .le-left { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.learn-end .end-title { font-size: 46px; }
+.le-real { width: 100%; max-width: 440px; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 26px 24px; border-radius: 30px; background: #fff; border: 4px dashed #F4D35E; text-align: center; }
+.le-real.did { border-style: solid; border-color: #9CCB7A; background: #F4FAF0; }
+.le-real b { font-size: 28px; line-height: 1.2; color: var(--ink); }
+.le-real > span:not(.tag):not(.le-real-art) { font-size: 19px; font-weight: 700; color: var(--muted); line-height: 1.35; }
+.le-real-art { width: 150px; height: 150px; border-radius: 50%; background: #FFF7E0; display: flex; align-items: center; justify-content: center; }
+.learn-end .le-btns { grid-column: 1 / -1; }
+
+/* shared lesson bits */
+.ln-glow { animation: lnGlow 1.6s ease-in-out infinite; border-radius: 18px; }
+@keyframes lnGlow { 0%, 100% { box-shadow: 0 0 0 0 rgba(244, 211, 94, 0); } 50% { box-shadow: 0 0 0 10px rgba(244, 211, 94, 0.55); } }
+.reduce-motion .ln-glow { animation: none; box-shadow: 0 0 0 6px rgba(244, 211, 94, 0.55); }
+.ln-progress { position: absolute; height: 16px; border-radius: 8px; background: rgba(255, 255, 255, 0.85); border: 3px solid #fff; box-shadow: 0 2px 0 rgba(59, 47, 47, 0.1); overflow: hidden; z-index: 20; }
+.ln-progress i { display: block; height: 100%; width: 0; border-radius: 6px; background: linear-gradient(90deg, #9FD8C9, #4FB3A9); transition: width 0.15s; }
+.ln-tip { position: absolute; z-index: 20; padding: 10px 16px; border-radius: 18px; background: #fff; font-weight: 800; font-size: 19px; line-height: 1.25; color: var(--ink); box-shadow: 0 4px 0 rgba(59, 47, 47, 0.1); }
+
+/* ---------------- Brush teeth (learn-teeth.js) */
+.lt-spot { width: 100%; height: 100%; border-radius: 50%; border: 5px dashed rgba(79, 179, 169, 0.7); background: rgba(255, 255, 255, 0.35); }
+.lt-area { border-radius: 30px; }
+.lt-area.ln-glow { background: rgba(255, 255, 255, 0.08); }
+.lt-brush { cursor: grab; touch-action: none; }
+.lt-paste { cursor: pointer; touch-action: none; }
+.lt-foamface { position: absolute; z-index: 8; width: 54px; height: 30px; margin-left: -27px; border-radius: 20px; background: radial-gradient(circle at 30% 50%, #fff 0 9px, transparent 10px), radial-gradient(circle at 60% 40%, #fff 0 8px, transparent 9px), radial-gradient(circle at 80% 60%, #fff 0 7px, transparent 8px); filter: drop-shadow(0 0 1px #9FD0EE); pointer-events: none; }
+.lt-splash { position: absolute; z-index: 3; width: 120px; height: 40px; pointer-events: none; background: radial-gradient(circle at 20% 60%, rgba(255,255,255,.95) 0 8px, transparent 9px), radial-gradient(circle at 50% 40%, rgba(255,255,255,.95) 0 10px, transparent 11px), radial-gradient(circle at 78% 60%, rgba(255,255,255,.95) 0 8px, transparent 9px); animation: ltSplash 1s ease-out forwards; }
+@keyframes ltSplash { from { transform: scale(0.4); opacity: 0; } 40% { opacity: 1; } to { transform: scale(1); opacity: 0.9; } }
+.lt-water { pointer-events: none; animation: ltRun 0.5s linear infinite; }
+@keyframes ltRun { 50% { filter: brightness(1.08); } }
+.lt-sparkle { animation: ltTwinkle 1.4s ease-in-out infinite; transform-origin: 400px 330px; }
+@keyframes ltTwinkle { 50% { opacity: 0.55; } }
+.reduce-motion .lt-water, .reduce-motion .lt-sparkle, .reduce-motion .lt-splash { animation: none; }
+.lt-rot { width: 100%; height: 100%; transform: rotate(-62deg); transform-origin: 78% 50%; }
+.learn-card .learn-steps { font-size: 15px; font-weight: 800; color: var(--muted); padding: 2px 10px; border-radius: 10px; background: rgba(255, 255, 255, 0.7); }
+
+/* engine: change coins, and anything being dragged rises above the scene */
+.sx-change { display: flex; align-items: center; justify-content: center; gap: 4px; width: 100%; height: 100%; }
+.sx-change-coin { width: 46px; height: 46px; display: block; }
+.sx-scene .sx-el.dragging, .sx-scene .dragging { z-index: 30 !important; }

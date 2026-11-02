@@ -1,0 +1,69 @@
+/* learn-bedroom.css: Get dressed and Pack my school bag (learn-bedroom.js) */
+
+/* the clothes Lumi is wearing, drawn in his own box so they walk with him */
+.sx-lumi > svg.lr-wear { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.sx-lumi.flip > svg.lr-wear { transform: scaleX(-1); }
+.sx-lumi.walking > svg.lr-wear { animation: sxWalk 0.45s ease-in-out 2; }
+.sx-lumi.flip.walking > svg.lr-wear { animation-name: sxWalkF; }
+.lr-new { animation: lrPop 0.6s ease-out; transform-box: fill-box; transform-origin: 50% 50%; }
+@keyframes lrPop { 0% { opacity: 0; transform: scale(1.25); } 60% { opacity: 1; transform: scale(0.97); } 100% { opacity: 1; transform: scale(1); } }
+.lr-in { animation: lrIn 0.5s ease-out; }
+@keyframes lrIn { from { opacity: 0; transform: translateY(-14px) scale(0.9); } to { opacity: 1; transform: none; } }
+.lr-bump { animation: lrBump 0.45s ease-out; }
+@keyframes lrBump { 40% { transform: scale(1.05, 0.95); } }
+
+/* drop places: a soft dashed ring over Lumi, a ring by each foot */
+.lr-zone { display: block; width: 100%; height: 100%; border-radius: 50%; border: 4px dashed rgba(47, 158, 149, 0.35); background: rgba(255, 255, 255, 0.06); transition: border-color 0.2s, background 0.2s; }
+.sx-dragging .lr-zone { border-color: rgba(47, 158, 149, 0.85); background: rgba(255, 255, 255, 0.22); }
+.lr-foot > svg { display: block; }
+.sx-dragging .lr-foot > svg ellipse { stroke-width: 6; fill-opacity: 0.5; }
+.lr-strap { cursor: pointer; animation: lrBreath 1.6s ease-in-out infinite; }
+@keyframes lrBreath { 50% { filter: drop-shadow(0 0 8px rgba(255, 210, 63, 0.95)); } }
+.lr-mirrorhit { border-radius: 18px; }
+.lr-zipend { display: block; width: 100%; height: 100%; border-radius: 50%; border: 4px dashed rgba(244, 211, 94, 0.95); background: rgba(255, 246, 200, 0.35); }
+.lr-zippull { cursor: grab; touch-action: none; filter: drop-shadow(0 3px 4px rgba(59, 47, 47, 0.25)); animation: lrBreath 1.6s ease-in-out infinite; }
+.lr-zippull.dragging { cursor: grabbing; animation: none; }
+
+/* the dark room before the curtains open */
+.lr-dim { position: absolute; inset: 0; z-index: 9; pointer-events: none; background: rgba(30, 36, 80, 0.42); }
+.lr-dim.out { animation: lrFade 1.2s ease-out forwards; }
+@keyframes lrFade { to { opacity: 0; } }
+.lr-cur.anim .lr-cur-l, .lr-cur.anim .lr-cur-r { transform-box: fill-box; animation: lrCur 1s ease-out both; }
+.lr-cur.anim .lr-cur-l { transform-origin: 0 50%; }
+.lr-cur.anim .lr-cur-r { transform-origin: 100% 50%; }
+@keyframes lrCur { from { transform: scaleX(3.1); } to { transform: none; } }
+
+/* the picture timetable on the wall */
+.lr-ttbox { text-align: left; }
+.lr-tt { position: relative; display: flex; flex-direction: column; box-sizing: border-box; width: 100%; height: 100%; padding: 12px 12px 12px; border-radius: 16px; background: #FFFDF8; box-shadow: 0 6px 0 rgba(90, 60, 40, 0.12), inset 0 0 0 3px #EFE6D8; line-height: 1.15; font-weight: 800; color: var(--ink); }
+.lr-tt-pin { position: absolute; left: 50%; top: -8px; width: 18px; height: 18px; margin-left: -9px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #F7A39C, #E5534B 60%, #B5332C); box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2); }
+.lr-tt-title { display: block; font-size: 20px; text-align: center; margin: 2px 0 8px; }
+.lr-tt-cols { display: flex; gap: 10px; flex: 1; min-height: 0; }
+.lr-tt-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; padding: 6px; border-radius: 12px; background: #F4EEE4; transition: opacity 0.3s; }
+.lr-tt-col.tmr { background: #FFF3CC; }
+.lr-tt.on .lr-tt-col.today { opacity: 0.45; }
+.lr-tt.on .lr-tt-col.tmr { box-shadow: 0 0 0 4px #F4D35E; }
+.lr-tt-day { display: block; font-size: 17px; text-align: center; color: #6B5A4E; padding: 2px 0; }
+.lr-tt-col.tmr .lr-tt-day { color: var(--ink); }
+.lr-tt-row { display: flex; align-items: center; gap: 10px; height: 64px; padding: 0 8px; border-radius: 10px; background: #fff; }
+.lr-tt-pic { position: relative; width: 40px; height: 50px; flex: none; line-height: 0; }
+.lr-tt-pic > svg { width: 100%; height: 100%; }
+.lr-tt-tick { position: absolute; right: -8px; bottom: -6px; width: 24px; height: 24px; border-radius: 50%; background: #5BAA4A; color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 2px #fff; animation: lrPop 0.5s ease-out; }
+.lr-tt-tick svg { width: 16px; height: 16px; }
+.lr-tt-name { font-size: 18px; white-space: nowrap; }
+
+/* the check list by the mirror */
+.lr-check { display: flex; flex-direction: column; gap: 8px; box-sizing: border-box; width: 100%; height: 100%; padding: 14px; border-radius: 22px; background: #FFFDF8; box-shadow: 0 6px 0 rgba(90, 60, 40, 0.12), inset 0 0 0 3px #EFE6D8; line-height: 1.15; font-weight: 800; color: var(--ink); text-align: left; }
+.lr-check-t { display: block; font-size: 22px; text-align: center; margin-bottom: 2px; }
+.lr-ci { display: flex; align-items: center; gap: 10px; height: 76px; padding: 0 10px; border-radius: 14px; background: #fff; box-shadow: inset 0 0 0 2px #F1E9DC; }
+.lr-ci-art { width: 62px; height: 54px; flex: none; line-height: 0; display: flex; align-items: center; justify-content: center; }
+.lr-ci-art > svg { max-width: 100%; max-height: 100%; }
+.lr-ci-l { flex: 1; min-width: 0; font-size: 19px; white-space: nowrap; }
+.lr-ci-ok { width: 34px; height: 34px; flex: none; border-radius: 50%; border: 3px dashed #D9CFC0; display: flex; align-items: center; justify-content: center; color: #fff; box-sizing: border-box; }
+.lr-ci-ok.on { border: 0; background: #5BAA4A; animation: lrPop 0.5s ease-out both; }
+.lr-spark { animation: lrTwinkle 1.4s ease-in-out infinite; }
+@keyframes lrTwinkle { 50% { opacity: 0.4; transform: scale(0.75) rotate(20deg); } }
+
+.reduce-motion .lr-new, .reduce-motion .lr-in, .reduce-motion .lr-bump, .reduce-motion .lr-cur.anim .lr-cur-l, .reduce-motion .lr-cur.anim .lr-cur-r,
+.reduce-motion .lr-strap, .reduce-motion .lr-zippull, .reduce-motion .lr-spark, .reduce-motion .lr-tt-tick, .reduce-motion .lr-ci-ok.on { animation: none; }
+.reduce-motion .lr-dim.out { display: none; }

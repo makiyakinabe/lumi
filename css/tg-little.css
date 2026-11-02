@@ -1,0 +1,89 @@
+/* tg-little.css: styles for the little two-player games (tg-little.js). Prefix every rule with the game's screen class, e.g. .tg-copy */
+
+/* ======================================================================= Copy me */
+.tg-copy .tg-stage { padding: 80px 24px 24px; }
+.tg-copy .cp-pick { display: flex; flex-direction: column; align-items: center; gap: 22px; }
+.tg-copy .cp-q { position: static; }
+.tg-copy .cp-cards { max-width: 900px; }
+.tg-copy .cp-card { position: relative; width: 190px; height: 190px; font-size: 22px; }
+.tg-copy .cp-cards.n6 .cp-card { width: 160px; height: 165px; font-size: 19px; }
+.tg-copy .cp-cards.n6 .cp-card svg { width: 84px; height: 84px; }
+.tg-copy .cp-num { position: absolute; top: 8px; right: 10px; width: 34px; height: 34px; border-radius: 50%; background: var(--teal); color: #fff; font-style: normal; font-size: 20px; display: flex; align-items: center; justify-content: center; }
+.tg-copy .cp-show { display: flex; align-items: center; justify-content: center; gap: 60px; width: 100%; }
+.tg-copy .cp-lumi { line-height: 0; transform-origin: 50% 90%; }
+.tg-copy .cp-lumi > svg { transform-origin: 50% 90%; }
+.tg-copy .cp-lumi.a-clap > svg { animation: cpClap 0.5s ease-in-out infinite; }
+.tg-copy .cp-lumi.a-wave > svg { animation: cpWave 0.9s ease-in-out infinite; }
+.tg-copy .cp-lumi.a-arms > svg { animation: cpArms 1.4s ease-in-out infinite; }
+.tg-copy .cp-lumi.a-jump > svg { animation: cpJump 0.8s ease-in-out infinite; }
+.tg-copy .cp-lumi.a-nose > svg { animation: cpNose 1.2s ease-in-out infinite; }
+.tg-copy .cp-lumi.a-silly > svg { animation: cpSilly 0.7s ease-in-out infinite; }
+.tg-copy .cp-lumi.a-stomp > svg { animation: cpStomp 0.6s ease-in-out infinite; }
+@keyframes cpClap { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(0.9, 1.05); } }
+@keyframes cpWave { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+@keyframes cpArms { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(0.94, 1.12) translateY(-6%); } }
+@keyframes cpJump { 0%, 100% { transform: translateY(0) scale(1.05, 0.95); } 45% { transform: translateY(-26%) scale(0.97, 1.04); } }
+@keyframes cpNose { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-8deg) scale(1.03); } }
+@keyframes cpSilly { 0%, 100% { transform: rotate(-10deg) scale(1.04, 0.96); } 50% { transform: rotate(10deg) scale(0.96, 1.04); } }
+@keyframes cpStomp { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-5%) rotate(4deg); } }
+.tg-copy .cp-cardbig { display: flex; align-items: center; gap: 14px; }
+.tg-copy .cp-mini { width: 220px; height: 240px; border-radius: 28px; background: #fff; border: 4px solid #fff; box-shadow: 0 6px 0 rgba(90, 60, 40, 0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+.tg-copy .cp-mini svg { width: 130px; height: 130px; }
+.tg-copy .cp-mini b { font-size: 28px; color: var(--ink); }
+.tg-copy .cp-mini.on { border-color: var(--teal); }
+.tg-copy .cp-then { font-size: 22px; font-weight: 800; color: var(--muted); }
+
+/* ======================================================================= Peekaboo Lumi */
+.tg-peekaboo .tg-stage { align-items: stretch; justify-content: stretch; }
+.tg-peekaboo .pb-room { position: relative; flex: 1; background: linear-gradient(#FBF1FF, #F3E8FB); }
+.tg-peekaboo .pb-window { position: absolute; right: 7%; top: 9%; width: 150px; height: 110px; border-radius: 14px; background: #CFE6F5; border: 8px solid #fff; box-shadow: 0 4px 0 rgba(90, 60, 40, 0.08); }
+.tg-peekaboo .pb-floor { position: absolute; left: 0; right: 0; bottom: 0; height: 30%; background: #E8D6F2; }
+.tg-peekaboo .pb-spots { position: absolute; left: 0; right: 0; bottom: 8%; display: flex; align-items: flex-end; justify-content: center; gap: 70px; }
+.tg-peekaboo .pb-spots.n4 { gap: 36px; }
+.tg-peekaboo .pb-spot { position: relative; padding: 0; border: 0; background: none; line-height: 0; cursor: pointer; transition: transform 0.25s; }
+.tg-peekaboo .pb-spot:active { transform: scale(0.97); }
+.tg-peekaboo .pb-art { position: relative; display: block; width: 100%; height: 100%; z-index: 2; }
+.tg-peekaboo .pb-spot.empty .pb-art { opacity: 0.45; transform: translateY(14px) rotate(-3deg); transition: transform 0.4s, opacity 0.4s; }
+.tg-peekaboo .pb-not { position: absolute; left: 50%; top: -42px; transform: translateX(-50%); white-space: nowrap; padding: 6px 14px; border-radius: 16px; background: #fff; font-size: 18px; font-weight: 800; color: var(--muted); line-height: 1.2; z-index: 3; }
+.tg-peekaboo .pb-lumi { position: absolute; left: 50%; bottom: 40%; margin-left: -85px; z-index: 1; animation: pbUp 0.6s cubic-bezier(.3, 1.5, .5, 1) both; }
+@keyframes pbUp { from { transform: translateY(70%); } to { transform: translateY(0); } }
+.tg-peekaboo .pb-boo { left: 50%; top: -190px; transform: translateX(-50%); white-space: nowrap; font-size: 26px; z-index: 4; }
+
+/* ======================================================================= Breathe together */
+.tg-breathe .tg-stage { background: linear-gradient(#F4F8FD, #E7F0FA); }
+.tg-breathe .br-wrap { display: flex; align-items: center; justify-content: space-between; width: 100%; height: 100%; padding: 70px 30px 24px; gap: 20px; }
+.tg-breathe .br-pad { width: 210px; height: 300px; border-radius: 36px; border: 5px dashed #B9CDE6; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; touch-action: none; user-select: none; -webkit-user-select: none; cursor: pointer; flex: none; transition: background 0.4s, border-color 0.4s; }
+.tg-breathe .br-pad.held { border-style: solid; border-color: #8EB8E5; background: #E3EEFA; }
+.tg-breathe .br-pad.lumi-holds { border-style: solid; border-color: #E6DCCB; background: #FFF8EE; cursor: default; }
+.tg-breathe .br-pad-name { font-size: 24px; font-weight: 800; color: var(--ink); }
+.tg-breathe .br-pad-hint { font-size: 17px; font-weight: 700; color: var(--muted); }
+.tg-breathe .br-mid { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; height: 100%; }
+.tg-breathe .br-sky { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 0; }
+.tg-breathe .br-balloon { line-height: 0; transform-origin: 50% 60%; }
+.tg-breathe .br-text { font-size: 26px; font-weight: 800; color: #4A78A8; text-align: center; min-height: 34px; }
+
+/* ======================================================================= Feed the animals */
+.tg-feed .tg-stage { padding: 70px 24px 24px; }
+.tg-feed .fd-wrap { display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 16px; height: 100%; }
+.tg-feed .fd-animal { position: relative; display: flex; flex-direction: column; align-items: center; line-height: 0; }
+.tg-feed .fd-animal.eat > svg { animation: fdMunch 0.35s ease-in-out 4; }
+.tg-feed .fd-animal.no > svg { animation: fdShake 0.5s ease-in-out; }
+@keyframes fdMunch { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.05, 0.94); } }
+@keyframes fdShake { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-6deg); } 75% { transform: rotate(6deg); } }
+.tg-feed .fd-think { position: absolute; right: -150px; top: -6px; width: 128px; height: 108px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0 rgba(90, 60, 40, 0.08); }
+.tg-feed .fd-think::before, .tg-feed .fd-think::after { content: ''; position: absolute; border-radius: 50%; background: #fff; }
+.tg-feed .fd-think::before { width: 26px; height: 26px; left: -14px; bottom: 6px; }
+.tg-feed .fd-think::after { width: 14px; height: 14px; left: -32px; bottom: -6px; }
+.tg-feed .fd-name { margin-top: 6px; font-size: 22px; font-weight: 800; color: var(--ink); line-height: 1.2; }
+.tg-feed .fd-yum { position: absolute; right: -130px; top: 10px; }
+.tg-feed .fd-food { width: 170px; height: 160px; }
+.reduce-motion .tg-copy .cp-lumi > svg, .reduce-motion .tg-feed .fd-animal > svg { animation: none !important; }
+.tg-copy .cp-cards.n6 { max-width: 560px; }
+.tg-peekaboo .pb-spot.tall .pb-lumi { left: auto; right: -96px; bottom: 6%; margin-left: 0; animation-name: pbSide; }
+@keyframes pbSide { from { transform: translateX(-60%); } to { transform: translateX(0); } }
+.tg-peekaboo .pb-spot.tall .pb-boo { top: -56px; left: auto; right: -150px; transform: none; }
+.tg-peekaboo .pb-spot.tall .pb-boo { top: -56px; left: 50%; right: auto; transform: translateX(-50%); }
+.tg-peekaboo .pb-spot.tall.left .pb-lumi { right: auto; left: -96px; animation-name: pbSideL; }
+@keyframes pbSideL { from { transform: translateX(60%); } to { transform: translateX(0); } }
+.tg-copy .cp-lumicol { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.tg-copy .cp-cap { padding: 8px 18px; border-radius: 20px; background: #fff; font-size: 22px; font-weight: 800; color: var(--ink); box-shadow: 0 4px 0 rgba(90, 60, 40, 0.08); }

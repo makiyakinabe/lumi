@@ -1,0 +1,122 @@
+/* tg-teen.css: styles for the Teens two-player games (tg-teen.js). Every rule is prefixed with the game's screen class. */
+
+/* ---------- shared bits for the teen games ---------- */
+.tg-outing .tgt-q, .tg-rather .tgt-q, .tg-story .tgt-q, .tg-shop .tgt-q, .tg-phone .tgt-q { position: static; max-width: none; text-align: center; }
+.tg-rather .tg-stage, .tg-feel .tg-stage, .tg-outing .tg-stage, .tg-story .tg-stage, .tg-shop .tg-stage, .tg-phone .tg-stage { padding: 76px 24px 18px; }
+.tg-rather .tgt-pass, .tg-feel .tgt-pass { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+.tg-rather .tgt-pass b, .tg-feel .tgt-pass b { font-size: 30px; color: var(--ink); }
+.tg-rather .tgt-pass > span:not(.tg-av), .tg-feel .tgt-pass > span:not(.tg-av) { font-size: 20px; font-weight: 700; color: var(--muted); }
+.tg-rather .tgt-side, .tg-feel .tgt-side { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 300px; }
+.tg-rather .tgt-side b, .tg-feel .tgt-side b { font-size: 20px; color: var(--ink); }
+.tg-rather .tgt-reveal, .tg-feel .tgt-reveal { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.tg-rather .tgt-result, .tg-feel .tgt-result { padding: 10px 26px; border-radius: 26px; background: #fff; font-size: 26px; font-weight: 800; color: var(--muted); box-shadow: 0 4px 0 rgba(90, 60, 40, 0.08); }
+.tg-rather .tgt-result.same, .tg-feel .tgt-result.same { color: var(--green); }
+
+/* ---------- Plan our outing ---------- */
+.tg-outing .tgt-opts .tg-choice { min-width: 160px; }
+.tg-outing .tg-choice.tgt-low { opacity: 0.45; }
+.tg-outing .tgt-plan { width: 640px; max-width: 100%; background: #fff; border-radius: 26px; padding: 18px 26px; box-shadow: 0 6px 0 rgba(90, 60, 40, 0.08); display: flex; flex-direction: column; gap: 6px; }
+.tg-outing .tgt-plan-h { display: flex; align-items: center; gap: 10px; font-size: 26px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+.tg-outing .tgt-plan-row { display: grid; grid-template-columns: 48px 120px 1fr; align-items: center; gap: 12px; padding: 4px 0; border-bottom: 2px solid #F3EDE4; font-size: 20px; color: var(--ink); }
+.tg-outing .tgt-plan-row b { color: var(--muted); font-size: 17px; }
+.tg-outing .tgt-plan-row span:last-child { font-weight: 800; }
+.tg-outing .tgt-plan-ic { line-height: 0; }
+.tg-outing .tgt-plan-list { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; }
+.tg-outing .tgt-plan-list b { font-size: 17px; color: var(--muted); margin-right: 4px; }
+.tg-outing .tgt-check { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 16px; background: #EEF8EA; color: var(--green); font-weight: 800; font-size: 17px; }
+
+/* ---------- Would you rather? ---------- */
+.tg-rather .tgt-pair { align-items: center; }
+.tg-rather .tgt-big { width: 280px; min-height: 260px; font-size: 26px; }
+.tg-rather .tgt-or { font-size: 26px; font-weight: 800; color: var(--muted); }
+.tg-rather .tgt-hidden { display: flex; align-items: center; gap: 10px; padding: 6px 16px 6px 6px; border-radius: 26px; background: #fff; font-size: 18px; font-weight: 800; color: var(--muted); }
+.tg-rather .tgt-side .tg-choice { width: 220px; min-height: 170px; }
+.tg-rather .tgt-why { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.tg-rather .tgt-chip { height: 44px; padding: 0 14px; border-radius: 22px; border: 2px solid #E6DCCB; background: #fff; font-size: 16px; font-weight: 800; color: var(--ink); }
+.tg-rather .tgt-because { font-size: 19px; font-weight: 800; color: var(--teal); }
+
+/* ---------- Our silly story ---------- */
+.tg-story .tgt-story { display: flex; flex-direction: column; align-items: center; gap: 16px; width: 100%; }
+.tg-story .tgt-strip { display: flex; gap: 12px; justify-content: center; }
+.tg-story .tgt-panel { width: 150px; height: 120px; border-radius: 16px; border: 3px dashed #D9C9B4; background: rgba(255, 255, 255, 0.6); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 15px; font-weight: 800; color: var(--muted); text-align: center; padding: 6px; line-height: 1.15; }
+.tg-story .tgt-panel.on { border: 3px solid #fff; background: #fff; color: var(--ink); box-shadow: 0 4px 0 rgba(90, 60, 40, 0.08); }
+.tg-story .tgt-panel.now { border-color: var(--teal); }
+.tg-story .tgt-q-mark { font-size: 40px; color: #D9C9B4; line-height: 1; }
+.tg-story .tgt-opts .tg-choice { min-width: 150px; min-height: 140px; font-size: 18px; }
+.tg-story .tgt-story.read .tgt-panel { width: 190px; height: 170px; font-size: 17px; }
+.tg-story .tgt-story-text { background: #fff; border-radius: 22px; padding: 14px 28px; max-width: 860px; box-shadow: 0 4px 0 rgba(90, 60, 40, 0.08); }
+.tg-story .tgt-story-text p { margin: 4px 0; font-size: 24px; font-weight: 800; color: var(--ink); line-height: 1.35; }
+
+/* ---------- Shop and pay ---------- */
+.tg-shop .tgt-shop { display: grid; grid-template-columns: 200px 1fr; grid-template-rows: 1fr auto; gap: 14px; width: 100%; height: 100%; }
+.tg-shop .tgt-list { grid-row: 1 / span 2; background: #fff; border-radius: 22px; padding: 14px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 4px 0 rgba(90, 60, 40, 0.08); }
+.tg-shop .tgt-list b { font-size: 20px; color: var(--ink); }
+.tg-shop .tgt-list span { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 800; color: var(--ink); }
+.tg-shop .tgt-list span em { font-style: normal; flex: 1; }
+.tg-shop .tgt-list span.got { color: var(--green); }
+.tg-shop .tgt-list span.got em { text-decoration: line-through; }
+.tg-shop .tgt-shelf { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; background: #E8D3B4; border-radius: 20px; padding: 12px; }
+.tg-shop .tgt-item { border-radius: 16px; background: #fff; border: 3px solid #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 6px; font-size: 16px; font-weight: 800; color: var(--ink); line-height: 1.1; }
+.tg-shop .tgt-item b { color: var(--teal); font-size: 17px; }
+.tg-shop .tgt-item.taken { opacity: 0.4; }
+.tg-shop .tgt-item.scanned { opacity: 1; border-color: var(--green); }
+.tg-shop .tgt-counter .tgt-item { width: 130px; height: 140px; }
+.tg-shop .tgt-basket { display: flex; align-items: center; gap: 8px; min-height: 64px; background: #fff; border-radius: 18px; padding: 4px 12px; }
+.tg-shop .tgt-bitem { line-height: 0; }
+.tg-shop .tgt-counter { display: flex; align-items: center; justify-content: center; gap: 28px; }
+.tg-shop .tgt-counter.col { flex-direction: column; gap: 16px; }
+.tg-shop .tgt-till { min-width: 200px; padding: 10px 22px; border-radius: 16px; background: #2B2F4A; color: #C9CCE0; display: flex; flex-direction: column; align-items: center; font-size: 16px; font-weight: 800; }
+.tg-shop .tgt-till b { font-size: 34px; color: #FFE27A; }
+.tg-shop .tgt-till.pay { background: #fff; color: var(--muted); }
+.tg-shop .tgt-till.pay b { color: var(--teal); }
+.tg-shop .tgt-tray { min-height: 76px; min-width: 520px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; padding: 6px 14px; border-radius: 18px; background: rgba(255, 255, 255, 0.7); border: 3px dashed #D9C9B4; font-size: 18px; font-weight: 700; }
+.tg-shop .tgt-wallet { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.tg-shop .tgt-money { padding: 4px; border-radius: 16px; background: #fff; border: 3px solid #fff; line-height: 0; box-shadow: 0 4px 0 rgba(90, 60, 40, 0.08); }
+.tg-shop .tgt-money.in { box-shadow: none; background: transparent; border: 0; }
+.tg-shop .tgt-money:active { transform: scale(0.95); }
+.tg-shop .tgt-amt { min-width: 170px; min-height: 110px; font-size: 34px; }
+.tg-shop .tgt-sum { font-size: 34px; font-weight: 800; color: var(--ink); }
+.tg-shop .tgt-sum b { color: var(--green); }
+
+/* ---------- How would you feel? ---------- */
+.tg-feel .tg-stage { padding: 70px 24px 14px; }
+.tg-feel .tgt-situ { display: flex; align-items: center; gap: 16px; padding: 10px 26px 10px 14px; border-radius: 24px; background: #fff; box-shadow: 0 4px 0 rgba(90, 60, 40, 0.08); }
+.tg-feel .tgt-situ b { font-size: 26px; color: var(--ink); }
+.tg-feel .tgt-feelpick { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
+.tg-feel .tgt-row-h { font-size: 18px; font-weight: 800; color: var(--muted); }
+.tg-feel .tgt-feels, .tg-feel .tgt-helps { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.tg-feel .tgt-feel { width: 120px; height: 112px; border-radius: 20px; border: 4px solid #fff; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 16px; font-weight: 800; color: var(--ink); box-shadow: 0 4px 0 rgba(90, 60, 40, 0.08); }
+.tg-feel .tgt-help { height: 60px; padding: 0 16px 0 10px; border-radius: 30px; border: 3px solid #fff; background: #fff; display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 800; color: var(--ink); box-shadow: 0 4px 0 rgba(90, 60, 40, 0.08); }
+.tg-feel .tgt-feel.on, .tg-feel .tgt-help.on { border-color: var(--teal); }
+.tg-feel .tgt-side .tgt-feel { width: 150px; height: 130px; }
+
+/* ---------- Phone practice ---------- */
+.tg-phone .tgt-script { min-width: 190px; }
+.tg-phone .tgt-call { display: flex; gap: 28px; align-items: stretch; width: 100%; height: 100%; }
+.tg-phone .tgt-phone { width: 380px; flex: none; border-radius: 34px; background: #2B2F4A; padding: 14px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 8px 0 rgba(43, 47, 74, 0.15); }
+.tg-phone .tgt-phone-top { display: flex; align-items: center; gap: 10px; padding: 6px 10px; border-radius: 20px; background: rgba(255, 255, 255, 0.1); color: #fff; }
+.tg-phone .tgt-phone-top > span:nth-child(2) { display: flex; flex-direction: column; flex: 1; }
+.tg-phone .tgt-phone-top b { font-size: 18px; }
+.tg-phone .tgt-phone-top small { font-size: 13px; color: #C9CCE0; font-weight: 700; }
+.tg-phone .tgt-live { width: 34px; height: 34px; border-radius: 50%; background: #5DAA68; display: flex; align-items: center; justify-content: center; color: #fff; }
+.tg-phone .tgt-msgs { flex: 1; border-radius: 22px; background: #F5F2EC; padding: 12px; display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; overflow: hidden; }
+.tg-phone .tgt-msg { max-width: 82%; padding: 9px 14px; border-radius: 18px; font-size: 16px; font-weight: 700; line-height: 1.3; color: var(--ink); }
+.tg-phone .tgt-msg.them { align-self: flex-start; background: #fff; border-bottom-left-radius: 6px; }
+.tg-phone .tgt-msg.me { align-self: flex-end; background: #CFE8E4; border-bottom-right-radius: 6px; }
+.tg-phone .tgt-callside { flex: 1; display: flex; align-items: center; justify-content: center; min-width: 0; }
+.tg-phone .tgt-them, .tg-phone .tgt-mine { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; max-width: 560px; }
+.tg-phone .tgt-them-h { font-size: 20px; font-weight: 800; color: var(--muted); }
+.tg-phone .tgt-them-line { font-size: 32px; font-weight: 800; color: var(--ink); text-align: center; background: #fff; padding: 18px 26px; border-radius: 24px; line-height: 1.3; box-shadow: 0 4px 0 rgba(90, 60, 40, 0.08); }
+.tg-phone .tgt-line { width: 100%; min-height: 74px; padding: 10px 20px; border-radius: 22px; border: 3px solid #fff; background: #fff; display: flex; align-items: center; gap: 14px; text-align: left; font-size: 21px; font-weight: 800; color: var(--ink); box-shadow: 0 4px 0 rgba(90, 60, 40, 0.08); }
+.tg-phone .tgt-line:active { transform: scale(0.98); }
+.tg-phone .tgt-line.own { border: 3px dashed #D9C9B4; background: rgba(255, 255, 255, 0.6); color: var(--muted); }
+.tg-phone .tgt-type { width: 100%; display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.tg-phone .tgt-typed { width: 100%; min-height: 60px; border-radius: 16px; background: #fff; display: flex; align-items: center; padding: 0 18px; font-size: 24px; font-weight: 800; color: var(--ink); }
+.tg-phone .tgt-keys { width: 100%; display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; }
+.tg-phone .tgt-keys .key { height: 50px; font-size: 20px; }
+
+/* ---------- while Lumi chooses (play with Lumi) ---------- */
+.tg-outing .tgt-wait, .tg-rather .tgt-wait, .tg-story .tgt-wait { opacity: 0.45; pointer-events: none; }
+.tg-outing .tgt-thinking, .tg-rather .tgt-thinking, .tg-story .tgt-thinking, .tg-feel .tgt-thinking { display: flex; align-items: center; gap: 10px; padding: 6px 18px 6px 6px; border-radius: 26px; background: #fff; font-size: 19px; font-weight: 800; color: var(--muted); box-shadow: 0 4px 0 rgba(90, 60, 40, 0.08); animation: tgtThink 1.6s ease-in-out infinite; }
+@keyframes tgtThink { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+.reduce-motion .tgt-thinking { animation: none !important; }

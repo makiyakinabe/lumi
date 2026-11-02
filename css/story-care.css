@@ -1,0 +1,35 @@
+/* story-care.css: dentist, haircut and polyclinic stories (story-care.js) */
+.cr-front, .cr-target { pointer-events: none; }
+.sx-dragging .cr-target { outline: 4px dashed rgba(47, 126, 121, 0.55); outline-offset: 0; border-radius: 50%; }
+.cr-lumihit { border-radius: 50%; outline: 5px dashed rgba(47, 126, 121, 0.6); outline-offset: -6px; animation: sxPulse 1.4s ease-in-out infinite; }
+.sx-lumi.cr-tilt { transform: rotate(-24deg); transition: left 0.9s ease-in-out, top 0.9s ease-in-out, width 0.9s ease, height 0.9s ease, transform 0.9s ease; }
+.cr-chair, .cr-salonchair { border-radius: 30px; }
+.cr-tooth { border-radius: 18px; }
+.cr-tooth.got { background: rgba(127, 209, 138, 0.35); }
+.cr-tooth-n { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: 30px; font-weight: 900; line-height: 1; color: #2F7E79; }
+.cr-dmirror { pointer-events: none; transition: left 0.3s ease, top 0.3s ease; }
+.cr-tuft { pointer-events: none; transition: transform 0.9s ease-in, opacity 0.9s ease-in; }
+.cr-tuft.cr-fall { transform: translateY(240px) rotate(120deg); opacity: 0; }
+.cr-scissors, .cr-brushtool { cursor: grab; touch-action: none; }
+.cr-scissors.dragging, .cr-brushtool.dragging { z-index: 20; filter: drop-shadow(0 10px 8px rgba(60, 40, 30, 0.25)); }
+.cr-scissors.snap, .cr-brushtool.snap { transition: transform 0.3s ease; }
+.cr-bits { pointer-events: none; transition: opacity 0.2s; }
+.cr-bit { position: absolute; width: 18px; height: 6px; border-radius: 3px; opacity: 0.9; }
+.cr-buzz > svg { animation: crBuzz 0.12s linear infinite; }
+@keyframes crBuzz { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(2px); } }
+.cr-mirrorhit { border-radius: 22px; outline: 5px dashed rgba(47, 126, 121, 0.55); outline-offset: -10px; }
+.cr-photos { position: absolute; z-index: 8; display: flex; flex-direction: column; gap: 14px; }
+.cr-photo { width: 170px; padding: 10px 10px 8px; border-radius: 12px; background: #fff; box-shadow: 0 6px 0 rgba(90, 60, 40, 0.12); display: flex; flex-direction: column; align-items: center; gap: 4px; transform: rotate(-3deg); }
+.cr-photo + .cr-photo { transform: rotate(3deg); }
+.cr-photo b { font-size: 18px; color: var(--ink); }
+.cr-photo-pic { position: relative; width: 150px; height: 130px; border-radius: 8px; background: #FDF5F8; display: flex; align-items: center; justify-content: center; line-height: 0; }
+.cr-photo-tufts { position: absolute; left: 15px; top: 5px; width: 120px; height: 120px; pointer-events: none; }
+.cr-photo-pic > svg.lumi { width: 120px; height: 120px; }
+.cr-ticket-out { animation: crPrint 0.9s ease-out; }
+@keyframes crPrint { from { transform: translateY(-40px); opacity: 0; } to { transform: none; opacity: 1; } }
+.cr-tag { display: inline-block; padding: 6px 12px; border-radius: 12px; background: #fff; font-size: 20px; font-weight: 900; color: #E5534B; line-height: 1.2; box-shadow: 0 4px 0 rgba(90, 60, 40, 0.1); }
+.cr-bedhit { border-radius: 24px; outline: 5px dashed rgba(47, 126, 121, 0.55); outline-offset: -6px; }
+.cr-brushing > svg { animation: crBrush 0.3s ease-in-out infinite; }
+@keyframes crBrush { 0%, 100% { transform: translateX(-6px) rotate(-8deg); } 50% { transform: translateX(6px) rotate(8deg); } }
+.reduce-motion .cr-buzz > svg, .reduce-motion .cr-brushing > svg, .reduce-motion .cr-lumihit { animation: none; }
+.cr-gown { pointer-events: none; }

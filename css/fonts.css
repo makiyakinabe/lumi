@@ -1,0 +1,13 @@
+/* fonts.css: Lumi's font, kept inside the app (nothing is loaded from the internet, for children's privacy).
+   Put Nunito's variable font file in web/fonts/ as Nunito-Variable.woff2 or Nunito-Variable.ttf
+   (free, SIL Open Font License: fonts.google.com/specimen/Nunito, "Download family", file "Nunito-VariableFont_wght.ttf").
+   Without it, Lumi uses the tablet's own rounded font (SF Pro Rounded on iPad and iPhone). */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 200 1000;
+  font-display: swap;
+  src: local('Nunito'), local('Nunito Regular'),
+       url('../fonts/Nunito-Variable.woff2') format('woff2'),
+       url('../fonts/Nunito-Variable.ttf') format('truetype');
+}
