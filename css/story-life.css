@@ -1,0 +1,82 @@
+/* story-life.css: the bus, library, vaccination, thunder, swimming and lost stories (story-life.js) */
+/* scene items have line-height 0; text cards here need their own */
+.lf-note, .lf-btn, .lf-busscreen, .lf-book, .lf-open, .lf-kscreen, .lf-qscreen, .lf-ticket, .lf-sticker, .lf-cubicle, .lf-idcard, .lf-stepnum { line-height: 1.2; }
+/* bus */
+.lf-plate { border-radius: 12px; outline: 4px dashed rgba(47, 126, 121, 0.55); outline-offset: 2px; }
+.lf-plate.on { outline: 6px solid #7FD18A; outline-offset: 2px; }
+.lf-note { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 18px; background: #FFFDF6; border: 3px solid #E6DCCB; box-shadow: 0 6px 0 rgba(90, 60, 40, 0.12); transform: rotate(2deg); line-height: 1.1; color: var(--ink); }
+.lf-note b { font-size: 24px; font-weight: 900; }
+.lf-note span { font-size: 16px; font-weight: 700; color: var(--muted); }
+.lf-drive-in { animation: lfDriveIn 1.3s cubic-bezier(.2,.7,.3,1) both; }
+.lf-drive-out { animation: lfDriveOut 1.6s ease-in both; }
+@keyframes lfDriveIn { from { transform: translateX(760px); } to { transform: none; } }
+@keyframes lfDriveOut { from { transform: none; } to { transform: translateX(-760px); } }
+.lf-door { border-radius: 8px; outline: 6px solid #7FD18A; outline-offset: -4px; animation: sxPulse 1.4s ease-in-out infinite; }
+.lf-btn { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: 999px; background: var(--teal); color: #fff; font-size: 30px; font-weight: 900; box-shadow: 0 8px 0 #1F5E5A; animation: sxPulse 1.6s ease-in-out infinite; }
+.lf-seat { border-radius: 20px; }
+.lf-busscreen { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 12px; background: #1E2233; border: 5px solid #5A6070; color: #FFB000; font-family: 'Courier New', monospace; font-size: 24px; font-weight: 800; letter-spacing: 1px; }
+.lf-busscreen b { color: #FFD23F; }
+.lf-busscreen.stopping { color: #FF7A6E; animation: sxPulse 1s ease-in-out infinite; }
+.lf-bell { border-radius: 16px; }
+.lf-bell.go { outline: 6px solid #FF7A6E; outline-offset: 4px; animation: sxPulse 1.2s ease-in-out infinite; }
+/* library */
+.lf-book { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border-radius: 6px 12px 12px 6px; box-shadow: inset 8px 0 0 rgba(0,0,0,.18), 0 6px 0 rgba(60, 40, 30, 0.18); color: #fff; }
+.lf-book svg { filter: drop-shadow(0 2px 0 rgba(0,0,0,.15)); background: rgba(255,255,255,.85); border-radius: 50%; padding: 4px; }
+.lf-book b { font-size: 16px; font-weight: 900; }
+.lf-basket, .lf-swimbag, .lf-tent { border-radius: 26px; }
+.lf-open { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border-radius: 16px; background: #FFFDF6; border: 4px solid #7FB069; box-shadow: 0 8px 0 rgba(60, 40, 30, 0.15); color: var(--ink); }
+.lf-open b { font-size: 24px; font-weight: 900; }
+.lf-open .lf-pg { display: block; font-size: 16px; font-weight: 800; color: var(--muted); }
+.lf-openbtn { border-radius: 16px; animation: sxPulse 1.6s ease-in-out infinite; }
+.lf-kscreen { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 14px; background: #E8F6F3; border: 6px solid #2B2F4A; text-align: center; color: var(--ink); }
+.lf-kscreen b { font-size: 22px; font-weight: 900; line-height: 1.15; }
+.lf-kscreen span { font-size: 16px; font-weight: 800; color: var(--muted); }
+.lf-pad { border-radius: 10px; background: rgba(127, 209, 138, 0.35); }
+.lf-slot { border-radius: 12px; }
+/* vaccination */
+.lf-qscreen { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 16px; background: #1E2233; border: 6px solid #5A6070; color: #BFF2CF; }
+.lf-qscreen span { font-size: 18px; font-weight: 800; letter-spacing: 1px; }
+.lf-qscreen b { font-size: 64px; line-height: 1; font-weight: 900; color: #FFD23F; font-family: 'Courier New', monospace; }
+.lf-qbtn { border-radius: 16px; }
+.lf-qbtn.go { outline: 6px solid #7FD18A; outline-offset: 4px; animation: sxPulse 1.2s ease-in-out infinite; }
+.lf-ticket { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 10px; background: #fff; border: 3px dashed #C9D1D9; box-shadow: 0 6px 0 rgba(60, 40, 30, 0.12); transform: rotate(-4deg); color: var(--ink); line-height: 1.1; }
+.lf-ticket span { font-size: 14px; font-weight: 800; color: var(--muted); }
+.lf-ticket b { font-size: 40px; font-weight: 900; }
+.lf-armbtn { border-radius: 40px; animation: sxPulse 1.6s ease-in-out infinite; }
+.lf-count { position: absolute; z-index: 6; display: flex; gap: 26px; }
+.lf-num { width: 130px; height: 130px; border-radius: 50%; border: 0; background: #fff; color: var(--ink); font-size: 64px; font-weight: 900; box-shadow: 0 8px 0 rgba(60, 40, 30, 0.15); }
+.lf-num.on { background: #7FD18A; color: #fff; }
+.lf-num.next { outline: 6px solid var(--teal); outline-offset: 4px; animation: sxPulse 1.3s ease-in-out infinite; }
+.lf-plaster { border-radius: 16px; }
+.lf-sticker { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 50%; background: #FFF1C2; border: 5px solid #F4B400; color: #8A5A00; }
+.lf-sticker b { font-size: 16px; font-weight: 900; letter-spacing: 1px; }
+.lf-sticker.small { border-width: 3px; }
+/* thunder */
+.lf-winbtn { border-radius: 14px; outline: 5px dashed rgba(47, 126, 121, 0.6); outline-offset: -8px; animation: sxPulse 1.6s ease-in-out infinite; }
+.lf-flash { position: absolute; inset: 0; z-index: 1; background: #fff; opacity: 0; pointer-events: none; animation: lfFlash 1.2s ease-out 0.3s 1 both; }
+@keyframes lfFlash { 0% { opacity: 0; } 8% { opacity: 0.45; } 16% { opacity: 0.1; } 24% { opacity: 0.35; } 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .lf-flash { animation: none; } }
+/* swimming */
+.lf-cubicle { width: 100%; height: 100%; display: flex; align-items: flex-start; justify-content: center; padding-top: 40px; border-radius: 10px; background: #9DB7CC; box-shadow: inset 0 0 0 6px rgba(0,0,0,.08); }
+.lf-cubicle span { padding: 8px 16px; border-radius: 10px; background: #E5534B; color: #fff; font-size: 20px; font-weight: 900; letter-spacing: 1px; }
+.lf-cubicle.free span { background: #3FA45A; }
+.lf-cubicle.free { outline: 5px solid rgba(63, 164, 90, 0.5); outline-offset: -5px; }
+.lf-cubicle.shut span { background: #E5534B; }
+.lf-showerbtn { border-radius: 20px; animation: sxPulse 1.6s ease-in-out infinite; }
+.lf-rain { position: absolute; z-index: 4; pointer-events: none; background: repeating-linear-gradient(100deg, rgba(142,197,242,0) 0 14px, rgba(142,197,242,.55) 14px 17px); border-radius: 30px; animation: lfRain 0.6s linear infinite; }
+@keyframes lfRain { from { background-position: 0 0; } to { background-position: 0 60px; } }
+.lf-water { width: 100%; height: 100%; background: linear-gradient(rgba(91,183,224,.55), rgba(70,160,205,.85)); border-top: 4px solid rgba(255,255,255,.7); pointer-events: none; }
+.lf-step { border-radius: 8px; display: flex; align-items: center; justify-content: flex-start; padding-left: 14px; }
+.lf-stepnum { width: 38px; height: 38px; border-radius: 50%; background: #fff; color: var(--ink); font-size: 22px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
+.lf-step.next { outline: 5px solid var(--teal); outline-offset: -2px; animation: sxPulse 1.3s ease-in-out infinite; }
+.lf-step.on .lf-stepnum { background: #7FD18A; color: #fff; }
+.lf-splash { width: 100%; height: 100%; background: radial-gradient(circle at 30% 60%, #fff 0 8px, transparent 9px), radial-gradient(circle at 60% 40%, #fff 0 6px, transparent 7px), radial-gradient(circle at 80% 70%, #fff 0 7px, transparent 8px); opacity: .85; pointer-events: none; animation: lfSplash .6s ease-out both; }
+@keyframes lfSplash { from { transform: scale(.4); opacity: 1; } to { transform: scale(1.2); opacity: .6; } }
+/* lost */
+.lf-who { border-radius: 30px; }
+.lf-idcard { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 2px; padding: 12px 16px; border-radius: 16px; background: #FFFDF6; border: 4px solid #E5534B; box-shadow: 0 6px 0 rgba(60, 40, 30, 0.14); color: var(--ink); line-height: 1.15; }
+.lf-idcard b { font-size: 22px; font-weight: 900; color: #B5403A; }
+.lf-idcard span { font-size: 17px; font-weight: 800; }
+.lf-idcard i { display: flex; align-items: center; gap: 6px; font-style: normal; font-size: 22px; font-weight: 900; }
+.lf-hearts { position: absolute; z-index: 7; width: 120px; height: 100px; pointer-events: none; background: radial-gradient(circle at 30% 40%, #EF8A7A 0 14px, transparent 15px), radial-gradient(circle at 70% 30%, #EF8A7A 0 11px, transparent 12px), radial-gradient(circle at 55% 70%, #F2A7BE 0 10px, transparent 11px); animation: lfHearts 1.4s ease-out both; }
+@keyframes lfHearts { from { transform: translateY(20px) scale(.6); opacity: 0; } to { transform: translateY(-20px) scale(1); opacity: 1; } }

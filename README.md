@@ -86,7 +86,7 @@ Fun › Stories. Each story is a set of scenes the child acts out with Lumi, wit
 - Everyone in the stories is a full-body character (`js/people.js`): parents, grandparents, teachers, dentist, doctor, hairdresser, hawker uncle and aunty, cashier, MRT staff and more.
 - Payments use one guided step for all stories (`SX.payStep`): cash (drag notes and coins until it adds up, then take the change), card (tap on the reader) or phone (scan the QR code).
 
-Code: the engine is `js/stories.js` (the `A.SX` helpers are explained at the top); each story is its own file (`js/story-hawker.js`, `js/story-care.js`, `js/story-out.js`, `js/story-school.js`).
+Code: the engine is `js/stories.js` (the `A.SX` helpers are explained at the top); each story is its own file (`js/story-hawker.js`, `js/story-care.js`, `js/story-out.js`, `js/story-school.js`, `js/story-life.js`).
 
 ## No emoji: drawn pictures everywhere
 
@@ -228,7 +228,7 @@ The home screen has only **Go** and four big tiles: **My day**, **Talk**, **Calm
 | **Talk** | An AAC-style board: a message bar, core words that never move, Fitzgerald Key colours, folders (Feelings, Phrases, Food, Play, Places, People, My words) and a keyboard on Challenge. 12, 24 or 35 buttons depending on difficulty. |
 | **Calm** | Balloon breathing, squeeze, count, bells, plus calming music: Lullaby, Ocean waves, Soft rain, Floating, and **My music** (a song a grown-up uploaded). |
 | **Play** | Bubbles (calm), Match (memory), Jigsaw, Sort it (everyday things) and What next? (patterns). No timers, no losing. |
-| **Stories** | Story adventures with Lumi in places children really go: the dentist, a haircut, the supermarket, a birthday party, a new teacher, the polyclinic (queue number, doctor, pharmacy), lunch at the hawker centre (chope a seat, sold out, tray return), a fire drill at school and taking the MRT. Read aloud, with "What could Lumi do?" choices and things to tap. |
+| **Stories** | Story adventures with Lumi in places children really go: the dentist, a haircut, the supermarket, a birthday party, a new teacher, the polyclinic (queue number, doctor, pharmacy), lunch at the hawker centre (chope a seat, sold out, tray return), a fire drill at school, taking the MRT, taking the bus (check the number, wave it down, press the bell), the library (quiet voice, self-check machine), getting a vaccination (count 1-2-3, plaster, sticker), thunder (close the window, a cosy corner), a swimming lesson (free cubicle, shower, one step at a time) and what to do if you get lost (stay put, find someone who works there, show the card). Read aloud, with "What could Lumi do?" choices and things to tap. |
 | **Learn** | Guided tutorials where Lumi does each step with the child: Brush teeth, Wash hands, Get dressed, Pack my bag, plus any the grown-ups made with their own photos. Tap, press and hold, rub with a finger, pick the right thing, or tap **I did it** after doing it for real. |
 | **Pet** | Unlocks after buying a pet in the Room. Feed, play, wash (rub) and put to sleep, like a Tamagotchi. It never gets sick; it just looks a bit sad until someone cares for it. The puppy and kitten also walk with Lumi on every child screen (home, the day's games, stories, calm corner), and wait outside during toilet and bath time. Grown-ups can turn this off in Settings › Play and breaks. |
 | **Me / Room / Shop** | Dress up Lumi, draw a T-shirt, buy room items and clothes with stars. |
@@ -255,7 +255,7 @@ Choosing an age group (in setup, or Grown-ups › Child) loads a pack. Age sets 
 | Example timetable | Kindergarten day: toilet, nap, bath, early bedtime | School day with the bus and checklists | Shower, MRT to school, laundry, homework, pack for tomorrow; weekends with chores, the hawker centre and cooking |
 | Routine steps | Hands-on games with Lumi | Hands-on games with Lumi, live bus times | Task checklists with timers (bus step keeps live times) |
 | Tutorials | Use the toilet, teeth, hands, get dressed | Canteen, pack my bag, teeth, hands, get dressed | Laundry, make a sandwich, order at the hawker centre, pack my bag, teeth, hands |
-| Stories | Dentist, haircut, supermarket, party, new teacher, polyclinic, hawker centre, fire drill | All of those plus Taking the MRT | Dentist, haircut, supermarket, polyclinic, hawker centre, fire drill, Taking the MRT, Asking for help at work |
+| Stories | Dentist, haircut, supermarket, party, new teacher, polyclinic, hawker centre, fire drill, bus, library, vaccination, thunder, swimming, getting lost | All of those plus Taking the MRT | Dentist, haircut, supermarket, polyclinic, hawker centre, fire drill, Taking the MRT, Asking for help at work, bus, library, vaccination, thunder, getting lost |
 | Talk board | 12 buttons | 24 buttons | 35 buttons, keyboard and an **Out and about** folder ("Can you say that again?", "Please wait, I'm typing", "I use this app to talk", "How much is it?", "I am lost"…) |
 | Rewards | Stars, stickers, pet, room | Streaks, badges, pet, room | "Done today" and streaks; pet, dress up and room hidden |
 | Lumi says | "Yay! You did it!" | "Well done!" | "Done. Nice work." |
@@ -346,6 +346,7 @@ web/
   js/pics-*.js      the pictures: food and nature, things and places, symbols, faces and actions
   js/people.js      full-body people (parents, teachers, dentist, hawker uncle...)
   js/stories.js     the interactive story engine (A.SX)
+  js/story-life.js  stories: taking the bus, the library, a vaccination, thunder, swimming lesson, if I get lost
   js/story-*.js     the stories: hawker centre, care (dentist, haircut, polyclinic), outings, school and work
   js/native.js      native app extras (Android voice, notifications, back button); nothing in a browser
   js/store.js       grown-ups-only check, privacy summary
