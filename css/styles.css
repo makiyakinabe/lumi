@@ -2161,3 +2161,62 @@ svg.pic.person { overflow: hidden; }
 .room-undo { position: absolute; right: 16px; top: 16px; z-index: 40; display: inline-flex; align-items: center; gap: 8px; height: 56px; padding: 0 20px 0 14px; border: 0; border-radius: 999px; background: #fff; color: var(--ink); font-size: 20px; font-weight: 800; box-shadow: 0 4px 0 rgba(90, 60, 40, 0.15); }
 .icon-btn.room-music.on { background: #DCEFED; color: var(--teal); }
 @media (prefers-reduced-motion: reduce) { .room-hint { animation: none; } }
+
+/* ---------------------------------------------------------------- pet corner: hands-on care (pet.js) */
+.pc-room { touch-action: none; }
+.pc-pet { margin-left: -140px; z-index: 2; transition: left 0.9s ease-in-out, bottom 0.4s ease; }
+.pc-pet > i, .pc-pet > span { position: absolute; pointer-events: none; }
+.pc-pet.onbed { bottom: 12%; }
+.pc-pet.inbath { bottom: 9%; }
+.pc-pet.walk > svg { animation: pcWalk 0.3s ease-in-out infinite alternate; transform-origin: 50% 100%; }
+.pc-pet.run > svg { animation: pcWalk 0.18s ease-in-out infinite alternate; transform-origin: 50% 100%; }
+.pc-pet.eat > svg { animation: pcEat 0.42s ease-in-out infinite; transform-origin: 50% 100%; }
+.pc-pet.shake > svg { animation: pcShake 0.16s linear 5; }
+.pc-pet.giggle > svg { animation: menuGiggle 0.7s ease-in-out; transform-origin: 50% 90%; }
+.pc-pet.pc-carryable { cursor: grab; }
+@keyframes pcWalk { from { transform: translateY(0) rotate(-3deg); } to { transform: translateY(-10px) rotate(3deg); } }
+@keyframes pcEat { 0%, 100% { transform: none; } 50% { transform: translateY(14px) scale(1.03, 0.95); } }
+@keyframes pcShake { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-7deg); } 75% { transform: rotate(7deg); } }
+.pc-drag { touch-action: none; cursor: grab; }
+.pc-room .dragging { z-index: 30 !important; cursor: grabbing; filter: drop-shadow(0 12px 10px rgba(59, 47, 47, 0.25)); }
+.pc-room .snap { transition: transform 0.28s ease; }
+.pc-room .tap-picked { outline: 5px solid var(--teal); outline-offset: 4px; border-radius: 22px; }
+.pc-room .target { animation: pcTarget 1.6s ease-in-out infinite; }
+@keyframes pcTarget { 0%, 100% { filter: drop-shadow(0 0 0 rgba(127, 209, 138, 0)); } 50% { filter: drop-shadow(0 0 14px rgba(127, 209, 138, 0.95)); } }
+/* feed */
+.pc-bowl { position: absolute; left: 4%; bottom: 6%; width: 21%; height: 84px; z-index: 1; line-height: 0; }
+.pc-bowl-food { position: absolute; left: 50%; top: -30px; margin-left: -32px; line-height: 0; animation: popIn 0.3s ease-out; }
+.pc-shelf { position: absolute; right: 16px; top: 16px; z-index: 5; display: flex; gap: 10px; padding: 10px; border-radius: 24px; background: rgba(255, 255, 255, 0.85); box-shadow: 0 6px 0 rgba(90, 60, 40, 0.1); }
+.pc-food { width: 96px; height: 104px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 18px; background: var(--star-tint); border: 3px solid #F3DDA0; font-size: 15px; font-weight: 800; color: var(--ink); line-height: 1.1; }
+.pc-food-art { line-height: 0; pointer-events: none; }
+.pc-flakes { left: 70px; top: 40px; width: 140px; height: 120px; background: radial-gradient(circle at 20% 10%, #8A5A2B 0 4px, transparent 5px), radial-gradient(circle at 50% 30%, #A8703A 0 4px, transparent 5px), radial-gradient(circle at 80% 15%, #8A5A2B 0 3px, transparent 4px), radial-gradient(circle at 35% 50%, #A8703A 0 3px, transparent 4px), radial-gradient(circle at 65% 60%, #8A5A2B 0 4px, transparent 5px); animation: pcFlakes 1.6s ease-in both; }
+@keyframes pcFlakes { from { transform: translateY(-30px); opacity: 1; } to { transform: translateY(70px); opacity: 0; } }
+/* play */
+.pc-toy { position: absolute; left: 86%; bottom: 7%; margin-left: -37px; z-index: 4; line-height: 0; transition: left 0.6s ease-out; }
+.pc-carry { left: 110px; top: 128px; line-height: 0; z-index: 3; }
+.pc-pet.following .fish-swim { animation: none; transition: transform 0.25s ease-out; transform-box: fill-box; transform-origin: center; }
+.pc-pet.following { cursor: pointer; }
+/* wash */
+.pc-tub { position: absolute; left: calc(62% - 170px); bottom: 3%; width: 340px; height: 150px; z-index: 3; line-height: 0; pointer-events: none; }
+.pc-tools { position: absolute; right: 16px; top: 16px; z-index: 5; display: flex; gap: 12px; padding: 10px; border-radius: 24px; background: rgba(255, 255, 255, 0.85); }
+.pc-tool { width: 104px; height: 88px; padding: 8px; border-radius: 18px; background: #EAF5FB; line-height: 0; }
+.pc-tool.on { outline: 5px solid var(--teal); outline-offset: 2px; animation: sxPulse 1.6s ease-in-out infinite; }
+.pc-tool.off { opacity: 0.4; filter: grayscale(0.6); }
+.pc-foam { width: 54px; height: 54px; margin: -27px 0 0 -27px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff 0 35%, #EAF5FB 70%, #CFE8F5); box-shadow: 18px 8px 0 -8px #fff, -14px 12px 0 -10px #F4FAFD; transition: opacity 0.3s ease; z-index: 1; }
+.pc-mud { width: 34px; height: 26px; margin: -13px 0 0 -17px; border-radius: 50%; background: #A87B50; transition: opacity 0.3s ease; }
+.pc-drop { width: 16px; height: 22px; margin: -11px 0 0 -8px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; background: #8EC5F2; border: 2px solid #fff; transition: opacity 0.3s ease; }
+.pc-spray { position: absolute; width: 10px; height: 26px; margin: -13px 0 0 -5px; border-radius: 5px; background: #8EC5F2; opacity: 0.8; pointer-events: none; animation: pcSpray 0.9s ease-in forwards; z-index: 6; }
+@keyframes pcSpray { to { transform: translateY(60px); opacity: 0; } }
+.pc-algae { left: 22px; top: 33px; width: 236px; height: 236px; border-radius: 50%; background: radial-gradient(circle at 30% 70%, rgba(110, 170, 80, 0.75) 0 22%, transparent 23%), radial-gradient(circle at 70% 35%, rgba(110, 170, 80, 0.7) 0 18%, transparent 19%), radial-gradient(circle at 55% 75%, rgba(130, 185, 90, 0.7) 0 20%, transparent 21%), rgba(150, 200, 110, 0.35); transition: opacity 0.2s linear; }
+/* sleep */
+.pc-bed { position: absolute; left: 2%; bottom: 4%; width: 40%; height: 120px; z-index: 1; line-height: 0; }
+.pc-blanket { position: absolute; right: 18%; bottom: 8%; width: 200px; height: 110px; z-index: 4; line-height: 0; }
+.pc-tucked { left: 30px; bottom: 4px; width: 220px; height: 96px; line-height: 0; z-index: 2; }
+.pc-lamp { position: absolute; right: 4%; bottom: 6%; width: 90px; height: 220px; padding: 0; border: 0; background: none; z-index: 4; line-height: 0; }
+.pc-lamp.go { animation: pcTarget 1.6s ease-in-out infinite; }
+.pc-room.fish .pc-lamp { right: auto; left: 6%; }
+.pc-moon { position: absolute; left: 20px; top: 76px; color: #FFF1C2; animation: bob 3s ease-in-out infinite; }
+.need-row.on { box-shadow: 0 0 0 4px var(--teal); }
+.pet-tip { height: auto; min-height: 80px; padding: 12px 18px; line-height: 1.25; }
+.pet-tip > span { flex: 1; }
+.reduce-motion .pc-pet > svg, .reduce-motion .pc-room .target, .reduce-motion .pc-tool.on { animation: none !important; }

@@ -1831,6 +1831,7 @@
     if (S.screen === 'calm' && screen !== 'calm' && window.LumiAudio && window.LumiAudio.playing) window.LumiAudio.stop();
     if (S.roomMusic && !ROOM_SCREENS.includes(screen)) roomMusic(false);
     if (screen !== 'room') S.roomUndo = null;
+    if (S.screen === 'pet' && screen !== 'pet') { if (A.petStopLullaby) A.petStopLullaby(); S.care = null; S.petX = null; S.petFromX = null; S.petAnim = null; }
     if (screen === 'menu' || screen === 'setup') S.history = [];
     else if (!o.back && !o.replace && S.screen && S.screen !== screen) {
       S.history.push(S.screen);

@@ -43,7 +43,7 @@
     scen: () => { S.sc.chosen = null; S.sc.explored = []; },
     fsm: () => A.ACTIONS.tOpen({ v: 'fsm' }),
     mission: () => A.ACTIONS.tOpen({ v: 'mission' }),
-    pet: () => { S.petMode = null; S.petAnim = null; },
+    pet: () => { S.care = null; S.petX = null; S.petFromX = null; S.petAnim = null; },
     draw: () => A.ACTIONS.drawClear(),
     'g-bubbles': () => A.ACTIONS.gAgain({ v: 'bubbles' }, { dataset: {} }),
     'g-match': () => A.ACTIONS.gAgain({ v: 'match' }, { dataset: {} }),
