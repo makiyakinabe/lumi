@@ -548,12 +548,19 @@
     return h + '</div>';
   }
 
-  function roomDecor() {
+  // the things Lumi owns, where the child put them (state.roomPos[id] = { l, t, z } in % of the room),
+  // or where they start. In the room itself (edit) each one can be dragged anywhere.
+  function roomDecor(edit) {
     const walkers = A.buddyPets ? A.buddyPets() : []; // the puppy and kitten walk with Lumi instead
+    const placed = state.roomPos || {};
     return D.ROOM.filter((r) => state.owned.includes(r.id) && !walkers.includes(r.id)).map((r) => {
       const p = r.pos;
-      const pos = `left:${p.left}%;${p.top != null ? 'top:' + p.top + '%' : 'bottom:' + p.bottom + '%'};width:${p.w}%`;
-      return `<div class="decor" style="${pos}" role="img" aria-label="${esc(r.name)}">${L.item(r.id, '100%').replace('height="100%"', '')}</div>`;
+      const c = placed[r.id];
+      const pos = c ? `left:${c.l}%;top:${c.t}%;width:${p.w}%;z-index:${2 + (c.z || 0)}` : `left:${p.left}%;${p.top != null ? 'top:' + p.top + '%' : 'bottom:' + p.bottom + '%'};width:${p.w}%`;
+      const art = L.item(r.id, '100%').replace('height="100%"', '');
+      return edit
+        ? `<div class="decor movable" data-id="${r.id}" style="${pos}" role="button" tabindex="-1" aria-label="${esc(r.name)}. Drag to move it.">${art}</div>`
+        : `<div class="decor" style="${pos}" role="img" aria-label="${esc(r.name)}">${art}</div>`;
     }).join('');
   }
 
@@ -1346,7 +1353,20 @@
   }
 
   // ---------------------------------------------------------------- Room
-  VOICE.room = () => "This is Lumi's room. Tap something to buy it.";
+  VOICE.room = () => (state.roomMoved ? "This is Lumi's room. Move things anywhere you like." : "This is Lumi's room. Drag things to move them anywhere you like. Tap something new to buy it.");
+  // soft music-box music plays the whole time the child is in the room (and dressing Lumi up)
+  const ROOM_SCREENS = ['room', 'dressup'];
+  const roomMusicOn = () => state.settings.roomMusic !== false && state.settings.sounds && !S.mute;
+  function roomMusic(on) {
+    const M = window.LumiAudio;
+    if (!M) return;
+    if (on && roomMusicOn() && !M.playing) { M.play('lullaby'); S.roomMusic = true; }
+    if (!on && S.roomMusic) { if (M.playing === 'lullaby') M.stop(); S.roomMusic = false; }
+  }
+  ENTER.room = () => roomMusic(true);
+  ENTER.dressup = () => roomMusic(true);
+  A.roomMusic = roomMusic;
+  A.ROOM_SCREENS = ROOM_SCREENS;
   SCREENS.room = () => {
     const tabs = [['furniture', 'Furniture', 'rSofa'], ['plants', 'Plants', 'rPlant'], ['rugs', 'Rugs', 'rRug'], ['clothes', 'Clothes', 'shirt'], ['pets', 'Pets', 'kPet']];
     const tabHtml = tabs.map(([id, name, inner]) => {
@@ -1362,14 +1382,16 @@
 <section class="screen" aria-label="Lumi's room">
   ${srTitle("Lumi's room")}
   <div class="row between" style="height:60px">
-    <div class="row gap12">${backBtn()}${speakBtn("This is Lumi's room.")}</div>
+    <div class="row gap12">${backBtn()}${speakBtn("This is Lumi's room.")}<button class="icon-btn room-music ${S.roomMusic ? 'on' : ''}" data-a="roomMusicToggle" aria-label="${S.roomMusic ? 'Turn the music off' : 'Turn the music on'}" aria-pressed="${!!S.roomMusic}">${ic(S.roomMusic ? 'music' : 'mute', 30)}</button></div>
     ${starChip(true)}
   </div>
   <div class="row gap24 grow">
-    <div class="panel scene" style="width:690px">
+    <div class="panel scene room-scene" style="width:690px">
       <div class="floor" style="height:24%"></div>
-      ${roomDecor()}
-      <div class="lumi-pos bob" style="left:33%;bottom:6%">${L.svg({ look: lookWith(), mood: 'happy', size: 230 })}</div>
+      ${roomDecor(true)}
+      <div class="lumi-pos bob movable room-lumi" data-id="lumi" role="button" tabindex="-1" aria-label="Lumi. Drag to move Lumi." style="${state.roomLumi ? `left:${state.roomLumi.l}%;top:${state.roomLumi.t}%` : 'left:33%;bottom:6%'};z-index:30">${L.svg({ look: lookWith(), mood: 'happy', size: 230 })}</div>
+      ${state.roomMoved ? '' : `<span class="room-hint">${ic('hand', 26)}<span>Drag things to move them</span></span>`}
+      ${S.roomUndo ? `<button class="room-undo" data-a="roomUndo" aria-label="Undo the last move">${ic('undo', 26)}<span>Undo</span></button>` : ''}
     </div>
     <div class="col grow gap16">
       <div class="row gap12">${tabHtml}</div>
@@ -1401,6 +1423,43 @@
   }
 
   // ---------------------------------------------------------------- Dress up
+  // drag anything in the room (and Lumi) to a new place; it stays there, here and on the home screen
+  AFTER.room = () => {
+    const box = stage.querySelector('.room-scene');
+    if (!box || !A.SG) return;
+    box.querySelectorAll('.movable').forEach((el) => {
+      const id = el.dataset.id;
+      const name = id === 'lumi' ? 'Lumi' : (D.ROOM.find((r) => r.id === id) || {}).name || '';
+      A.SG.drag(el, box, {
+        start: () => { el.classList.add('lifted'); el.style.zIndex = 60; tone(520, 0.08, 0.04); },
+        tap: () => { el.classList.remove('lifted'); el.classList.remove('wiggle-once'); void el.offsetWidth; el.classList.add('wiggle-once'); say(id === 'lumi' ? 'Hi! Drag me anywhere.' : `${name}. Drag it anywhere.`); },
+        drop: (p, s) => {
+          el.classList.remove('lifted');
+          const W = box.offsetWidth, H = box.offsetHeight, w = el.offsetWidth, h = el.offsetHeight;
+          // a drag moves it by how far the finger went; a tap-to-move puts its middle where the child tapped
+          const dragged = s && s.x0 != null;
+          let x = dragged ? el.offsetLeft + (p.x - s.x0) : p.x - w / 2;
+          let y = dragged ? el.offsetTop + (p.y - s.y0) : p.y - h / 2;
+          x = Math.max(-w * 0.15, Math.min(W - w * 0.85, x));
+          y = Math.max(0, Math.min(H - h, y));
+          const pct = { l: Math.round((x / W) * 1000) / 10, t: Math.round((y / H) * 1000) / 10 };
+          const before = id === 'lumi' ? state.roomLumi || null : (state.roomPos || {})[id] || null;
+          S.roomUndo = { id, before };
+          if (id === 'lumi') state.roomLumi = pct;
+          else {
+            state.roomPos = state.roomPos || {};
+            const top = Math.max(0, ...Object.values(state.roomPos).map((q) => q.z || 0));
+            state.roomPos[id] = Object.assign(pct, { z: top + 1 }); // the last thing moved sits in front
+          }
+          if (!state.roomMoved) { state.roomMoved = true; say('You moved it! Make the room just how you like it.'); }
+          tone(660, 0.12, 0.05);
+          save();
+          render();
+          return true;
+        }
+      });
+    });
+  };
   VOICE.dressup = () => 'Dress up Lumi! Tap anything to try it.';
   SCREENS.dressup = () => {
     const look = state.look;
@@ -1770,6 +1829,8 @@
     const o = opts || {};
     clearTimers();
     if (S.screen === 'calm' && screen !== 'calm' && window.LumiAudio && window.LumiAudio.playing) window.LumiAudio.stop();
+    if (S.roomMusic && !ROOM_SCREENS.includes(screen)) roomMusic(false);
+    if (screen !== 'room') S.roomUndo = null;
     if (screen === 'menu' || screen === 'setup') S.history = [];
     else if (!o.back && !o.replace && S.screen && S.screen !== screen) {
       S.history.push(S.screen);
@@ -2117,6 +2178,23 @@
       tone(659, 0.3, 0.1);
       render();
       say(`Lumi loves the ${it.name.toLowerCase()}!`);
+    },
+    roomMusicToggle: () => {
+      if (S.roomMusic) { roomMusic(false); state.settings.roomMusic = false; say('Music off.'); }
+      else { state.settings.roomMusic = true; if (window.LumiAudio && window.LumiAudio.playing) window.LumiAudio.stop(); roomMusic(true); say(S.roomMusic ? 'Music on.' : 'Sounds are turned off in Grown-ups.'); }
+      save();
+      render();
+    },
+    roomUndo: () => {
+      const u = S.roomUndo;
+      if (!u) return;
+      if (u.id === 'lumi') state.roomLumi = u.before;
+      else if (u.before) state.roomPos[u.id] = u.before;
+      else delete state.roomPos[u.id];
+      S.roomUndo = null;
+      save();
+      render();
+      say('Back where it was.');
     },
 
     // dress up

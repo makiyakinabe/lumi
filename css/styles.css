@@ -2152,3 +2152,12 @@ svg.pic.person { overflow: hidden; }
 #stage.high-contrast :is(.sx-words, .bar, .sx-bubble, .ln-tip, .g-panel, .panel) { border: 3px solid #3B2F2F; }
 #stage.high-contrast :is(.g-note, .sx-task, .mode-sub, .learn-steps, .day-time, .plan-time) { color: #2A201C !important; }
 #stage.high-contrast .sx-task { color: #1E5C58 !important; }
+
+/* Lumi's room: drag things (and Lumi) anywhere */
+.room-scene .movable { cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
+.room-scene .movable.dragging, .room-scene .movable.lifted { cursor: grabbing; animation: none !important; filter: drop-shadow(0 14px 10px rgba(59, 47, 47, 0.25)); z-index: 60 !important; }
+.room-scene .movable.tap-picked { outline: 5px dashed rgba(47, 126, 121, 0.7); outline-offset: 6px; border-radius: 18px; }
+.room-hint { position: absolute; left: 16px; top: 16px; z-index: 40; display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px 10px 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.92); color: var(--ink); font-size: 20px; font-weight: 800; line-height: 1.2; box-shadow: 0 4px 0 rgba(90, 60, 40, 0.12); pointer-events: none; animation: sxPulse 2.4s ease-in-out infinite; }
+.room-undo { position: absolute; right: 16px; top: 16px; z-index: 40; display: inline-flex; align-items: center; gap: 8px; height: 56px; padding: 0 20px 0 14px; border: 0; border-radius: 999px; background: #fff; color: var(--ink); font-size: 20px; font-weight: 800; box-shadow: 0 4px 0 rgba(90, 60, 40, 0.15); }
+.icon-btn.room-music.on { background: #DCEFED; color: var(--teal); }
+@media (prefers-reduced-motion: reduce) { .room-hint { animation: none; } }
