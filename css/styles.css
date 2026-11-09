@@ -39,7 +39,7 @@ html, body {
   margin: 0;
   height: 100%;
   overflow: hidden;
-  background: #2B2523;
+  background: #F6E7D3;
   font-family: 'Nunito', ui-rounded, 'SF Pro Rounded', 'Segoe UI Rounded', 'Varela Round', system-ui, sans-serif;
   font-weight: 800;
   color: var(--ink);
@@ -49,32 +49,35 @@ html, body {
   touch-action: manipulation;
 }
 
-#viewport { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+/* The stage fills the screen edge to edge (app.js fit() sets its size to the screen's shape); the notch and
+   the home bar are kept clear, and the strip around them takes the colour of the current screen. */
+#viewport {
+  position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+}
+body { transition: background-color 0.3s ease; }
 #stage {
   position: relative;
   flex: none;
   width: 1194px;
   height: 834px;
   overflow: hidden;
-  border-radius: 24px;
+  border-radius: 0;
   background: var(--bg);
   transform-origin: center center;
 }
 #screen { position: absolute; inset: 0; }
 
-/* Phones, held sideways: edge to edge, notch and home bar kept clear (app.js fit() sets .is-phone) */
-html.is-phone, html.is-phone body { background: var(--bg); transition: background-color 0.3s ease; }
-html.is-phone #viewport {
-  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) max(env(safe-area-inset-bottom, 0px), 6px) env(safe-area-inset-left, 0px);
-}
-html.is-phone #stage { border-radius: 0; }
+/* Phones: a little room above the home bar */
+html.is-phone #viewport { padding-bottom: max(env(safe-area-inset-bottom, 0px), 6px); }
 #turnPhone { display: none; }
 html.turn-me #viewport { visibility: hidden; }
 html.turn-me #turnPhone {
   display: flex; position: fixed; inset: 0; z-index: 50; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
   background: #F6E7D3; color: var(--ink); text-align: center; padding: 24px;
 }
-#turnPhone .tp-word { font-size: 28px; line-height: 34px; font-weight: 900; }
+#turnPhone .tp-word { font-size: clamp(28px, 5vmin, 56px); line-height: 1.2; font-weight: 900; }
+#turnPhone .tp-pic svg { width: clamp(150px, 28vmin, 320px); height: auto; }
 #turnPhone .tp-phone { transform-origin: 60px 60px; animation: tpTurn 3.2s ease-in-out infinite; }
 @keyframes tpTurn { 0%, 30% { transform: none; } 55%, 85% { transform: rotate(-90deg); } 100% { transform: none; } }
 @media (prefers-reduced-motion: reduce) { #turnPhone .tp-phone { animation: none; transform: rotate(-90deg); } }
@@ -1942,6 +1945,20 @@ button.sx-el:active { transform: scale(0.97); }
 .sx-breath { position: absolute; z-index: 1; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, rgba(201, 184, 238, 0.55), rgba(201, 184, 238, 0)); animation: sxBreath 6s ease-in-out infinite; pointer-events: none; }
 @keyframes sxBreath { 0%, 100% { transform: scale(0.7); } 50% { transform: scale(1.25); } }
 .sx-bar { display: flex; align-items: center; gap: 14px; flex: none; height: 108px; }
+/* the scene and its words, centred on screens wider or taller than the tablet (stories.js fitScene scales the scene) */
+.sx-screen > .sx-scene { align-self: center; margin-top: auto; }
+.sx-screen > .sx-bar { align-self: center; margin-bottom: auto; max-width: 100%; }
+/* wide screens: the picture fills the height, the words and buttons stand in a column beside it */
+.sx-screen.sx-wide { display: grid; grid-template-columns: max-content minmax(0, 1fr); grid-template-rows: 56px minmax(0, 1fr); gap: 16px; }
+.sx-screen.sx-wide > .row.between { grid-column: 1 / -1; grid-row: 1; }
+.sx-screen.sx-wide > .sx-scene { grid-column: 1; grid-row: 2; align-self: start; margin-top: 0; }
+.sx-screen.sx-wide > .sx-bar { grid-column: 2; grid-row: 2; align-self: start; margin: 0; height: auto; display: grid; grid-template-columns: 92px minmax(0, 1fr) 92px; grid-template-rows: minmax(0, 1fr) auto; gap: 14px; align-items: end; }
+.sx-screen.sx-wide .sx-words { grid-column: 1 / -1; grid-row: 1; height: 100%; justify-content: flex-start; gap: 14px; padding: 22px 22px; }
+.sx-screen.sx-wide .sx-text { font-size: calc(25px * var(--ts, 1)); line-height: 1.3; }
+.sx-screen.sx-wide .sx-task, .sx-screen.sx-wide .sx-praise { font-size: calc(21px * var(--ts, 1)); }
+.sx-screen.sx-wide .st-nav.prev { grid-column: 1; grid-row: 2; }
+.sx-screen.sx-wide .sx-help { grid-column: 2; grid-row: 2; justify-self: center; }
+.sx-screen.sx-wide .st-nav.next { grid-column: 3; grid-row: 2; }
 .sx-bar .st-nav { width: 92px; height: 92px; }
 .st-nav.next.ready { box-shadow: 0 0 0 0 rgba(47, 126, 121, 0.5); animation: sxReady 1.6s ease-in-out infinite; }
 @keyframes sxReady { 0%, 100% { box-shadow: 0 0 0 0 rgba(47, 126, 121, 0.45); } 50% { box-shadow: 0 0 0 12px rgba(47, 126, 121, 0); } }

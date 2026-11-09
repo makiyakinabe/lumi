@@ -551,8 +551,35 @@
   </div>
 </section>`;
   };
+  // Fit the scene to the screen's shape. The scene is drawn at W x H; it is scaled (never squashed) to use the
+  // space: on a tall or tablet-shaped screen the words sit under the picture, and on a wide screen (a phone held
+  // sideways, a laptop) the picture grows to the full height and the words move to a column beside it.
+  function fitScene() {
+    const scr = A.stage.querySelector('.sx-screen');
+    const box = scr && scr.querySelector(':scope > .sx-scene');
+    const bar = scr && scr.querySelector(':scope > .sx-bar');
+    if (!box || !bar) return;
+    const SW = A.stageW || 1194, SH = A.stageH || 834;
+    const PAD_X = 80, PAD_Y = 56, HEAD = 56, GAP = 16, BAR = 108, COL = 300;
+    const sCol = Math.min((SW - PAD_X) / W, (SH - PAD_Y - HEAD - BAR - 2 * GAP) / H);
+    const sRow = Math.min((SW - PAD_X - GAP - COL) / W, (SH - PAD_Y - HEAD - GAP) / H);
+    const wide = sRow >= sCol * 0.95;
+    const s = Math.min(wide ? sRow : sCol, 1.6);
+    scr.classList.toggle('sx-wide', wide);
+    box.style.transformOrigin = '0 0';
+    box.style.transform = Math.abs(s - 1) < 0.005 ? '' : `scale(${s.toFixed(4)})`;
+    box.style.marginRight = `${(W * (s - 1)).toFixed(1)}px`;
+    box.style.marginBottom = `${(H * (s - 1)).toFixed(1)}px`;
+    bar.style.width = wide ? '' : `${Math.round(W * s)}px`;
+    bar.style.height = wide ? `${Math.round(H * s)}px` : '';
+  }
+  A.fitScene = fitScene;
+  const resizeBefore = A.onStageResize;
+  A.onStageResize = () => { if (resizeBefore) resizeBefore(); fitScene(); };
+
   // after each draw: walk Lumi to his new place, then let the step wire its drags
   A.AFTER.story = () => {
+    fitScene();
     const st = S.sx;
     if (!st || st.ended) return;
     const box = A.stage.querySelector('.sx-scene');

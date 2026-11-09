@@ -624,7 +624,7 @@
   function placeHand(el) {
     const st = stage.getBoundingClientRect();
     const r = el.getBoundingClientRect();
-    const s = st.width / 1194;
+    const s = st.width / (stage.offsetWidth || 1194);
     handEl.style.left = ((r.left - st.left + r.width * 0.5) / s) + 'px';
     handEl.style.top = ((r.top - st.top + r.height * 0.55) / s) + 'px';
     handEl.hidden = false;
@@ -2634,10 +2634,12 @@
   stage.addEventListener('pointerleave', endPress);
   stage.addEventListener('contextmenu', (e) => e.preventDefault());
 
-  // ================================================================ FIT THE TABLET STAGE TO THE WINDOW
-  // On a phone the stage fills the screen's height, the space on either side takes the colour of the
-  // current screen (so it looks like one edge-to-edge picture, not a tablet in a box), the notch and the
-  // home bar are kept clear, and holding the phone upright shows "Turn me sideways".
+  // ================================================================ FILL THE SCREEN, WHATEVER THE DEVICE
+  // Lumi is designed on a 1194 x 834 landscape stage. The stage keeps that height (or width) and grows in the
+  // other direction to match the screen's shape exactly, so every screen fills a phone, an iPad, a laptop or a
+  // big monitor edge to edge with no bars: the flexible layouts stretch, and the fixed pictures (story scenes,
+  // games) stay centred. The notch and home bar are kept clear, and a phone or tablet held upright shows
+  // "Turn me sideways".
   const root = document.documentElement;
   const vp = document.getElementById('viewport');
   const turnEl = document.createElement('div');
@@ -2650,7 +2652,6 @@
     <b class="tp-word">Turn me sideways</b>`;
   document.body.appendChild(turnEl);
   function sideColour() {
-    if (!root.classList.contains('is-phone')) { document.body.style.background = ''; return; }
     let c = '';
     const first = document.getElementById('screen').firstElementChild;
     for (const el of [first, stage]) {
@@ -2660,21 +2661,39 @@
     }
     document.body.style.background = c;
   }
+  const BASE_W = 1194, BASE_H = 834, MIN_ASPECT = 1.2, MAX_ASPECT = 2.4;
+  let lastSize = '';
   function fit() {
     const W0 = window.innerWidth, H0 = window.innerHeight;
     const phone = Math.min(W0, H0) < 600 && Math.max(W0, H0) < 1100;
+    const touch = navigator.maxTouchPoints > 0 || (window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
     root.classList.toggle('is-phone', phone);
-    root.classList.toggle('turn-me', phone && H0 > W0);
+    root.classList.toggle('turn-me', H0 > W0 && (phone || touch));
     const cs = getComputedStyle(vp);
-    const W = vp.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
-    const H = vp.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
-    const s = Math.min(W / 1194, H / 834);
+    const W = Math.max(1, vp.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight));
+    const H = Math.max(1, vp.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom));
+    // the stage takes the screen's shape (within sensible limits: a very tall or very wide window gets thin edges)
+    const a = Math.max(MIN_ASPECT, Math.min(MAX_ASPECT, W / H));
+    const sw = a >= BASE_W / BASE_H ? Math.round(BASE_H * a) : BASE_W;
+    const sh = a >= BASE_W / BASE_H ? BASE_H : Math.round(BASE_W / a);
+    const s = Math.min(W / sw, H / sh);
+    stage.style.width = sw + 'px';
+    stage.style.height = sh + 'px';
     stage.style.transform = `scale(${s})`;
+    root.style.setProperty('--stage-w', sw + 'px');
+    root.style.setProperty('--stage-h', sh + 'px');
+    A.stageW = sw;
+    A.stageH = sh;
     sideColour();
+    const size = sw + 'x' + sh;
+    if (lastSize && size !== lastSize && A.onStageResize) A.onStageResize();
+    lastSize = size;
   }
+  // how much the stage is scaled on screen (screen pixels per stage pixel)
+  A.stageScale = () => stage.getBoundingClientRect().width / (stage.offsetWidth || 1);
   window.addEventListener('resize', fit);
   window.addEventListener('orientationchange', () => setTimeout(fit, 120));
-  new MutationObserver(() => { if (root.classList.contains('is-phone')) requestAnimationFrame(sideColour); })
+  new MutationObserver(() => requestAnimationFrame(sideColour))
     .observe(document.getElementById('screen'), { childList: true });
   fit();
 

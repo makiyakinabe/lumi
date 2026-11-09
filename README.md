@@ -375,6 +375,10 @@ It focuses on routines, communication and emotional regulation, with three modes
 
 It is plain HTML, CSS and JavaScript. There is nothing to install and no build step.
 
+## Fits any screen
+
+Lumi fills the whole screen on any device held sideways: phones, iPads (any size), Android tablets, laptops and big monitors, with no black bars. It is designed on a 1194 × 834 landscape "stage"; `fit()` in `js/app.js` keeps that height (or width) and stretches the other side to match the screen's shape, so the flexible screens simply grow. The story and lesson pictures are scaled to use the space too (`fitScene()` in `js/stories.js`): on a wide screen such as a phone or a 16:9 laptop the picture fills the height and the words move into a column beside it. The notch and home bar are kept clear, and the strip around them takes the colour of the current screen. Held upright, a phone or tablet shows "Turn me sideways". A desktop browser window narrower than it is tall shows the app with thin edges.
+
 ## Home language (Chinese, Malay, Tamil)
 
 Grown-ups › Sensory › **Home language**. Pick 华文, Bahasa Melayu or தமிழ் and:

@@ -225,7 +225,7 @@
     if (st.act === 'rub') {
       const area = A.stage.querySelector('.rub-area');
       const fill = area.querySelector('.rub-fill');
-      const scale = () => A.stage.getBoundingClientRect().width / 1194;
+      const scale = () => A.stageScale();
       const need = A.level() === 1 ? 1300 : 2000;
       let last = null;
       let down = false;
