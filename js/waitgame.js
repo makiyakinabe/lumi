@@ -34,7 +34,7 @@
 
   // how long to wait: grows a little each time the child waits all the way
   const W = () => state.waitPractice || (state.waitPractice = { len: {}, best: {}, used: {}, times: 0 });
-  const base = () => ({ 1: 10, 2: 20, 3: 30 }[A.level()] || 20);
+  const base = () => ({ 1: 10, 2: 20, 3: 30 }[(state.gameLevels || {}).wait || A.level()] || 20);
   const lenFor = (k) => Math.max(5, Math.round(W().len[k] || base()));
 
   // ---------------------------------------------------------------- drawing
@@ -101,7 +101,7 @@
   };
   A.SCREENS['g-wait'] = () => {
     const g = S.wg || (S.wg = {});
-    const head = `<div class="row between" style="height:60px;flex:none"><div class="row gap12">${A.backBtn()}${A.speakBtn(A.VOICE['g-wait']())}<span class="game-chip" style="background:#E3F1FA;color:#3E6E9A">${ic('hourglass', 30)}<span>Waiting game</span></span></div><span></span></div>`;
+    const head = `<div class="row between" style="height:60px;flex:none"><div class="row gap12">${A.backBtn()}${A.speakBtn(A.VOICE['g-wait']())}<span class="game-chip" style="background:#E3F1FA;color:#3E6E9A">${ic('hourglass', 30)}<span>Waiting game</span></span></div>${!g.scene && A.GAME ? A.GAME.levelPicker('wait') : '<span></span>'}</div>`;
     if (!g.scene) {
       const cards = Object.keys(SCENES).map((k) => `<button class="game-card wg-pick" data-a="wgPick" data-v="${k}" style="background:${SCENES[k].sky}">
           <span class="wg-pick-art">${SCENES[k].art()}</span><span class="game-name">${esc(SCENES[k].name)}</span>
@@ -216,7 +216,9 @@
 
   // the Games hub opens games with gOpen; this one is ours
   const gOpen = A.ACTIONS.gOpen;
-  A.ACTIONS.gOpen = (d, el) => { if (d.v === 'wait') { S.wg = {}; go('g-wait'); return undefined; } return gOpen(d, el); };
+  A.ACTIONS.gOpen = (d, el) => { if (d.v === 'wait') { S.wg = {}; if (A.GAME) S.gLevel = A.GAME.levelOf('wait'); go('g-wait'); return undefined; } return gOpen(d, el); };
+  // Easy / Medium / Hard start the waits at 10, 20 or 30 seconds (they still grow as the child gets better)
+  if (A.GAME_MAKERS) A.GAME_MAKERS.wait = () => { W().len = {}; S.wg = {}; return {}; };
   Object.assign(A.ACTIONS, {
     wgPick: (d) => begin(d.v),
     wgAct: (d) => {

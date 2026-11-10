@@ -2,7 +2,8 @@
   play.js
   The Play area: short puzzle games with Lumi that are calming, make you think, or teach everyday things.
   No timers and no losing. Wrong taps get a gentle wiggle and a hint.
-  Difficulty follows the level the grown-ups chose (1 Easy, 2 Medium, 3 Challenge).
+  Every game has three levels (Easy, Medium, Hard). A game starts at the level the grown-ups chose, and the child can
+  change it in the game's top bar; each game remembers its own level (state.gameLevels). More games: games-more.js.
 */
 (function () {
   'use strict';
@@ -12,12 +13,21 @@
   const shuffle = (arr) => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const NOTES = [392, 440, 523, 587, 659, 784];
   const gameOf = (id) => D.GAMES.find((g) => g.id === id);
-
+  // the level of the game being played (falls back to the grown-ups' level)
+  const lv = () => S.gLevel || A.level();
+  const LEVEL_NAMES = { 1: 'Easy', 2: 'Medium', 3: 'Hard' };
+  const levelOf = (id) => (state.gameLevels || {})[id] || A.level();
+  // Easy / Medium / Hard, as one, two or three stars (child-sized buttons)
+  function levelPicker(id) {
+    const cur = lv();
+    return `<div class="lvl-pick" role="group" aria-label="How hard">${[1, 2, 3].map((n) => `<button class="lvl-opt ${cur === n ? 'on' : ''}" data-a="gLevel" data-v="${n}" data-id="${id}" aria-pressed="${cur === n}" aria-label="${LEVEL_NAMES[n]}">
+      <span class="lvl-stars">${ic('star', 22).repeat(n)}</span><span>${LEVEL_NAMES[n]}</span></button>`).join('')}</div>`;
+  }
   function header(id, voice) {
     const g = gameOf(id);
     return `<div class="row between" style="height:60px;flex:none">
       <div class="row gap12">${A.backBtn()}${A.speakBtn(voice)}<span class="game-chip" style="background:${g.tint};color:${g.ink}">${ic(g.icon, 34)}<span>${g.name}</span></span></div>
-      <span></span>
+      ${levelPicker(id)}
     </div>`;
   }
   function winCard(id) {
@@ -27,6 +37,7 @@
       <div class="win-title">${ic('star', 40)}<span>Well done!</span>${ic('star', 40)}</div>
       <div class="row gap16">
         <button class="primary" data-a="gAgain" data-v="${id}" style="height:80px">${ic('undo', 32)}<span>Again</span></button>
+        ${lv() < 3 ? `<button class="primary soft-btn" data-a="gLevel" data-v="${lv() + 1}" data-id="${id}" style="height:80px">${ic('star', 32)}<span>Harder</span></button>` : ''}
         <button class="primary soft-btn" data-a="back" style="height:80px">${ic('puzzle', 32)}<span>Games</span></button>
       </div></div></div>`;
   }
@@ -67,6 +78,7 @@
       <span class="game-ic" style="color:${g.ink}">${ic(g.icon, 92)}</span>
       <span class="game-name">${g.name}</span>
       <span class="game-kind" style="color:${g.ink}">${g.kind}</span>
+      <span class="game-lvl" aria-label="${LEVEL_NAMES[levelOf(g.id)]}">${ic('star', 18).repeat(levelOf(g.id))}</span>
       ${state.profile.targets[g.skill] ? `<span class="tile-focus">${ic('star', 22)}</span>` : ''}
     </button>`).join('');
     return `
@@ -77,7 +89,7 @@
     ${tabs || '<span></span>'}
   </div>
   <div class="row gap24 grow">
-    <div class="game-grid grow n${games.length}">${cards || '<p class="muted">No games turned on. Ask a grown-up.</p>'}</div>
+    <div class="game-grid grow n${games.length} ${games.length > 6 ? 'many' : ''}">${cards || '<p class="muted">No games turned on. Ask a grown-up.</p>'}</div>
     <div class="panel scene" style="width:280px">
       <div class="floor" style="height:22%"></div>
       <div class="lumi-pos bob" style="left:20px;bottom:30px">${L.svg({ look: A.lookWith(), mood: 'excited', wave: true, size: 240 })}</div>
@@ -90,19 +102,24 @@
   // ---------------------------------------------------------------- Bubbles (calm)
   A.PARENT['g-bubbles'] = 'play';
   A.VOICE['g-bubbles'] = () => 'Pop the bubbles slowly. Listen to the sounds.';
+  const BUB_NAMES = ['blue', 'purple', 'green', 'yellow', 'pink', 'mint'];
+  const BUB_STRONG = ['#8EC5EC', '#BBA7EA', '#A6D98E', '#F7CF6A', '#F29BB8', '#8FD9CB'];
   A.SCREENS['g-bubbles'] = () => `
 <section class="screen" aria-label="Bubbles">
   ${A.srTitle('Bubbles')}
   ${header('bubbles', 'Pop the bubbles slowly. Listen to the sounds.')}
   <div class="panel bubble-field grow" id="bubbleField">
     <div class="bubble-lumi">${L.svg({ look: A.lookWith(), mood: 'calm', size: 200 })}</div>
-    <div class="bubble-count" aria-live="polite">${ic('bubbles', 26)}<span id="popCount">${S.g.popped}</span></div>
+    <div class="bubble-count" aria-live="polite">${S.g.target != null ? `<span class="bub-target" style="background:${BUB_STRONG[S.g.target]}"></span><span>Pop ${BUB_NAMES[S.g.target]}</span>` : ic('bubbles', 26)}<span id="popCount">${S.g.popped}</span>${lv() > 1 ? `<span>/ ${lv() === 3 ? 12 : 20}</span>` : ''}</div>
   </div>
 </section>`;
   A.AFTER['g-bubbles'] = () => {
     const field = document.getElementById('bubbleField');
-    const colours = [['#BFE3F7', 0], ['#DCD1F4', 1], ['#CFE8C4', 2], ['#FDE6B8', 3], ['#F8D3DE', 4], ['#CDEDE8', 5]];
-    const slow = A.level() === 1 ? 1.25 : 1;
+    const g = S.g;
+    // Hard: strong colours, and only the colour Lumi names counts
+    const colours = g.target != null ? [0, 2, 3, 4].map((n) => [BUB_STRONG[n], n]) : [['#BFE3F7', 0], ['#DCD1F4', 1], ['#CFE8C4', 2], ['#FDE6B8', 3], ['#F8D3DE', 4], ['#CDEDE8', 5]];
+    const slow = lv() === 1 ? 1.25 : lv() === 3 ? 0.8 : 1;
+    const goal = lv() === 1 ? 15 : lv() === 2 ? 20 : 12;
     const spawn = () => {
       if (!document.body.contains(field) || field.querySelectorAll('.bub').length > 9) return;
       const [c, n] = pick(colours);
@@ -123,10 +140,11 @@
       b.classList.add('popped');
       tone(NOTES[Number(b.dataset.note)], 0.9, 0.09);
       setTimeout(() => b.remove(), 320);
+      if (g.target != null && Number(b.dataset.note) !== g.target) { tone(330, 0.15, 0.04); return; }
       S.g.popped += 1;
       const c = document.getElementById('popCount');
       if (c) c.textContent = S.g.popped;
-      if (S.g.popped === 15 && !S.g.rewarded) {
+      if (S.g.popped === goal && !S.g.rewarded) {
         S.g.rewarded = true;
         state.stats.games += 1;
         track('games', 'Bubbles');
@@ -139,7 +157,7 @@
   // ---------------------------------------------------------------- Match pairs (memory)
   const MATCH_FACES = ['sun', 'bus', 'teeth', 'cutlery', 'school', 'shoes', 'bottle', 'umbrella', 'lunchbox', 'buscard', 'jacket', 'towel'];
   function newMatch() {
-    const pairs = { 1: 3, 2: 6, 3: 8 }[A.level()] || 6;
+    const pairs = { 1: 3, 2: 6, 3: 8 }[lv()] || 6;
     const faces = shuffle(MATCH_FACES).slice(0, pairs);
     return { cards: shuffle(faces.concat(faces)).map((k) => ({ k, open: false, done: false })), first: null, lock: false, won: false };
   }
@@ -178,7 +196,7 @@
       render();
       tone(784, 0.4, 0.09);
       say('A match!');
-      if (g.cards.every((x) => x.done)) later(() => win('match', A.level() === 3 ? 2 : 1), 600);
+      if (g.cards.every((x) => x.done)) later(() => win('match', lv() === 3 ? 2 : 1), 600);
     } else {
       g.lock = true;
       render();
@@ -211,7 +229,7 @@
       ${lumi('happy', 190, 160, 220)}`;
   }
   function newJigsaw(pic) {
-    const [cols, rows] = { 1: [2, 2], 2: [3, 2], 3: [3, 3] }[A.level()] || [3, 2];
+    const [cols, rows] = { 1: [2, 2], 2: [3, 2], 3: [3, 3] }[lv()] || [3, 2];
     const n = cols * rows;
     return { pic: pic || pick(['park', 'beach', 'night']), cols, rows, placed: Array(n).fill(false), tray: shuffle([...Array(n).keys()]), sel: null, won: false, art: null };
   }
@@ -233,7 +251,7 @@
     const sh = BH / g.rows;
     const slots = g.placed.map((on, k) => `<button class="jslot ${on ? 'on' : ''}" data-a="jSlot" data-k="${k}" style="width:${sw}px;height:${sh}px" aria-label="Space ${k + 1}${on ? ', filled' : ''}">${on ? pieceSvg(g, k, sw, sh) : ''}</button>`).join('');
     const tray = g.tray.filter((k) => !g.placed[k]).map((k) => `<button class="jpiece ${g.sel === k ? 'sel' : ''}" data-a="jPiece" data-k="${k}" aria-label="Piece">${pieceSvg(g, k, Math.round(sw * 0.62), Math.round(sh * 0.62))}</button>`).join('');
-    const ghost = A.level() < 3 ? `<svg class="jghost" width="${BW}" height="${BH}" viewBox="0 0 600 400" aria-hidden="true">${g.art}</svg>` : '';
+    const ghost = lv() < 3 ? `<svg class="jghost" width="${BW}" height="${BH}" viewBox="0 0 600 400" aria-hidden="true">${g.art}</svg>` : '';
     const pics = ['park', 'beach', 'night'].map((p) => `<button class="jpic ${g.pic === p ? 'on' : ''}" data-a="gAgain" data-v="jigsaw" data-pic="${p}" aria-label="${p} picture"><svg width="96" height="64" viewBox="0 0 600 400" aria-hidden="true">${picture(p)}</svg></button>`).join('');
     return `
 <section class="screen" aria-label="Jigsaw">
@@ -252,7 +270,7 @@
   A.GUIDE['g-jigsaw'] = () => {
     const g = S.g;
     if (!g || g.won) return null;
-    if (g.sel !== null) return { sel: `[data-a="jSlot"][data-k="${g.sel}"]`, say: 'Tap where it goes.', delay: A.level() === 1 ? 2500 : undefined };
+    if (g.sel !== null) return { sel: `[data-a="jSlot"][data-k="${g.sel}"]`, say: 'Tap where it goes.', delay: lv() === 1 ? 2500 : undefined };
     return { sel: '.jpiece', say: 'Tap a piece.' };
   };
   Object.assign(A.ACTIONS, {
@@ -267,7 +285,7 @@
         g.sel = null;
         tone(NOTES[k % NOTES.length], 0.4, 0.09);
         render();
-        if (g.placed.every(Boolean)) later(() => win('jigsaw', A.level() === 3 ? 2 : 1), 500);
+        if (g.placed.every(Boolean)) later(() => win('jigsaw', lv() === 3 ? 2 : 1), 500);
       } else {
         track('tries', 'jigsaw', { quiet: true });
         el.classList.remove('wiggle-once');
@@ -280,7 +298,7 @@
 
   // ---------------------------------------------------------------- Sort it (everyday learning)
   function newSort() {
-    const set = D.SORT_SETS[A.level()] || D.SORT_SETS[2];
+    const set = D.SORT_SETS[lv()] || D.SORT_SETS[2];
     return { set, queue: shuffle(set.items), i: 0, wrong: 0, won: false };
   }
   A.PARENT['g-sort'] = 'play';
@@ -322,7 +340,7 @@
       g.i += 1;
       g.wrong = 0;
       render();
-      if (g.i >= g.queue.length) later(() => win('sort', A.level() === 3 ? 2 : 1), 400);
+      if (g.i >= g.queue.length) later(() => win('sort', lv() === 3 ? 2 : 1), 400);
       else later(() => say(A.VOICE['g-sort']()), 900);
     } else {
       if (!g.wrong) track('tries', 'sort', { quiet: true });
@@ -348,21 +366,21 @@
   const shapeSvg = (t, size) => `<svg width="${size}" height="${size}" viewBox="0 0 60 60" aria-hidden="true"><g fill="${t.c}" stroke="#3B2F2F" stroke-width="2.5" stroke-linejoin="round">${SHAPES[t.s]}</g></svg>`;
   const same = (a, b) => a.s === b.s && a.c === b.c;
   function patternRound() {
-    const lv = A.level();
+    const lvl = lv();
     const shapes = shuffle(Object.keys(SHAPES));
     const cols = shuffle(COLS);
     const unit = [{ s: shapes[0], c: cols[0] }, { s: shapes[1], c: cols[1] }];
     let rule;
-    if (lv === 1) rule = [0, 1];
-    else if (lv === 2) { unit.push({ s: shapes[2], c: cols[2] }); rule = [0, 1, 2]; }
+    if (lvl === 1) rule = [0, 1];
+    else if (lvl === 2) { unit.push({ s: shapes[2], c: cols[2] }); rule = [0, 1, 2]; }
     else rule = pick([[0, 0, 1, 1], [0, 1, 1], [0, 0, 1]]);
-    const len = lv === 1 ? 5 : lv === 2 ? 7 : 8;
+    const len = lvl === 1 ? 5 : lvl === 2 ? 7 : 8;
     const seq = [];
     for (let i = 0; i < len; i++) seq.push(unit[rule[i % rule.length]]);
     const answer = seq.pop();
     const opts = [answer];
     const pool = unit.concat([{ s: shapes[3], c: cols[3] }, { s: shapes[4], c: cols[4] }]);
-    for (const p of shuffle(pool)) if (opts.length < (lv === 1 ? 2 : lv === 2 ? 3 : 4) && !opts.some((o) => same(o, p))) opts.push(p);
+    for (const p of shuffle(pool)) if (opts.length < (lvl === 1 ? 2 : lvl === 2 ? 3 : 4) && !opts.some((o) => same(o, p))) opts.push(p);
     return { seq, answer, opts: shuffle(opts), solved: false };
   }
   function newPattern() { return { round: 0, total: 5, r: patternRound(), won: false }; }
@@ -402,7 +420,7 @@
       render();
       later(() => {
         g.round += 1;
-        if (g.round >= g.total) { win('pattern', A.level() === 3 ? 2 : 1); return; }
+        if (g.round >= g.total) { win('pattern', lv() === 3 ? 2 : 1); return; }
         g.r = patternRound();
         render();
       }, 1100);
@@ -417,13 +435,37 @@
   };
 
   // ---------------------------------------------------------------- open / restart
-  const MAKERS = { bubbles: () => ({ popped: 0 }), match: newMatch, jigsaw: newJigsaw, sort: newSort, pattern: newPattern };
+  const MAKERS = (A.GAME_MAKERS = { bubbles: () => ({ popped: 0, target: lv() === 3 ? pick([0, 2, 3, 4]) : null }), match: newMatch, jigsaw: newJigsaw, sort: newSort, pattern: newPattern });
+  // shared with games-more.js
+  A.GAME = { header, winCard, win, lv, shuffle, NOTES, gameOf, LEVEL_NAMES, levelPicker, levelOf };
+  // games that need a kick after they are drawn (e.g. Lumi plays the tune first) set A.GAME_START[id]
+  A.GAME_START = A.GAME_START || {};
+  const started = (id) => { if (A.GAME_START[id]) A.GAME_START[id](); };
   Object.assign(A.ACTIONS, {
-    gOpen: (d) => { S.g = MAKERS[d.v](); go('g-' + d.v); },
+    gOpen: (d) => { S.gLevel = levelOf(d.v); S.g = MAKERS[d.v](); S.gId = d.v; go('g-' + d.v); started(d.v); },
+    // change how hard the game is; it starts again at the new level
+    gLevel: (d, el) => {
+      const id = el.dataset.id;
+      const n = Number(d.v);
+      S.gLevel = n;
+      state.gameLevels = state.gameLevels || {};
+      state.gameLevels[id] = n;
+      save();
+      S.g = id === 'jigsaw' ? newJigsaw(S.g && S.g.pic) : MAKERS[id]();
+      S.gId = id;
+      A.clearTimers();
+      render();
+      started(id);
+      tone(n === 1 ? 523 : n === 2 ? 659 : 784, 0.2, 0.07);
+      say(LEVEL_NAMES[n] + '.');
+    },
     playTab: (d) => { S.playTab = d.v; render(); say(A.VOICE.play()); },
     gAgain: (d, el) => {
       S.g = d.v === 'jigsaw' ? newJigsaw(el.dataset.pic || null) : MAKERS[d.v]();
+      S.gId = d.v;
+      A.clearTimers();
       render();
+      started(d.v);
       const v = A.VOICE['g-' + d.v];
       if (v) say(v());
     }

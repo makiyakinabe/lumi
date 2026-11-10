@@ -317,11 +317,26 @@
       <path d="M38 28a14 14 0 0 1-24 8l-3-3" fill="none" stroke="#3B2F2F" stroke-width="6" stroke-linecap="round"/><path d="M38 28a14 14 0 0 1-24 8l-3-3" fill="none" stroke="#F59FBF" stroke-width="2.6" stroke-linecap="round"/>
       <path d="M39 8v9h-9z" fill="#6FCBBE" ${K2}/><path d="M9 40v-9h9z" fill="#F59FBF" ${K2}/>`),
     kHeart: art48(`<path d="M24 42C8 31 4 21 9.5 13.5c4-5.5 11-4.5 14.5 1 3.5-5.5 10.5-6.5 14.5-1C44 21 40 31 24 42z" fill="#F07C9B" ${K2}/>${SHINE(14, 16, 2.5, 3.5)}${FACE(24, 23, 1)}`),
+    kFeed: art48(`<ellipse cx="24" cy="38" rx="19" ry="6" fill="#fff" ${K2}/><ellipse cx="24" cy="37" rx="12" ry="3" fill="#EFE7DA"/>
+      <path d="M17 18c-4-3-11-1-11 7 0 6 4 10 7 10 1 0 2-.6 3-.6s2 .6 3 .6c3 0 7-4 7-10 0-8-7-10-11-7z" fill="#E5484D" ${K2}/><path d="M17 18c0-3 1-5 3-6" fill="none" stroke="#7A4E2A" stroke-width="2" stroke-linecap="round"/>
+      <path d="M27 16c2 9 7 15 15 13 2 0 3-1 2-2.5-7 1-12-4-14-12-.6-2-3.5-1.5-3 1.5z" fill="#FFD84D" ${K2}/>${SHINE(12, 23, 1.8, 3)}`),
+    kTune: art48(`<path d="M14 10a9 9 0 0 0-9 9v7l-3 5h24l-3-5v-7a9 9 0 0 0-9-9z" fill="#8EB8E5" ${K2}/><circle cx="14" cy="34" r="3" fill="#4A78A8" ${K2}/>
+      <path d="M34 16a9 9 0 0 0-9 9v7l-3 5h24l-3-5v-7a9 9 0 0 0-9-9z" fill="#EF8A7A" ${K2}/><circle cx="34" cy="40" r="3" fill="#C9584A" ${K2}/>
+      <path d="M30 4v8.5" stroke="#3B2F2F" stroke-width="2.2" stroke-linecap="round"/><ellipse cx="27.5" cy="12.5" rx="3" ry="2.2" fill="#3B2F2F"/>`),
+    kMaze: art48(`<rect x="5" y="5" width="38" height="38" rx="6" fill="#E7F3E1" ${K2}/>
+      <path d="M5 16h22M16 27h22M5 38h11M27 27v-11M16 27v11" stroke="#8A6A4A" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="10" cy="10.5" r="3.5" fill="#F2A65A" ${K2}/><path d="M33 33l5-4 5 4v6h-10z" fill="#EF8A7A" ${K2}/>`),
+    kCatch: art48(`<path d="M10 30h28l-4 12H14z" fill="#C9A27E" ${K2}/><path d="M12 34h24M13 38h22" stroke="#8A6A4A" stroke-width="1.4"/>
+      <path d="M24 3l3 6.3 7 1-5 4.8 1.2 6.9-6.2-3.3-6.2 3.3 1.2-6.9-5-4.8 7-1z" fill="#FFD23F" ${K2}/><path d="M38 14l1.4 2.9 3.2.5-2.3 2.2.5 3.2-2.8-1.5-2.8 1.5.5-3.2-2.3-2.2 3.2-.5z" fill="#FFD23F" ${K2}/>`),
+    kFind: art48(`<circle cx="20" cy="20" r="13" fill="#DCEFED" ${K2}/><circle cx="20" cy="20" r="8" fill="#fff" stroke="#3B2F2F" stroke-width="1.6"/>${SHINE(16, 16, 2.4, 3.4)}
+      <path d="M29.5 29.5l11 11" stroke="#3B2F2F" stroke-width="7" stroke-linecap="round"/><path d="M29.5 29.5l11 11" stroke="#B9A6E0" stroke-width="3.6" stroke-linecap="round"/>`),
+    kWeather: art48(`<circle cx="16" cy="16" r="8" fill="#FFD23F" ${K2}/><path d="M16 2v3M16 27v3M2 16h3M27 16h3M6 6l2 2M24 24l2 2M6 26l2-2M24 8l2-2" stroke="#F4B400" stroke-width="2.2" stroke-linecap="round"/>
+      <path d="M17 36h20a7 7 0 0 0 1-13.9A10 10 0 0 0 19 23a6.5 6.5 0 0 0-2 13z" fill="#fff" ${K2}/><path d="M22 40l-2 4M29 40l-2 4M36 40l-2 4" stroke="#5E8FC4" stroke-width="2.4" stroke-linecap="round"/>`),
     kFlag: art48(`<path d="M10 44V6" stroke="#3B2F2F" stroke-width="3" stroke-linecap="round"/><path d="M11 7h26l-5 8 5 8H11z" fill="#FFB067" ${K2}/><path d="M18 12l1.5 3 3.3.5-2.4 2.3.6 3.3-3-1.6-3 1.6.6-3.3-2.4-2.3 3.3-.5z" fill="#FFD23F" stroke="#3B2F2F" stroke-width="1.3"/><ellipse cx="10" cy="44" rx="6" ry="2" fill="#C9B8A4"/>`)
   });
 
   // "Calm minimal" style swaps the colourful kid icons for simple line icons
-  const LINE_FOR = { kDay: 'calendar', kTalk: 'chat', kCalm: 'cloud', kFun: 'fun', kPuzzle: 'puzzle', kStories: 'storybook', kLearn: 'learn', kHint: 'bulb', kPet: 'paw', kDress: 'shirt', kRoom: 'house', kTogether: 'together', kDuo: 'together', kLock: 'lock', kBalloon: 'balloon', kSqueeze: 'squeeze', kCount: 'count', kBell: 'bell', kBubbles: 'bubbles', kCards: 'cards', kSort: 'sort', kShapes: 'shapes', kTurns: 'swap', kHeart: 'heart', kFlag: 'flag', wMore: 'plus', wDone: 'check', wNext: 'arrow', wDifferent: 'shuffle' };
+  const LINE_FOR = { kDay: 'calendar', kTalk: 'chat', kCalm: 'cloud', kFun: 'fun', kPuzzle: 'puzzle', kStories: 'storybook', kLearn: 'learn', kHint: 'bulb', kPet: 'paw', kDress: 'shirt', kRoom: 'house', kTogether: 'together', kDuo: 'together', kLock: 'lock', kBalloon: 'balloon', kSqueeze: 'squeeze', kCount: 'count', kBell: 'bell', kBubbles: 'bubbles', kCards: 'cards', kSort: 'sort', kShapes: 'shapes', kTurns: 'swap', kHeart: 'heart', kFlag: 'flag', kFeed: 'apple', kTune: 'music', kMaze: 'puzzle', kCatch: 'star', kFind: 'search', kWeather: 'sun', wMore: 'plus', wDone: 'check', wNext: 'arrow', wDifferent: 'shuffle' };
   // ---------- colour pictures for every routine step (same style as the bus, teeth and school) ----------
   Object.assign(ICONS, {
     sShirt: art48(`<path d="M16 7 5 13l4.5 8.5 5-2.2V42h19V19.3l5 2.2L43 13 32 7c-1.2 3.4-4.2 5.4-8 5.4S17.2 10.4 16 7z" fill="#8EB8E5" ${K}/>

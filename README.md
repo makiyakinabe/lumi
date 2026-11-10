@@ -394,6 +394,23 @@ Lumi is for children and youths with a range of special needs, not only non-verb
 - **Timetable**: one **Copy day** button (pick the days, or Weekdays / Weekend / Every day). On today's day, **Today only** changes the plan just for today (a dentist visit, a public holiday) without touching the usual week; tomorrow goes back to normal, or tap Undo today's changes. Drag a step by its dots to move it (the times stay put and the steps swap into them), or use Earlier / Later in the Step panel.
 - **Progress** starts with three plain sentences (days used, feelings shared, stories practised and whether the child felt better afterwards). The charts are folded underneath in "Charts and details".
 
+## Games: more of them, and three levels each
+
+Fun › Games › Puzzles now has 12 games. Every game has **Easy**, **Medium** and **Hard** buttons (one, two or three stars) in its top bar. A game opens at the level the grown-ups chose; the child can change it, and each game remembers its own level (`state.gameLevels`). Finishing a game offers **Harder** next to Again. Still no timers that end a game and no losing.
+
+| Game | What the child does | Easy | Medium | Hard |
+| --- | --- | --- | --- | --- |
+| Feed Lumi | Drag (or tap) food to Lumi's plate, the number Lumi asks for | 1 to 3 of one food | 2 to 5, with a wrong food in the tray | two foods at once ("2 apples and 1 banana") |
+| Copy the tune | Lumi rings bells; ring them back in order | 3 bells, 2 to 4 notes | 4 bells, 3 to 5 notes | 5 bells, 4 to 6 notes, quicker |
+| Way home | Slide Lumi through a maze to the house | 4 × 3 maze | 6 × 4 with bonus stars | 8 × 5, collect all stars first |
+| Catch stars | Move Lumi to catch falling stars | slow, big stars, catch 8 | faster, catch 12 | fastest, dodge raindrops, catch 15 |
+| Find it | Find the thing Lumi names in a room | 4 big things, picture shown | 8 things | 12 small, tilted things, word only |
+| Weather | Drag the right clothes onto Lumi for sun, rain or cold | 1 thing, 2 choices | 2 things, 4 choices | 2 things, 6 choices |
+
+The first games gained levels too: Bubbles (Hard: pop only the colour Lumi names), Match (3, 6 or 8 pairs), Jigsaw (4, 6 or 9 pieces; Hard has no faint picture), Sort it, What next? and the Waiting game (waits start at 10, 20 or 30 seconds). New games are in `js/games-more.js`; grown-ups can switch any game off in Activities.
+
+The clothes shop and room shop scroll, so the longer lists never squash.
+
 ## Lumi's room: bigger or smaller
 
 In Lumi's room, tap anything (or Lumi) and big **−** and **+** buttons appear under the shop. Each thing can be made smaller or bigger in 8 steps (half size to just over double); it grows from where it stands, so its feet stay on the floor. Sizes are saved with the room (`state.roomSize`) and show on the home screen too. Undo puts back the last move or size change. Tap the tick to put the buttons away. Owned things tapped in the shop are picked too.
@@ -758,6 +775,7 @@ web/
   js/feelchart.js   Progress: feelings and breaks over time, and patterns
   js/focus.js       what Lumi helps with (focus areas) and the Grown-ups Overview
   js/grownups-plus.js  Getting started, Share a report, Grown-ups lock, the plain-sentence Progress summary
+  js/games-more.js  six more Play games (Feed Lumi, Copy the tune, Way home, Catch stars, Find it, Weather)
   js/lang.js        home language: Chinese, Malay and Tamil words and voice
   js/comingup.js    Coming up stories (social stories) with a countdown, in My day on the day
   js/offline.js     backup and restore, and installing Lumi to work without internet
