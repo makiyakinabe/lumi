@@ -43,8 +43,11 @@
   A.VOICE.learn = () => 'Learn with Lumi. Pick one to do together.';
   A.SCREENS.learn = () => {
     const count = (name) => state.events.filter((e) => e.kind === 'tutorials' && e.detail === name).length;
-    const cards = lessonList().map((t) => `<button class="learn-card" ${sceneFor(t) ? `data-a="stOpen" data-v="${sceneFor(t)}"` : `data-a="lesOpen" data-v="${t.id}"`} style="background:${t.tint}">
+    const rec = A.focusStories ? A.focusStories() : [];
+    const rank = (t) => { const i = rec.indexOf(sceneFor(t)); return i < 0 ? 99 : i; };
+    const cards = lessonList().slice().sort((a, b) => rank(a) - rank(b)).map((t) => `<button class="learn-card" ${sceneFor(t) ? `data-a="stOpen" data-v="${sceneFor(t)}"` : `data-a="lesOpen" data-v="${t.id}"`} style="background:${t.tint}">
       ${sceneFor(t) && A.storyPreview && A.storyPreview(sceneFor(t)) ? A.storyPreview(sceneFor(t)).html : `<span class="sx-mini plain"><span class="learn-art">${lessonArt(t, 110)}</span></span>`}
+      ${rec.includes(sceneFor(t)) ? `<span class="fo-for">${ic('star', 16)}<span>For ${esc(state.childName || 'you')}</span></span>` : ''}
       <span class="sc-foot"><span class="learn-name">${esc(t.name)}</span>${sceneFor(t) ? `<span class="learn-steps">${(D.STORIES.find((x) => x.id === sceneFor(t)) || { steps: [] }).steps.length} small steps</span>` : ''}</span>
       <span class="learn-meta">${dots(Math.min(count(t.name), 5), 5, 'var(--gold)', 14)}</span>
       ${t.custom ? `<span class="tag mine">${ic('camera', 14)}<span>Ours</span></span>` : ''}</button>`).join('');

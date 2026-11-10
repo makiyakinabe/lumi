@@ -375,6 +375,17 @@ It focuses on routines, communication and emotional regulation, with three modes
 
 It is plain HTML, CSS and JavaScript. There is nothing to install and no build step.
 
+## Set up around each child: "What should Lumi help with?"
+
+Lumi is for children and youths with a range of special needs, not only non-verbal children. Grown-ups pick one or more focus areas, by need rather than diagnosis (nothing is shown to the child): Communicating, Feelings and calm, Routines and getting ready, Sensory comfort, Going out and new places, Focus and waiting, Everyday life skills, Friends and turn-taking, Easier touch. It is step 2 of first-run setup and on Grown-ups › Overview (`js/focus.js`). Each focus:
+
+- puts its home button first and stars its skills on the child's screens,
+- lists its stories and lessons first, marked "For Mia",
+- turns on settings that usually help when it is added (for example Sensory comfort: less movement, quieter music, a calmer voice; Easier touch: tap instead of drag, bigger text), and says what it changed,
+- adds one number to Overview and Progress (for example "12 talk-board messages this week").
+
+**Grown-ups** opens on an Overview: the child, what Lumi helps with, big buttons for every task (Timetable, Coming up, Activities, Sensory, Progress, Notes, Child, Back to Lumi) and this week at a glance. The other pages keep the everyday settings in view and fold the rest into closed sections (tap to open; they stay open while you use them).
+
 ## Fits any screen
 
 Lumi fills the whole screen on any device held sideways: phones, iPads (any size), Android tablets, laptops and big monitors, with no black bars. It is designed on a 1194 × 834 landscape "stage"; `fit()` in `js/app.js` keeps that height (or width) and stretches the other side to match the screen's shape, so the flexible screens simply grow. The story and lesson pictures are scaled to use the space too (`fitScene()` in `js/stories.js`): on a wide screen such as a phone or a 16:9 laptop the picture fills the height and the words move into a column beside it. The notch and home bar are kept clear, and the strip around them takes the colour of the current screen. Held upright, a phone or tablet shows "Turn me sideways". A desktop browser window narrower than it is tall shows the app with thin edges.

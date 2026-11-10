@@ -711,7 +711,7 @@
   <div class="colour-grid six">${colourCards(p.theme, 'setupTheme')}</div>
   <div class="row between">
     <span class="row gap12"><button class="g-btn outline" data-a="qzOpen" data-v="setup">${ic('sliders', 20)}<span>${state.sensory && state.sensory.done ? 'Sensory settings done' : 'Sensory quick-start (5 questions)'}</span></button><span class="g-note">Saved on this device only.</span></span>
-    <button class="g-btn big-g" data-a="setupDone">${ic('check', 22)}<span>Start Lumi</span></button>
+    <button class="g-btn big-g" data-a="setupDone"><span>Next</span>${ic('chev', 22)}</button>
   </div>
 </section>`;
   };
@@ -783,7 +783,7 @@
         <span class="mode-ic">${duo}</span>
         <span class="col"><span class="mode-name">Together</span><span class="mode-sub">With ${esc(partner)}</span></span>
       </button>
-      <button class="mode-card grown hold-btn" data-hold="builder" aria-label="Grown-ups: press and hold">
+      <button class="mode-card grown hold-btn" data-hold="cgHome" aria-label="Grown-ups: press and hold">
         <span class="mode-ic">${ic('kLock', 70)}</span>
         <span class="col"><span class="mode-name">Grown-ups</span><span class="mode-sub">Press and hold</span></span>
         <span class="hold-fill"></span>
@@ -904,7 +904,9 @@
   const longDate = () => new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' });
   SCREENS.home = () => {
     const resume = S.day && !S.day.ended;
-    const tiles = TILES.filter((t) => (t[0] === 'fun' ? funItems().length : state.profile.show[t[0]] !== false)).map((t) => tileHtml(t, true)).join('');
+    const order = A.focusTileOrder ? A.focusTileOrder() : [];
+    const rank = (k) => { const i = order.indexOf(k); return i < 0 ? 9 + TILES.findIndex((t) => t[0] === k) : i; };
+    const tiles = TILES.filter((t) => (t[0] === 'fun' ? funItems().length : state.profile.show[t[0]] !== false)).sort((a, b) => rank(a[0]) - rank(b[0])).map((t) => tileHtml(t, true)).join('');
     return `
 <section class="screen" aria-label="Home">
   ${srTitle('Lumi home')}

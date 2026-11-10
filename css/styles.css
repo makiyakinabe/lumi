@@ -2320,3 +2320,60 @@ svg.pic.person { overflow: hidden; }
 .story-card .story-name, .learn-card .learn-name { font-size: calc(24px * var(--ts, 1)); line-height: 1.2; text-align: left; }
 .sc-snip { padding: 0 6px; font-size: 17px; font-weight: 700; line-height: 1.35; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .learn-card .learn-meta { padding: 0 6px; }
+
+/* ---------------------------------------------------------------- what Lumi helps with (focus.js) */
+.fo-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 14px; }
+.fo-card { position: relative; display: flex; align-items: center; gap: 14px; min-height: 104px; padding: 14px 44px 14px 14px; border-radius: 20px; border: 3px solid #EFE6D8; background: #fff; text-align: left; line-height: 1.25; }
+.fo-card.on { border-color: var(--fi); background: var(--fc); }
+.fo-ic { flex: none; width: 58px; height: 58px; border-radius: 16px; display: flex; align-items: center; justify-content: center; background: var(--fc, #F4EFE6); color: var(--fi, var(--ink)); }
+.fo-card.on .fo-ic { background: #fff; }
+.fo-ic.sm { width: 40px; height: 40px; border-radius: 12px; }
+.fo-txt { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.fo-txt b { font-size: 18px; font-weight: 900; color: var(--ink); }
+.fo-txt span { font-size: 14px; font-weight: 700; color: var(--muted); }
+.fo-check { position: absolute; right: 12px; top: 12px; width: 26px; height: 26px; border-radius: 50%; border: 3px solid #E2D8C8; display: flex; align-items: center; justify-content: center; color: #fff; }
+.fo-card.on .fo-check { background: var(--fi); border-color: var(--fi); }
+.fo-msg { display: flex; align-items: center; gap: 10px; margin-top: 16px; padding: 12px 16px; border-radius: 14px; background: #EEF6F1; color: #2F6B45; font-size: 15px; font-weight: 700; line-height: 1.3; }
+.fo-page .big-h { font-size: 24px; }
+.fo-setup { min-height: 0; overflow-y: auto; }
+.fo-setup .fo-grid { margin-top: 0; }
+.fo-chip { display: inline-flex; align-items: center; gap: 8px; min-height: 38px; padding: 6px 14px 6px 8px; border-radius: 999px; background: var(--fc); color: var(--fi); font-size: 15px; font-weight: 800; line-height: 1.2; }
+.fo-for { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; margin: -4px 0 -2px 6px; padding: 4px 12px 4px 8px; border-radius: 999px; background: #FFF1C2; color: #8A5A00; font-size: 14px; font-weight: 900; line-height: 1.2; }
+.fo-week { display: flex; flex-direction: column; gap: 8px; margin: 8px 0; }
+.fo-stat { display: grid; grid-template-columns: 40px auto 1fr; align-items: center; gap: 4px 12px; padding: 10px 12px; border-radius: 14px; background: var(--fc, #F7F2EA); line-height: 1.25; }
+.fo-stat .fo-ic { background: #fff; color: var(--fi, var(--ink)); }
+.fo-stat b { font-size: 24px; font-weight: 900; color: var(--ink); }
+.fo-stat > span:last-child { font-size: 14px; font-weight: 700; color: var(--muted); }
+/* Grown-ups overview */
+.ov-kid { display: flex; align-items: center; gap: 14px; }
+.ov-photo { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; flex: none; background: #FFF7E8; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.ov-name { font-size: 24px; font-weight: 900; color: var(--ink); line-height: 1.2; }
+.ov-focus { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 12px; }
+.ov-pick { display: flex; align-items: center; gap: 12px; width: 100%; margin-top: 8px; padding: 16px; border-radius: 18px; border: 3px dashed var(--teal); background: #F2FAF8; color: var(--teal); text-align: left; line-height: 1.25; }
+.ov-pick > span { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.ov-pick b { font-size: 17px; color: var(--ink); }
+.ov-pick span span { font-size: 14px; font-weight: 700; color: var(--muted); }
+.ov-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+.ov-act { display: flex; align-items: center; gap: 14px; min-height: 84px; padding: 12px 16px 12px 12px; border-radius: 18px; border: 3px solid #EFE6D8; background: #fff; text-align: left; line-height: 1.25; }
+.ov-act:active { transform: scale(0.98); }
+.ov-act-ic { flex: none; width: 56px; height: 56px; border-radius: 16px; background: #EAF5F3; color: var(--teal); display: flex; align-items: center; justify-content: center; }
+.ov-act-t { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.ov-act-t b { font-size: 18px; font-weight: 900; color: var(--ink); }
+.ov-act-t span { font-size: 14px; font-weight: 700; color: var(--muted); }
+.ov-act.try { border-color: var(--teal); background: #F2FAF8; }
+.ov-told { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 12px; border-radius: 12px; background: #FBF7F1; font-size: 15px; line-height: 1.25; }
+.g-link.inline { display: inline; padding: 0; font-size: inherit; }
+.g-link.see-all { display: inline-flex; align-items: center; gap: 4px; }
+/* tidy, closed sections in Grown-ups */
+.g-more { margin-top: 12px; border-radius: 16px; border: 2px solid #EFE6D8; background: #FFFDF9; }
+.g-more > summary { list-style: none; display: flex; align-items: center; gap: 12px; min-height: 58px; padding: 10px 16px; cursor: pointer; line-height: 1.25; }
+.g-more > summary::-webkit-details-marker { display: none; }
+.gm-t { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.gm-t b { font-size: 17px; font-weight: 900; color: var(--ink); }
+.gm-t span { font-size: 14px; font-weight: 700; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gm-chev { color: var(--muted); transition: transform 0.2s ease; line-height: 0; }
+.g-more[open] .gm-chev { transform: rotate(90deg); }
+.gm-in { padding: 2px 16px 16px; display: flex; flex-direction: column; gap: 10px; }
+.pack-box .g-more { margin-top: 0; background: transparent; border: 0; }
+.pack-box .g-more > summary { padding: 4px 0; min-height: 40px; }
+.fo-setup .fo-card { min-height: 128px; }

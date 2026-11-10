@@ -556,11 +556,16 @@
   A.PARENT.stories = 'fun';
   A.VOICE.stories = () => 'Pick a story to play with Lumi.';
   A.SCREENS.stories = () => {
-    const cards = A.storiesForAge().map((s) => {
+    // stories that match what Lumi helps this child with come first (Grown-ups > Overview > Lumi helps with)
+    const rec = A.focusStories ? A.focusStories() : [];
+    const forKid = `For ${esc(state.childName || 'you')}`;
+    const list = A.storiesForAge().slice().sort((a, b) => (rec.includes(a.id) ? rec.indexOf(a.id) : 99) - (rec.includes(b.id) ? rec.indexOf(b.id) : 99));
+    const cards = list.map((s) => {
       const read = state.stats.storyDone && state.stats.storyDone[s.id];
       const pv = previewOf(s.id);
       return `<button class="story-card sx-card" data-a="stOpen" data-v="${s.id}" style="background:${s.tint}">
         ${pv.html}
+        ${rec.includes(s.id) ? `<span class="fo-for">${ic('star', 16)}<span>${forKid}</span></span>` : ''}
         <span class="sc-foot"><span class="story-name">${esc(s.title)}</span>${read ? `<span class="tag green">${ic('check', 14)}<span>Played</span></span>` : `<span class="tag">${s.steps.length} steps</span>`}</span>
         ${pv.words ? `<span class="sc-snip">${esc(pv.words)}</span>` : ''}</button>`;
     }).join('');

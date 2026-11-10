@@ -13,18 +13,25 @@
   const A = window.LumiApp;
   const { D, L, S, state, ic, esc, say, save, render, go, uid, applyPrefs, dots } = A;
 
-  const TABS = [['builder', 'Timetable', 'calendar'], ['cgComingUp', 'Coming up', 'hourglass'], ['cgActivities', 'Activities', 'target'], ['cgChild', 'Child', 'person'], ['cgSensory', 'Sensory', 'sliders'], ['cgProgress', 'Progress', 'chart'], ['cgJournal', 'Journal', 'journal']];
+  // Overview is the page Grown-ups opens on (focus.js); Notes (the journal) opens from Overview and Progress
+  const TABS = [['cgHome', 'Overview', 'home'], ['builder', 'Timetable', 'calendar'], ['cgComingUp', 'Coming up', 'hourglass'], ['cgActivities', 'Activities', 'target'], ['cgChild', 'Child', 'person'], ['cgSensory', 'Sensory', 'sliders'], ['cgProgress', 'Progress', 'chart']];
+  const TAB_OF = { cgJournal: 'cgProgress', cgFocus: 'cgHome', cgVoice: 'cgSensory', cgLang: 'cgSensory', cgQuiz: 'cgSensory', cgNowNext: 'builder' };
   const tz = () => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone.replace(/_/g, ' '); } catch (e) { return ''; } };
   A.gHeader = (active) => `<div class="row between g-header">
     <div class="row gap12">
       <button class="icon-btn sm" data-a="nav" data-to="menu" aria-label="Back to the menu">${ic('back', 22)}</button>
-      <div class="col"><h1 class="g-title">Grown-ups</h1><span class="g-sub" title="Lumi uses this tablet's own date, time and time zone">${ic('clock', 13)} <span data-clock="date">${A.longDate()}</span>, <span data-clock="time">${A.fmt(A.fromMin(A.nowMin()))}</span> · ${esc(tz())}</span></div>
+      <div class="col"><h1 class="g-title">Grown-ups</h1><span class="g-sub" title="Lumi uses this tablet's own date, time and time zone (${esc(tz())})">${ic('clock', 13)} <span data-clock="date">${A.longDate()}</span>, <span data-clock="time">${A.fmt(A.fromMin(A.nowMin()))}</span></span></div>
     </div>
-    <div class="g-tabs" role="tablist">${TABS.map(([id, name, icon]) => `<button class="g-tab ${active === id ? 'on' : ''}" role="tab" aria-selected="${active === id}" data-a="nav" data-to="${id}">${ic(icon, 20)}<span>${name}</span></button>`).join('')}</div>
+    <div class="g-tabs" role="tablist">${TABS.map(([id, name, icon]) => `<button class="g-tab ${(TAB_OF[active] || active) === id ? 'on' : ''}" role="tab" aria-selected="${(TAB_OF[active] || active) === id}" data-a="nav" data-to="${id}">${ic(icon, 20)}<span>${name}</span></button>`).join('')}</div>
     <button class="g-btn" data-a="nav" data-to="menu">Done</button>
   </div>`;
   TABS.forEach(([id]) => { A.PARENT[id] = 'menu'; A.VOICE[id] = () => ''; });
 
+  // a tidy, closed section: the title and a few words; open it to see the settings (stays open while you use it)
+  S.gmOpen = S.gmOpen || {};
+  const more = (id, title, sub, inner) => `<details class="g-more" data-gm="${id}" ${S.gmOpen[id] ? 'open' : ''}><summary><span class="gm-t"><b>${title}</b>${sub ? `<span>${sub}</span>` : ''}</span><span class="gm-chev">${ic('chev', 18)}</span></summary><div class="gm-in">${inner}</div></details>`;
+  A.gMore = more;
+  document.addEventListener('toggle', (e) => { const d = e.target; if (d && d.matches && d.matches('details.g-more')) S.gmOpen[d.dataset.gm] = d.open; }, true);
   const toggle = (on, action, value, label, extra) => `<button class="check-row" data-a="${action}" data-v="${value}" aria-pressed="${!!on}"><span class="box ${on ? 'on' : ''}">${on ? ic('check', 14) : ''}</span>${extra || ''}<span>${label}</span></button>`;
   const seg = (items, cur, action) => `<div class="seg" role="group">${items.map(([v, label]) => `<button class="seg-opt ${String(cur) === String(v) ? 'on' : ''}" data-a="${action}" data-v="${v}" aria-pressed="${String(cur) === String(v)}">${label}</button>`).join('')}</div>`;
 
@@ -71,7 +78,7 @@
   <div class="row gap16 grow" style="align-items:stretch">
     <div class="g-panel scroll" style="width:300px">
       <h2 class="g-h">Target skills</h2>
-      <p class="g-note">Activities for these skills get a star on the child's screens.</p>
+      <p class="g-note">Starred for the child. Set for you by <button class="g-link inline" data-a="nav" data-to="cgFocus">Lumi helps with</button>.</p>
       ${skills}
       <h2 class="g-h top-gap">What the child sees</h2>
       ${tiles}
@@ -85,7 +92,7 @@
     </div>
     <div class="g-panel scroll" style="width:300px">
       <h2 class="g-h">Talk-board words</h2>
-      <p class="g-note">Add family names, favourite foods or places with a real photo. They appear in "My words".</p>
+      <p class="g-note">Family, foods, places, with a photo.</p>
       <div class="row wrap gap8">${words || '<span class="g-note">No words yet.</span>'}</div>
       <label class="g-field"><span>Word</span><input id="f-word" type="text" data-input="wordLabel" value="${esc(nw.label)}" maxlength="20" placeholder="Grandma"></label>
       ${A.LANGS && A.LANGS[state.settings.lang2] ? `<label class="g-field"><span>In ${A.LANGS[state.settings.lang2].name} (optional)</span><input id="f-word-l2" type="text" lang="${A.LANGS[state.settings.lang2].voiceLang}" data-input="wordL2" value="${esc(S.newWordL2 || '')}" maxlength="30" placeholder="${state.settings.lang2 === 'zh' ? '婆婆' : state.settings.lang2 === 'ms' ? 'Nenek' : 'பாட்டி'}"></label>` : ''}
@@ -107,8 +114,7 @@
   function busSettings() {
     const b = state.bus;
     const t = S.busTest;
-    return `<h2 class="g-h top-gap">Bus times (for the Bus step)</h2>
-      ${toggle(b.live, 'cgBusLive', '1', 'Use live bus arrival times from LTA DataMall (the same data as the MyTransport.SG app)')}
+    return `${toggle(b.live, 'cgBusLive', '1', 'Use live bus arrival times (LTA DataMall)')}
       <div class="row gap8">
         <label class="g-field grow"><span>Bus stop number (5 digits, on the bus stop sign)</span><input class="g-input" type="text" inputmode="numeric" maxlength="5" data-input="busStop" value="${esc(b.stop)}" placeholder="e.g. 83139"></label>
         <label class="g-field" style="width:150px"><span>Bus number</span><input class="g-input" type="text" maxlength="5" data-input="busService" value="${esc(b.service)}" placeholder="e.g. 15"></label>
@@ -118,7 +124,7 @@
       <div class="g-field"><span>Minutes to walk to the bus stop (Lumi says when to leave)</span>${seg([[0, 'Off'], [3, '3 min'], [5, '5 min'], [8, '8 min'], [10, '10 min']], b.walk, 'cgBusWalk')}</div>
       <div class="row gap8"><button class="g-btn small outline" data-a="cgBusTest">${ic('busLine', 16)}<span>Check bus times now</span></button>
         ${t ? `<span class="bus-test ${t.ok ? 'ok' : t.ok === false ? 'bad' : ''}">${esc(t.text)}</span>` : ''}</div>
-      <p class="g-note">How to set it up: get a free AccountKey from LTA DataMall, then copy tools/bus-relay-worker.js into a free Cloudflare Worker with your key saved as LTA_KEY. Paste the worker's link above. Without live times, the Bus step runs a short practice countdown.</p>`;
+      <p class="g-note">Needs a free LTA DataMall key and relay (see tools/bus-relay-worker.js). Without it, the Bus step uses a practice countdown.</p>`;
   }
 
   // what the chosen age pack changes, and an offer to load its example timetable
@@ -128,24 +134,18 @@
     if (!P) return '';
     const name = D.AGES[age].name;
     return `<div class="pack-box">
-      <div class="row between"><b>${esc(name)} pack</b><span class="g-note">Everything can still be changed below.</span></div>
-      <ul>${P.summary.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>
+      ${more('pack', `What the ${esc(name)} pack includes`, '', `<ul>${P.summary.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>`)}
       ${S.packOffer === age ? `<div class="pack-offer"><span>Also use the ${esc(name)} example timetable? It replaces your current timetable.</span>
         <span class="row gap8"><button class="g-btn small" data-a="cgPackWeek">Use it</button><button class="g-btn small outline" data-a="cgPackNo">Keep mine</button></span></div>`
         : `<button class="g-link" data-a="cgPackAsk">Load the ${esc(name)} example timetable</button>`}
-      <p class="g-note">Age sets the look, words and topics. Difficulty (below) is separate, so you can match your child's ability, for example the Teens look on Easy.</p>
     </div>`;
   }
 
   A.SCREENS.cgChild = () => {
     const p = state.profile;
-    const ages = Object.keys(D.AGES).map((k) => `<button class="age-card small ${p.age === k ? 'on' : ''}" data-a="cgAge" data-v="${k}" aria-pressed="${p.age === k}"><span class="age-name">${D.AGES[k].name}</span><span class="age-range">Ages ${D.AGES[k].range}</span><span class="g-note">${D.AGES[k].note}</span></button>`).join('');
-    const themes = Object.keys(D.THEMES).map((k) => {
-      const t = D.THEMES[k];
-      return `<button class="theme-card ${p.theme === k ? 'on' : ''}" data-a="cgTheme" data-v="${k}" aria-pressed="${p.theme === k}" style="background:${t.bg}">
-        <span class="theme-mini" style="background:${t.surface}"><span style="background:${t.floor}"></span></span><span class="theme-btn" style="background:${t.accent}"></span><span class="theme-name">${t.name}</span></button>`;
-    }).join('');
+    const ages = Object.keys(D.AGES).map((k) => `<button class="age-card small ${p.age === k ? 'on' : ''}" data-a="cgAge" data-v="${k}" aria-pressed="${p.age === k}"><span class="age-name">${D.AGES[k].name}</span><span class="age-range">Ages ${D.AGES[k].range}</span></button>`).join('');
     const partners = D.PARTNERS.map(([n, e]) => `<button class="partner-chip ${p.partner === n ? 'on' : ''}" data-a="cgPartner" data-v="${n}"><span class="emoji">${e}</span><span>${n}</span></button>`).join('');
+    const fs = A.focusChosen ? A.focusChosen() : [];
     return `
 <section class="screen grownup" aria-label="Child">
   ${A.gHeader('cgChild')}
@@ -153,33 +153,34 @@
     <div class="g-panel grow scroll">
       ${A.profilesHtml ? A.profilesHtml() : ''}
       <h2 class="g-h top-gap">This child</h2>
-      <label class="g-field"><span>Child's name (Lumi says it)</span><input id="f-child" type="text" data-input="childName" value="${esc(state.childName)}" maxlength="20"></label>
-      <div class="g-field"><span>Age group (loads that age pack)</span><div class="row gap8">${ages}</div></div>
+      <label class="g-field"><span>Name (Lumi says it)</span><input id="f-child" type="text" data-input="childName" value="${esc(state.childName)}" maxlength="20"></label>
+      <div class="g-field"><span>Age group</span><div class="row gap8">${ages}</div></div>
       ${packBox()}
-      <div class="g-field"><span>Difficulty (games, talk-board size, feelings choices, tutorial steps)</span>${seg([[1, 'Easy'], [2, 'Medium'], [3, 'Challenge']], p.level, 'cgLevel')}</div>
-      <p class="g-note">${{ 1: 'Easy: 12 talk buttons, 2 feeling choices, 3 matching pairs, 4-piece jigsaws, fewer tutorial steps. My day games are shorter: 2 foods at breakfast, fewer teeth to brush, 2 taps instead of 3 and less rubbing.', 2: 'Medium: 24 talk buttons, 4 feeling choices, 6 pairs, 6-piece jigsaws. My day games are played in full.', 3: 'Challenge: 35 talk buttons and a keyboard, 5 feeling choices, 8 pairs, 9-piece jigsaws, every tutorial step. My day games are played in full with more rubbing and no glowing hints.' }[p.level]}</p>
-      <div class="g-field"><span>Usually plays Together with</span><div class="row wrap gap8">${partners}</div></div>
-      <div class="g-field"><span>Photos for the main menu (optional, stay on this tablet)</span>
-        <div class="row gap24 wrap"><div class="col gap6"><span class="g-note">${esc(state.childName || 'Your child')}</span>${photoRow('child', state.childPhoto)}</div>
-        <div class="col gap6"><span class="g-note">${esc(p.partner || 'Play partner')}</span>${photoRow('partner', p.partnerPhoto)}</div></div></div>
-      <div class="g-field"><span>Daily goal for the streak (things to do with Lumi each day)</span>${seg([[1, '1 thing'], [2, '2 things'], [3, '3 things'], [5, '5 things']], state.streak.goal, 'cgGoal')}</div>
-      <div class="g-field"><span>Rest days (they never break the streak)</span><div class="row gap6">${D.DAYS.map((d) => { const on = (state.streak.restDays || []).includes(d.id); return `<button class="partner-chip ${on ? 'on' : ''}" data-a="cgRest" data-v="${d.id}" aria-pressed="${on}"><span>${d.short}</span></button>`; }).join('')}</div></div>
-      <p class="g-note">${ic('flame', 16)} Streak now: <b>${state.streak.count}</b> · best: <b>${state.streak.best || 0}</b> · shields: <b>${state.streak.shields || 0}</b> (one more every Monday, up to 2). Missing a day never shows "you lost": Lumi just says "let's start a new streak".</p>
-      ${busSettings()}
-      <div class="g-field"><span>Real-life goal (stars count towards it)</span>
-        <div class="row gap8"><input id="f-goal" class="g-input grow" type="text" data-input="goalName" value="${esc(state.goal.name)}" maxlength="24">
-        <button class="mini-btn bordered" data-a="bGoal" data-v="-5" aria-label="Fewer">${ic('minus', 16)}</button><span class="row gap4 g-strong">${ic('star', 18)}${state.goal.target}</span><button class="mini-btn bordered" data-a="bGoal" data-v="5" aria-label="More">${ic('plus', 16)}</button></div></div>
+      <div class="g-field"><span>Difficulty</span>${seg([[1, 'Easy'], [2, 'Medium'], [3, 'Challenge']], p.level, 'cgLevel')}<span class="g-note">${{ 1: 'Fewer, bigger choices and shorter games.', 2: 'The standard amount.', 3: 'More choices, a keyboard, longer games, no glowing hints.' }[p.level]}</span></div>
+      <div class="g-field"><span>Lumi helps with</span><div class="row wrap gap8">${fs.length ? fs.map((f) => `<span class="fo-chip" style="--fc:${f.tint};--fi:${f.ink}">${ic(f.icon, 18)}<span>${esc(f.name)}</span></span>`).join('') : '<span class="g-note">Not chosen yet.</span>'}<button class="g-btn small outline" data-a="nav" data-to="cgFocus">${ic('pencil', 16)}<span>${fs.length ? 'Change' : 'Choose'}</span></button></div></div>
+      ${more('people', 'Play partner and photos', esc(p.partner || ''), `
+        <div class="g-field"><span>Usually plays Together with</span><div class="row wrap gap8">${partners}</div></div>
+        <div class="g-field"><span>Photos for the main menu (stay on this tablet)</span>
+          <div class="row gap24 wrap"><div class="col gap6"><span class="g-note">${esc(state.childName || 'Your child')}</span>${photoRow('child', state.childPhoto)}</div>
+          <div class="col gap6"><span class="g-note">${esc(p.partner || 'Play partner')}</span>${photoRow('partner', p.partnerPhoto)}</div></div></div>`)}
+      ${more('goals', 'Daily goal and rewards', `${state.streak.goal} a day · ${esc(state.goal.name || '')}`, `
+        <div class="g-field"><span>Things to do with Lumi each day</span>${seg([[1, '1 thing'], [2, '2 things'], [3, '3 things'], [5, '5 things']], state.streak.goal, 'cgGoal')}</div>
+        <div class="g-field"><span>Rest days (never break the streak)</span><div class="row gap6">${D.DAYS.map((d) => { const on = (state.streak.restDays || []).includes(d.id); return `<button class="partner-chip ${on ? 'on' : ''}" data-a="cgRest" data-v="${d.id}" aria-pressed="${on}"><span>${d.short}</span></button>`; }).join('')}</div></div>
+        <p class="g-note">${ic('flame', 16)} Streak <b>${state.streak.count}</b> · best <b>${state.streak.best || 0}</b> · shields <b>${state.streak.shields || 0}</b></p>
+        <div class="g-field"><span>Real-life goal (stars count towards it)</span>
+          <div class="row gap8"><input id="f-goal" class="g-input grow" type="text" data-input="goalName" value="${esc(state.goal.name)}" maxlength="24">
+          <button class="mini-btn bordered" data-a="bGoal" data-v="-5" aria-label="Fewer">${ic('minus', 16)}</button><span class="row gap4 g-strong">${ic('star', 18)}${state.goal.target}</span><button class="mini-btn bordered" data-a="bGoal" data-v="5" aria-label="More">${ic('plus', 16)}</button></div></div>`)}
+      ${more('bus', 'Live bus times', state.bus.live ? 'On' : 'Off', busSettings())}
     </div>
     <div class="g-panel scroll" style="width:440px">
       <h2 class="g-h">Colours</h2>
-      <p class="g-note">Lumi is always drawn soft and round. Pick the colours that suit your child best: "Soft (low colour)" and "Stone" are the calmest.</p>
       <div class="colour-grid three">${A.colourCards(p.theme, 'cgTheme')}</div>
-      ${A.offlineHtml ? A.offlineHtml() : ''}
-      ${A.nativeNotifyHtml ? A.nativeNotifyHtml() : ''}
-      ${A.appIconHtml ? A.appIconHtml() : ''}
-      ${A.privacyHtml ? A.privacyHtml() : ''}
-      <span class="grow"></span>
-      <button class="g-btn danger" data-a="bReset">${S.confirmReset ? 'Tap again to reset everything' : 'Reset all progress'}</button>
+      ${more('device', 'Backup, offline and privacy', 'Keep a copy, app icon, notifications', `
+        ${A.offlineHtml ? A.offlineHtml() : ''}
+        ${A.nativeNotifyHtml ? A.nativeNotifyHtml() : ''}
+        ${A.appIconHtml ? A.appIconHtml() : ''}
+        ${A.privacyHtml ? A.privacyHtml() : ''}
+        <button class="g-btn danger top-gap" data-a="bReset">${S.confirmReset ? 'Tap again to reset everything' : 'Reset all progress'}</button>`)}
     </div>
   </div>
 </section>`;
@@ -191,56 +192,54 @@
     const r = state.reminders;
     const rem = (r.list || []).map((it) => `<div class="rem-row"><span class="emoji">${esc(it.e)}</span><span class="grow">${esc(it.text)}</span><span class="tag">${it.every ? 'every ' + it.every + ' min' : 'at ' + A.fmt(it.at)}</span><button class="mini-btn" data-a="cgRemDel" data-v="${it.id}" aria-label="Remove">${ic('x', 16)}</button></div>`).join('');
     const nr = S.newRem || (S.newRem = { e: '💧', text: '', mode: 'every', every: 60, at: '08:00' });
+    const voiceBits = `
+      <div class="g-field"><span>Lumi's voice (tap to hear)</span>${A.voicePickerHtml ? A.voicePickerHtml({ size: 40, cls: 'grown', subs: true }) : ''}</div>
+      ${toggle(st.childVoice, 'bToggle', 'childVoice', 'Child can choose the voice')}
+      <button class="fv-entry" data-a="nav" data-to="cgVoice">${ic('heart', 26)}<span class="grow"><b>Your own voice for Lumi</b><span>${A.familiarCount ? (() => { const c = A.familiarCount(); return c.have ? `${c.have} of ${c.total} lines recorded` : 'Record lines your child knows'; })() : ''}</span></span>${ic('chev', 22)}</button>
+      ${toggle(st.speakWords, 'bToggle', 'speakWords', 'Talk board says each word')}
+      ${A.langSettingsHtml ? A.langSettingsHtml() : ''}
+      <div class="g-field"><span>Chat with Lumi: use the microphone</span>${seg([['off', 'Off'], ['on', 'On']], st.chatMic === true ? 'on' : 'off', 'cgChatMic')}</div>
+      <p class="g-note">More voices: iPad Settings › Accessibility › Spoken Content › Voices. Android: Settings › Text-to-speech.</p>`;
+    const playBits = `
+      ${toggle(st.watchFirst !== false, 'bToggle', 'watchFirst', 'Lumi shows each step first, then the child tries')}
+      ${toggle(st.stepGames !== false, 'bToggle', 'stepGames', 'Full games for each part of the day')}
+      <div class="g-field"><span>Routine steps</span>${seg([['play', 'Play with Lumi'], ['tasks', 'Checklist']], state.profile.routineMode || 'play', 'cgRoutineMode')}</div>
+      <div class="g-field"><span>Reading time</span>${seg([['choose', 'Child chooses'], ['own', 'Own book'], ['story', 'A Lumi story']], st.reading || 'choose', 'cgReading')}</div>
+      ${toggle(st.breakBtn !== false, 'bToggle', 'breakBtn', 'Break button on every screen')}
+      ${toggle(st.moveBreak !== false, 'cgMoveOn', 'moveBreak', 'Movement breaks ("Move with Lumi")')}
+      ${st.moveBreak !== false ? `<div class="g-field"><span>Which moves</span>${seg([['choose', 'Child chooses'], ['calm', 'Calm'], ['energy', 'Energy']], st.moveKind || 'choose', 'cgMoveKind')}</div>
+      ${toggle(!!st.moveSeated, 'bToggle', 'moveSeated', 'Seated moves only')}` : ''}
+      ${toggle(st.buddy !== false, 'bToggle', 'buddy', 'Pets walk with Lumi')}`;
     return `
 <section class="screen grownup" aria-label="Sensory and comfort">
   ${A.gHeader('cgSensory')}
   <div class="row gap16 grow" style="align-items:stretch">
     <div class="g-panel grow scroll">
-      <div class="qz-banner">${ic('sliders', 30)}<span class="grow"><b>Not sure what to choose?</b><span>${state.sensory && state.sensory.done ? 'You answered the quick-start. Answer again any time.' : 'Answer 5 quick questions and Lumi sets these for you.'}</span></span><button class="g-btn small" data-a="qzOpen" data-v="cgSensory">${state.sensory && state.sensory.done ? 'Answer again' : 'Start'}</button></div>
-      <h2 class="g-h top-gap">Sight and motion</h2>
-      ${toggle(st.reduceMotion, 'bToggle', 'reduceMotion', 'Reduce animation (no bouncing or moving backgrounds)')}
-      ${toggle(st.highContrast, 'bToggle', 'highContrast', 'High contrast (darker outlines and text, stronger colours)')}
-      ${toggle(st.tapMove, 'bToggle', 'tapMove', 'Tap instead of drag: tap a thing, then tap where it goes (and tap to rub). For children who find dragging hard. "Do it with me" in Learn helps with any step.')}
+      <div class="qz-banner">${ic('sliders', 30)}<span class="grow"><b>Not sure?</b><span>${state.sensory && state.sensory.done ? 'You answered the 5 questions.' : 'Answer 5 questions and Lumi sets this for you.'}</span></span><button class="g-btn small" data-a="qzOpen" data-v="cgSensory">${state.sensory && state.sensory.done ? 'Again' : 'Start'}</button></div>
+      <h2 class="g-h top-gap">Sight and touch</h2>
+      ${toggle(st.reduceMotion, 'bToggle', 'reduceMotion', 'Less movement on screen')}
+      ${toggle(st.highContrast, 'bToggle', 'highContrast', 'High contrast')}
+      ${toggle(st.tapMove, 'bToggle', 'tapMove', 'Tap instead of drag')}
       <div class="g-field"><span>Text size</span>${seg([[0.9, 'Small'], [1, 'Normal'], [1.15, 'Large'], [1.3, 'Extra large']], st.textSize, 'cgText')}</div>
-      <h2 class="g-h top-gap">Sound and voice</h2>
+      <h2 class="g-h top-gap">Sound</h2>
       ${toggle(st.sounds, 'bToggle', 'sounds', 'Sounds and chimes')}
       ${toggle(st.voice, 'bToggle', 'voice', "Lumi's voice")}
-      <div class="g-field"><span>Lumi's voice (tap one to hear it)</span>${A.voicePickerHtml ? A.voicePickerHtml({ size: 40, cls: 'grown', subs: true }) : ''}</div>
-      ${toggle(st.childVoice, 'bToggle', 'childVoice', 'Child can choose the voice in the Pause menu')}
-      <button class="fv-entry" data-a="nav" data-to="cgVoice">${ic('heart', 26)}<span class="grow"><b>Your own voice for Lumi</b><span>${A.familiarCount ? (() => { const c = A.familiarCount(); return c.have ? `${c.have} of ${c.total} lines recorded` : 'Record key lines so your child hears you'; })() : ''}</span></span>${ic('chev', 22)}</button>
-      <p class="g-note">Voices come from the tablet. To add more on an iPad: Settings › Accessibility › Spoken Content › Voices. On Android: Settings › Text-to-speech.</p>
-      ${toggle(st.speakWords, 'bToggle', 'speakWords', 'Talk board says each word when tapped')}
-      ${A.langSettingsHtml ? A.langSettingsHtml() : ''}
-      <div class="g-field"><span>Chat with Lumi: Lumi listens with the microphone</span>${seg([['off', 'Off'], ['on', 'On']], st.chatMic === true ? 'on' : 'off', 'cgChatMic')}</div>
-      <p class="g-note">${A.chatMicAvailable && A.chatMicAvailable() ? 'Off unless you turn it on. The tablet\'s speech service may send the sound to Apple or Google to turn it into words; Lumi saves nothing. Picture chat always works without the microphone.' : 'This browser cannot listen. Picture chat still works. Chrome or Safari on the tablet can listen.'}</p>
       <div class="g-field"><span>Voice pace</span><div class="row gap8">${seg([[0.7, 'Slow'], [0.85, 'Calm'], [1, 'Normal'], [1.15, 'Quick']], st.voiceRate, 'cgRate')}<button class="g-btn small outline" data-a="cgTestVoice">${ic('speaker', 16)}<span>Test</span></button></div></div>
       <div class="g-field"><span>Music volume</span>${seg([[0.3, 'Quiet'], [0.6, 'Medium'], [0.9, 'Loud']], st.musicVolume, 'cgVol')}</div>
-      <div class="g-field"><span>Child's favourite music (plays in the calm corner as "My music")</span>
-        <div class="row gap8"><label class="g-btn outline file-btn">${ic('upload', 18)}<span>Upload a song</span><input type="file" accept="audio/*" data-file="music"></label>
+      ${more('voice', "Lumi's voice and languages", 'Voice, your own recordings, second language', voiceBits)}
+      ${more('music', 'Favourite music', S.mineName ? esc(S.mineName) : 'Plays in the calm corner', `<div class="row gap8"><label class="g-btn outline file-btn">${ic('upload', 18)}<span>Upload a song</span><input type="file" accept="audio/*" data-file="music"></label>
         <span class="g-note" id="mineName">${S.mineName ? esc(S.mineName) : 'No song yet'}</span>
-        ${S.mineName ? `<button class="g-btn small outline" data-a="music" data-v="mine">${ic(window.LumiAudio && window.LumiAudio.playing === 'mine' ? 'pauseFill' : 'playPause', 14)}<span>Play</span></button><button class="g-link" data-a="cgMineDel">Remove</button>` : ''}</div></div>
-      <h2 class="g-h top-gap">Play and breaks</h2>
-      ${toggle(st.watchFirst !== false, 'bToggle', 'watchFirst', 'Learn with Lumi: Lumi shows each step first, then the child tries (watch, then do)')}
-      ${toggle(st.stepGames !== false, 'bToggle', 'stepGames', 'Full Lumi games for every part of the day (off: a quicker "do it with Lumi" version)')}
-      <div class="g-field"><span>How routine steps work</span>${seg([['play', 'Play with Lumi first'], ['tasks', 'Task checklist (Teens)']], state.profile.routineMode || 'play', 'cgRoutineMode')}</div>
-      <div class="g-field"><span>Reading time in My day</span>${seg([['choose', 'Child chooses'], ['own', 'Their own book'], ['story', 'A Lumi story']], st.reading || 'choose', 'cgReading')}</div>
-      <p class="g-note">A Lumi story opens today's story from the Stories shelf (a new one each day). Your child can also pick another one.</p>
-      ${toggle(st.breakBtn !== false, 'bToggle', 'breakBtn', 'Show the Break button on every child screen')}
-      ${toggle(st.moveBreak !== false, 'cgMoveOn', 'moveBreak', 'Movement breaks: "Move with Lumi" on the Break screen')}
-      ${st.moveBreak !== false ? `<div class="g-field"><span>Which moves</span>${seg([['choose', 'Child chooses'], ['calm', 'Calm moves (push, stretch, squeeze)'], ['energy', 'Energy moves (jump, march, shake)']], st.moveKind || 'choose', 'cgMoveKind')}</div>
-      ${toggle(!!st.moveSeated, 'bToggle', 'moveSeated', 'Seated moves only (every move has a sitting version)')}
-      <p class="g-note">Calm moves help a body that is too busy settle; energy moves wake up a tired or fidgety body. Lumi always offers moving as a choice. If your child is very upset, breathing and quiet come first.</p>` : ''}
-      ${toggle(st.buddy !== false, 'bToggle', 'buddy', 'Our pets walk with Lumi on every screen')}
-      <p class="g-note">Breaks are never counted as a problem. Each one shows in Progress, so you can see when and where your child needs a pause.</p>
+        ${S.mineName ? `<button class="g-btn small outline" data-a="music" data-v="mine">${ic(window.LumiAudio && window.LumiAudio.playing === 'mine' ? 'pauseFill' : 'playPause', 14)}<span>Play</span></button><button class="g-link" data-a="cgMineDel">Remove</button>` : ''}</div>`)}
+      ${more('play', 'Play and breaks', 'Watch first, breaks, movement', playBits)}
       <h2 class="g-h top-gap">Guide hand</h2>
-      ${toggle(st.guide, 'bToggle', 'guide', 'Glow and a tapping hand show what to press next')}
-      <div class="g-field"><span>Show the hand after</span>${seg([[3, '3 seconds'], [6, '6 seconds'], [10, '10 seconds']], st.guideDelay, 'bDelay')}</div>
+      ${toggle(st.guide, 'bToggle', 'guide', 'Show what to press next')}
+      <div class="g-field"><span>Show it after</span>${seg([[3, '3 seconds'], [6, '6 seconds'], [10, '10 seconds']], st.guideDelay, 'bDelay')}</div>
     </div>
     <div class="g-panel scroll" style="width:430px">
-      <h2 class="g-h">Gentle reminders</h2>
-      <p class="g-note">A small banner slides in at the top with a soft chime. It never stops play.</p>
-      ${toggle(r.next, 'cgRemNext', 'next', 'Remind before the next timetable step (10 minutes before)')}
-      <div class="g-field"><span>Break reminder after</span>${seg([[0, 'Off'], [10, '10 min'], [20, '20 min'], [30, '30 min']], r.breakMin, 'cgBreak')}</div>
+      <h2 class="g-h">Reminders</h2>
+      <p class="g-note">A soft banner at the top. Play never stops.</p>
+      ${toggle(r.next, 'cgRemNext', 'next', '10 minutes before the next step')}
+      <div class="g-field"><span>Suggest a break after</span>${seg([[0, 'Off'], [10, '10 min'], [20, '20 min'], [30, '30 min']], r.breakMin, 'cgBreak')}</div>
       <div class="g-sub-h">Our reminders</div>
       ${rem || '<p class="g-note">None yet.</p>'}
       <div class="g-sub-h">Add a reminder</div>
@@ -248,7 +247,7 @@
       <label class="g-field"><span>Text</span><input id="f-rem" type="text" data-input="remText" value="${esc(nr.text)}" maxlength="40" placeholder="Drink some water"></label>
       <div class="row gap8">${seg([['every', 'Every'], ['at', 'At a time']], nr.mode, 'cgRemMode')}
         ${nr.mode === 'every' ? seg([[30, '30 min'], [60, '1 hour'], [120, '2 hours']], nr.every, 'cgRemEvery') : `<input class="g-input" type="time" data-input="remAt" value="${nr.at}">`}</div>
-      <div class="row gap8"><button class="g-btn" data-a="cgRemAdd">${ic('plus', 18)}<span>Add</span></button><button class="g-btn outline" data-a="cgRemTest">${ic('bell', 18)}<span>Test a reminder</span></button></div>
+      <div class="row gap8"><button class="g-btn" data-a="cgRemAdd">${ic('plus', 18)}<span>Add</span></button><button class="g-btn outline" data-a="cgRemTest">${ic('bell', 18)}<span>Test</span></button></div>
     </div>
   </div>
 </section>`;
@@ -361,13 +360,13 @@
   ${A.gHeader('cgProgress')}
   <div class="row gap16 grow" style="align-items:stretch">
     <div class="g-panel grow scroll">
-      <div class="row between"><h2 class="g-h">How ${esc(state.childName || 'your child')} is doing</h2><span class="g-note">Last 7 days compared with the 7 days before</span></div>
+      <div class="row between"><h2 class="g-h">How ${esc(state.childName || 'your child')} is doing</h2><button class="g-btn small outline" data-a="nav" data-to="cgJournal">${ic('journal', 16)}<span>Notes</span></button></div>
+      ${A.focusWeekHtml ? A.focusWeekHtml() : ''}
       <ul class="insights">${insights(week, prev).map((t) => `<li>${t}</li>`).join('')}</ul>
       ${A.feelChartHtml ? A.feelChartHtml() : ''}
       <div class="stat-grid">${perfTiles(week, prev)}</div>
-      <div class="row between top-gap"><h2 class="g-h">What ${esc(state.childName || 'they')} did</h2><span class="g-note">${state.stats.totalEarned} stars earned in total</span></div>
-      <div class="stat-grid">${tiles}</div>
-      <div class="row gap16 wrap">${barChart('Routine steps per day', week, 'steps', 'var(--teal)')}${barChart('Minutes using Lumi per day', week, 'minutes', '#7E64C8')}</div>
+      ${more('did', `Everything ${esc(state.childName || 'they')} did this week`, `${state.stats.totalEarned} stars in total`, `<div class="stat-grid">${tiles}</div>
+      <div class="row gap16 wrap">${barChart('Routine steps per day', week, 'steps', 'var(--teal)')}${barChart('Minutes using Lumi per day', week, 'minutes', '#7E64C8')}</div>`)}
     </div>
     <div class="g-panel scroll" style="width:400px">
       <h2 class="g-h">Skills this week</h2>
@@ -375,8 +374,7 @@
       <h2 class="g-h top-gap">Feelings shared</h2>
       <div class="row wrap gap8">${feelHtml}</div>
       ${A.meTalkHtml ? A.meTalkHtml() : ''}
-      <h2 class="g-h top-gap">Recent activity</h2>
-      <ul class="ev-list">${events || '<li class="g-note">Nothing yet. Play a little and come back!</li>'}</ul>
+      ${more('recent', 'Recent activity', '', `<ul class="ev-list">${events || '<li class="g-note">Nothing yet.</li>'}</ul>`)}
     </div>
   </div>
 </section>`;
