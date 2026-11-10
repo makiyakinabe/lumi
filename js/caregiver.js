@@ -15,7 +15,7 @@
 
   // Overview is the page Grown-ups opens on (focus.js); Notes (the journal) opens from Overview and Progress
   const TABS = [['cgHome', 'Overview', 'home'], ['builder', 'Timetable', 'calendar'], ['cgComingUp', 'Coming up', 'hourglass'], ['cgActivities', 'Activities', 'target'], ['cgChild', 'Child', 'person'], ['cgSensory', 'Sensory', 'sliders'], ['cgProgress', 'Progress', 'chart']];
-  const TAB_OF = { cgJournal: 'cgProgress', cgFocus: 'cgHome', cgVoice: 'cgSensory', cgLang: 'cgSensory', cgQuiz: 'cgSensory', cgNowNext: 'builder' };
+  const TAB_OF = { cgJournal: 'cgProgress', cgFocus: 'cgHome', cgVoice: 'cgSensory', cgLang: 'cgSensory', cgQuiz: 'cgSensory', cgNowNext: 'builder', cgReport: 'cgProgress' };
   const tz = () => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone.replace(/_/g, ' '); } catch (e) { return ''; } };
   A.gHeader = (active) => `<div class="row between g-header">
     <div class="row gap12">
@@ -171,6 +171,7 @@
           <div class="row gap8"><input id="f-goal" class="g-input grow" type="text" data-input="goalName" value="${esc(state.goal.name)}" maxlength="24">
           <button class="mini-btn bordered" data-a="bGoal" data-v="-5" aria-label="Fewer">${ic('minus', 16)}</button><span class="row gap4 g-strong">${ic('star', 18)}${state.goal.target}</span><button class="mini-btn bordered" data-a="bGoal" data-v="5" aria-label="More">${ic('plus', 16)}</button></div></div>`)}
       ${more('bus', 'Live bus times', state.bus.live ? 'On' : 'Off', busSettings())}
+      ${A.lockHtml ? more('lock', 'Grown-ups lock', A.lockLabel(), A.lockHtml()) : ''}
     </div>
     <div class="g-panel scroll" style="width:440px">
       <h2 class="g-h">Colours</h2>
@@ -360,11 +361,12 @@
   ${A.gHeader('cgProgress')}
   <div class="row gap16 grow" style="align-items:stretch">
     <div class="g-panel grow scroll">
-      <div class="row between"><h2 class="g-h">How ${esc(state.childName || 'your child')} is doing</h2><button class="g-btn small outline" data-a="nav" data-to="cgJournal">${ic('journal', 16)}<span>Notes</span></button></div>
+      <div class="row between"><h2 class="g-h">How ${esc(state.childName || 'your child')} is doing</h2><div class="row gap8"><button class="g-btn small outline" data-a="nav" data-to="cgJournal">${ic('journal', 16)}<span>Notes</span></button><button class="g-btn small" data-a="nav" data-to="cgReport">${ic('upload', 16)}<span>Share a report</span></button></div></div>
+      ${A.plainSummaryHtml ? A.plainSummaryHtml(7) : ''}
       ${A.focusWeekHtml ? A.focusWeekHtml() : ''}
-      <ul class="insights">${insights(week, prev).map((t) => `<li>${t}</li>`).join('')}</ul>
+      ${more('charts', 'Charts and details', 'Trends, feelings by day, accuracy, minutes', `<ul class="insights">${insights(week, prev).map((t) => `<li>${t}</li>`).join('')}</ul>
       ${A.feelChartHtml ? A.feelChartHtml() : ''}
-      <div class="stat-grid">${perfTiles(week, prev)}</div>
+      <div class="stat-grid">${perfTiles(week, prev)}</div>`)}
       ${more('did', `Everything ${esc(state.childName || 'they')} did this week`, `${state.stats.totalEarned} stars in total`, `<div class="stat-grid">${tiles}</div>
       <div class="row gap16 wrap">${barChart('Routine steps per day', week, 'steps', 'var(--teal)')}${barChart('Minutes using Lumi per day', week, 'minutes', '#7E64C8')}</div>`)}
     </div>

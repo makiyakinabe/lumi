@@ -140,6 +140,7 @@
     ['cgSensory', 'sliders', 'Sensory', 'Sound, motion, reminders'],
     ['cgProgress', 'chart', 'Progress', 'How it is going'],
     ['cgJournal', 'journal', 'Notes', 'Write what you noticed'],
+    ['cgReport', 'upload', 'Share a report', 'One page for school or therapy'],
     ['cgChild', 'person', 'Child', 'Name, age, colours, backup']
   ];
   A.PARENT.cgHome = 'menu';
@@ -163,6 +164,7 @@
         : `<button class="ov-pick" data-a="nav" data-to="cgFocus">${ic('target', 30)}<span><b>Choose what Lumi helps with</b><span>Takes 10 seconds</span></span>${ic('chev', 20)}</button>`}
     </div>
     <div class="g-panel grow scroll">
+      ${A.gsHtml ? A.gsHtml() : ''}
       <h2 class="g-h">What would you like to do?</h2>
       <div class="ov-actions">${ACTIONS_LIST.map(([to, icon, name, sub]) => `<button class="ov-act" data-a="nav" data-to="${to}"><span class="ov-act-ic">${ic(icon, 30)}</span><span class="ov-act-t"><b>${name}</b><span>${sub}</span></span></button>`).join('')}
         <button class="ov-act try" data-a="nav" data-to="menu"><span class="ov-act-ic">${ic('play', 30)}</span><span class="ov-act-t"><b>Back to Lumi</b><span>Hand the tablet back</span></span></button></div>

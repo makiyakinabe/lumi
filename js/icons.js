@@ -54,6 +54,8 @@
     minus: line('<path d="M5 12h14"/>', 2.6),
     up: line('<path d="M6 15l6-6 6 6"/>', 2.6),
     down: line('<path d="M6 9l6 6 6-6"/>', 2.6),
+    grip: line('<circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/>', 2.4),
+    copy: line('<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>'),
     trash: line('<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>'),
     undo: line('<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>', 2.4),
     bulb: line('<path d="M12 3a6 6 0 0 0-3.5 10.9V16h7v-2.1A6 6 0 0 0 12 3z"/><path d="M9.5 19h5M10.5 21.5h3"/>'),

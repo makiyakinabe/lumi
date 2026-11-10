@@ -430,7 +430,12 @@
       ? `<img class="step-photo" src="${info.photo}" width="${size}" height="${size}" alt="">`
       : ic(info.icon, size);
   }
-  const dayPlan = (k) => sortDay(state.week[k] || (state.week[k] = []));
+  // a "today only" plan (Grown-ups › Timetable) replaces this weekday's plan for today, then quietly expires
+  const todayOnly = () => { const t = state.todayOnly; return t && t.date === dateKey() && Array.isArray(t.steps) ? t : null; };
+  const weekPlan = (k) => sortDay(state.week[k] || (state.week[k] = []));
+  const dayPlan = (k) => { const t = todayOnly(); return t && k === todayKey() ? sortDay(t.steps) : weekPlan(k); };
+  // the list the timetable builder is editing right now
+  const bPlan = () => (S.bToday && S.bDay === todayKey() && todayOnly() ? sortDay(todayOnly().steps) : weekPlan(S.bDay));
 
   // ---------------------------------------------------------------- routine helpers
   function checkInfo(id) {
@@ -1677,7 +1682,7 @@
 
   // ---------------------------------------------------------------- Grown-ups: weekly timetable builder
   function selectedEntry() {
-    const plan = dayPlan(S.bDay);
+    const plan = bPlan();
     let e = plan.find((x) => x.uid === S.bSel);
     if (!e && plan.length) { e = plan[0]; S.bSel = e.uid; }
     return e || null;
@@ -1701,7 +1706,8 @@
       timeline += items.map((e) => {
         const info = stepInfo(e);
         const surprise = e.changes && e.changes.length && e.surprise && e.surprise !== 'never';
-        return `<div class="tl-row ${e.uid === S.bSel ? 'sel' : ''}">
+        return `<div class="tl-row ${e.uid === S.bSel ? 'sel' : ''}" data-uid="${e.uid}">
+          <span class="tl-grip" data-grip="${e.uid}" title="Drag to move" aria-hidden="true">${ic('grip', 18)}</span>
           <span class="tl-time">${fmt(e.time)}</span>
           <span class="tl-dot"></span>
           <button class="tl-card" data-a="bSel" data-v="${e.uid}" aria-label="Edit ${esc(info.label)} at ${fmt(e.time)}">
@@ -1720,7 +1726,10 @@
   }
 
   SCREENS.builder = () => {
-    const plan = dayPlan(S.bDay);
+    if (S.bToday && (S.bDay !== todayKey() || !todayOnly())) S.bToday = false;
+    const plan = bPlan();
+    const isToday = S.bDay === todayKey();
+    const own = isToday && todayOnly();
     const step = selectedEntry();
     const dayTabs = D.DAYS.map((d) => `<button class="day-tab ${S.bDay === d.id ? 'on' : ''}" data-a="bDay" data-v="${d.id}" aria-pressed="${S.bDay === d.id}">${d.short}<span class="count">${(state.week[d.id] || []).length}</span>${d.id === todayKey() ? '<span class="today-dot" title="Today"></span>' : ''}</button>`).join('');
 
@@ -1766,6 +1775,7 @@
           <div class="row between g-field row-field"><span>Stars for this step</span>
             <div class="row gap8"><button class="mini-btn bordered" data-a="bStars" data-v="-1" aria-label="Fewer stars">${ic('minus', 16)}</button><span class="row gap4 g-strong">${ic('star', 18)}${step.stars || 1}</span><button class="mini-btn bordered" data-a="bStars" data-v="1" aria-label="More stars">${ic('plus', 16)}</button></div>
           </div>
+          <div class="row gap8"><button class="g-btn outline grow" data-a="bMove" data-v="-1">${ic('up', 16)}<span>Earlier</span></button><button class="g-btn outline grow" data-a="bMove" data-v="1">${ic('down', 16)}<span>Later</span></button></div>
           <div class="row gap8"><button class="g-btn outline grow" data-a="bDup">Duplicate</button><button class="g-btn outline grow danger-text" data-a="bDel" data-v="${step.uid}">Remove</button></div>`;
       }
     } else if (S.bTab === 'new') {
@@ -1789,10 +1799,14 @@
     <div class="row gap6">${dayTabs}</div>
     <div class="row gap8">
       <button class="g-btn small" data-a="bPreview">${ic('play', 18)}<span>Try as child</span></button>
-      <span class="g-note" style="white-space:nowrap">Copy to</span>
-      <button class="g-btn small outline" data-a="bCopy" data-v="weekdays">Weekdays</button>
-      <button class="g-btn small outline" data-a="bCopy" data-v="weekend">Weekend</button>
-      <button class="g-btn small outline" data-a="bCopy" data-v="all">All</button>
+      <div class="copy-wrap"><button class="g-btn small outline ${S.bCopyOpen ? 'on' : ''}" data-a="bCopyOpen" aria-expanded="${!!S.bCopyOpen}">${ic('copy', 16)}<span>Copy day</span></button>
+        ${S.bCopyOpen ? `<div class="copy-pop" role="dialog" aria-label="Copy ${dayName(S.bDay)}">
+          <b>Copy ${dayName(S.bDay)} to</b>
+          <div class="row gap6">${D.DAYS.filter((x) => x.id !== S.bDay).map((x) => { const on = (S.bCopyTo || []).includes(x.id); return `<button class="partner-chip ${on ? 'on' : ''}" data-a="bCopyPick" data-v="${x.id}" aria-pressed="${on}"><span>${x.short}</span></button>`; }).join('')}</div>
+          <div class="row gap8"><button class="g-link" data-a="bCopyPick" data-v="weekdays">Weekdays</button><button class="g-link" data-a="bCopyPick" data-v="weekend">Weekend</button><button class="g-link" data-a="bCopyPick" data-v="all">Every day</button></div>
+          <span class="g-note">This replaces what is on those days.</span>
+          <button class="g-btn small" data-a="bCopy" ${(S.bCopyTo || []).length ? '' : 'disabled'}>${ic('check', 16)}<span>${(S.bCopyTo || []).length ? `Copy to ${(S.bCopyTo || []).length} day${(S.bCopyTo || []).length > 1 ? 's' : ''}` : 'Pick the days'}</span></button>
+        </div>` : ''}</div>
       <button class="g-btn small outline danger-text" data-a="bClear">${S.confirmClear ? 'Tap again to clear' : 'Clear day'}</button>
     </div>
   </div>
@@ -1808,7 +1822,10 @@
       <button class="g-btn outline" data-a="bTab" data-v="new">${ic('plus', 18)}<span>Make a new step</span></button>
     </div>
     <div class="g-panel grow">
-      <div class="row between"><h2 class="g-h">${dayName(S.bDay)}</h2><span class="g-note">Steps sort by time</span></div>
+      <div class="row between"><h2 class="g-h">${S.bToday ? 'Today only' : dayName(S.bDay)}</h2>
+        ${isToday ? `<div class="seg small" role="group" aria-label="Which plan"><button class="seg-opt ${S.bToday ? '' : 'on'}" data-a="bTodayMode" data-v="week" aria-pressed="${!S.bToday}">Every ${dayName(S.bDay)}</button><button class="seg-opt ${S.bToday ? 'on' : ''}" data-a="bTodayMode" data-v="today" aria-pressed="${!!S.bToday}">Today only</button></div>` : '<span class="g-note">Drag the dots to move a step</span>'}</div>
+      ${S.bToday ? `<div class="today-note">${ic('clock', 18)}<span>Changes here are just for today. Tomorrow goes back to normal.</span><button class="g-link" data-a="bTodayUndo">Undo today's changes</button></div>`
+        : own ? `<div class="today-note">${ic('clock', 18)}<span>Today has its own plan.</span><button class="g-link" data-a="bTodayMode" data-v="today">See today</button></div>` : ''}
       <div class="timeline">${timeline}</div>
     </div>
     <div class="g-panel" style="width:340px;overflow-y:auto">
@@ -1828,6 +1845,7 @@
   }
 
   function go(screen, voiceLine, opts) {
+    if (A.gateGo && A.gateGo(screen, voiceLine, opts)) return; // optional Grown-ups lock (grownups-plus.js)
     const o = opts || {};
     clearTimers();
     if (S.screen === 'calm' && screen !== 'calm' && window.LumiAudio && window.LumiAudio.playing) window.LumiAudio.stop();
@@ -1985,8 +2003,21 @@
     fr.readAsDataURL(file);
   }
 
+  // move a step to a new place in the day: the times stay where they were and the steps swap into them
+  function reorderPlan(plan, id, to) {
+    const times = plan.map((e) => e.time);
+    const from = plan.findIndex((e) => e.uid === id);
+    if (from < 0 || from === to) return;
+    const [e] = plan.splice(from, 1);
+    plan.splice(to, 0, e);
+    plan.forEach((x, k) => { x.time = times[k]; });
+    // two steps at the same time would not move; nudge the moved one
+    if (to > 0 && plan[to - 1].time === e.time && from < to) e.time = fromMin(toMin(e.time) + 5);
+    if (to < plan.length - 1 && plan[to + 1].time === e.time && from > to) e.time = fromMin(Math.max(0, toMin(e.time) - 5));
+    sortDay(plan);
+  }
   function addToDay(stepFields) {
-    const plan = dayPlan(S.bDay);
+    const plan = bPlan();
     const sel = plan.find((x) => x.uid === S.bSel);
     const time = sel ? fromMin(toMin(sel.time) + 15) : plan.length ? fromMin(toMin(plan[plan.length - 1].time) + 30) : '07:00';
     const e = entry(Object.assign({ time }, stepFields));
@@ -2348,7 +2379,7 @@
     },
 
     // grown-ups: weekly timetable
-    bDay: (d) => { S.bDay = d.v; S.bSel = null; S.confirmClear = false; render(); },
+    bDay: (d) => { S.bDay = d.v; S.bSel = null; S.confirmClear = false; S.bCopyOpen = false; render(); },
     bTab: (d) => { S.bTab = d.v; render(); },
     bSel: (d) => { S.bSel = d.v; S.bTab = 'step'; render(); },
     bAdd: (d) => {
@@ -2356,7 +2387,7 @@
       else addToDay({ id: d.id });
     },
     bDel: (d) => {
-      const plan = dayPlan(S.bDay);
+      const plan = bPlan();
       const i = plan.findIndex((x) => x.uid === d.v);
       if (i < 0) return;
       plan.splice(i, 1);
@@ -2368,8 +2399,9 @@
       const e = selectedEntry();
       if (!e) return;
       const copy = Object.assign(clone(e), { uid: uid(), time: fromMin(toMin(e.time) + 15) });
-      dayPlan(S.bDay).push(copy);
-      sortDay(state.week[S.bDay]);
+      const plan = bPlan();
+      plan.push(copy);
+      sortDay(plan);
       S.bSel = copy.uid;
       save();
       render();
@@ -2418,17 +2450,48 @@
       save();
       render();
     },
-    bCopy: (d) => {
-      const src = dayPlan(S.bDay);
-      const targets = D.DAYS.map((x) => x.id).filter((id, i) => id !== S.bDay && (d.v === 'all' || (d.v === 'weekdays' ? i < 5 : i >= 5)));
+    // one "Copy day" button: pick the days, then copy
+    bCopyOpen: () => { S.bCopyOpen = !S.bCopyOpen; S.bCopyTo = []; render(); },
+    bCopyPick: (d) => {
+      const ids = D.DAYS.map((x) => x.id).filter((id) => id !== S.bDay);
+      const sets = { weekdays: D.DAYS.slice(0, 5).map((x) => x.id), weekend: D.DAYS.slice(5).map((x) => x.id), all: ids };
+      if (sets[d.v]) S.bCopyTo = sets[d.v].filter((id) => id !== S.bDay);
+      else { const i = S.bCopyTo.indexOf(d.v); if (i >= 0) S.bCopyTo.splice(i, 1); else S.bCopyTo.push(d.v); }
+      render();
+    },
+    bCopy: () => {
+      const src = bPlan();
+      const targets = (S.bCopyTo || []).filter((id) => id !== S.bDay);
+      if (!targets.length) return;
       targets.forEach((id) => { state.week[id] = src.map((e) => Object.assign(clone(e), { uid: uid() })); });
+      S.bCopyOpen = false;
       save();
       render();
-      showToast(`<span>Copied to ${d.v === 'all' ? 'every day' : d.v}</span>`, 'toast-g');
+      showToast(`<span>Copied to ${targets.length === 6 ? 'every day' : targets.map(dayName).join(', ')}</span>`, 'toast-g');
+    },
+    // change today only: a copy of today's plan that is used just for today
+    bTodayMode: (d) => {
+      if (d.v === 'today') {
+        if (!todayOnly()) state.todayOnly = { date: dateKey(), steps: weekPlan(todayKey()).map((e) => clone(e)) };
+        S.bToday = true;
+        save();
+      } else S.bToday = false;
+      S.bSel = null;
+      render();
+    },
+    bTodayUndo: () => { state.todayOnly = null; S.bToday = false; S.bSel = null; save(); render(); showToast('<span>Today is back to the usual plan</span>', 'toast-g'); },
+    bMove: (d) => {
+      const plan = bPlan();
+      const i = plan.findIndex((x) => x.uid === S.bSel);
+      const j = i + Number(d.v);
+      if (i < 0 || j < 0 || j >= plan.length) return;
+      reorderPlan(plan, S.bSel, j);
+      save();
+      render();
     },
     bClear: () => {
       if (!S.confirmClear) { S.confirmClear = true; render(); later(() => { S.confirmClear = false; if (S.screen === 'builder') render(); }, 4000); return; }
-      state.week[S.bDay] = [];
+      bPlan().length = 0;
       S.confirmClear = false;
       S.bSel = null;
       save();
@@ -2622,6 +2685,39 @@
     const ch = e.target.closest('[data-change]');
     if (ch && A.onChange) A.onChange(ch.dataset.change, ch.value, ch);
   });
+  // Timetable: drag a step by its dots to move it earlier or later in the day
+  stage.addEventListener('pointerdown', (e) => {
+    const grip = e.target.closest('[data-grip]');
+    if (!grip || S.screen !== 'builder') return;
+    e.preventDefault();
+    const row = grip.closest('.tl-row');
+    const rows = [...stage.querySelectorAll('.timeline .tl-row')];
+    const from = rows.indexOf(row);
+    if (from < 0) return;
+    const startY = e.clientY;
+    const scale = A.stageScale ? A.stageScale() : 1;
+    let to = from;
+    row.classList.add('dragging');
+    try { grip.setPointerCapture(e.pointerId); } catch (err) { /* older browsers */ }
+    const move = (ev) => {
+      row.style.transform = `translateY(${(ev.clientY - startY) / scale}px)`;
+      to = 0;
+      rows.forEach((r, k) => { if (k === from) return; const b = r.getBoundingClientRect(); if (ev.clientY > b.top + b.height / 2) to++; });
+      rows.forEach((r, k) => { r.classList.toggle('drop-before', k !== from && to < from && k === to); r.classList.toggle('drop-after', k !== from && to > from && k === to); });
+    };
+    const up = () => {
+      grip.removeEventListener('pointermove', move);
+      grip.removeEventListener('pointerup', up);
+      grip.removeEventListener('pointercancel', up);
+      row.classList.remove('dragging');
+      row.style.transform = '';
+      rows.forEach((r) => r.classList.remove('drop-before', 'drop-after'));
+      if (to !== from) { reorderPlan(bPlan(), grip.dataset.grip, to); S.bSel = grip.dataset.grip; save(); render(); }
+    };
+    grip.addEventListener('pointermove', move);
+    grip.addEventListener('pointerup', up);
+    grip.addEventListener('pointercancel', up);
+  });
   // When a grown-up leaves the time box, re-sort the day. Text boxes update in place, so a tap on
   // another button straight after typing is never lost to a re-draw.
   let pointerDown = false;
@@ -2629,10 +2725,10 @@
   const resort = () => {
     pendingSort = false;
     if (S.screen !== 'builder') return;
-    sortDay(state.week[S.bDay]);
+    const plan = bPlan();
     save();
     const tl = stage.querySelector('.timeline');
-    if (tl) tl.innerHTML = timelineHtml(state.week[S.bDay]);
+    if (tl) tl.innerHTML = timelineHtml(plan);
   };
   stage.addEventListener('focusout', (e) => {
     const el = e.target.closest('[data-input="time"]');

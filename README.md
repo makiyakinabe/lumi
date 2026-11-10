@@ -386,6 +386,14 @@ Lumi is for children and youths with a range of special needs, not only non-verb
 
 **Grown-ups** opens on an Overview: the child, what Lumi helps with, big buttons for every task (Timetable, Coming up, Activities, Sensory, Progress, Notes, Child, Back to Lumi) and this week at a glance. The other pages keep the everyday settings in view and fold the rest into closed sections (tap to open; they stay open while you use them).
 
+## Made easier for grown-ups
+
+- **Getting started** (Overview): five steps that tick themselves (choose a focus, check the timetable, add a family word, try a story, set sound and reminders). Each one opens its page. The list hides itself when all five are done, or tap Hide.
+- **Share a report** (Overview or Progress): one page for a teacher, therapist or doctor, for the last 7 or 30 days. It has what Lumi helps with, a short summary, practice numbers, feelings, what the child told Lumi before and after stories, what helps them, and notes from home. **Print or save as PDF**, or **Download as a file** (an HTML page that opens on any device).
+- **Grown-ups lock** (Child › Grown-ups lock): press and hold (default), a sum written in words, or a 4-digit PIN. "Forgot PIN?" falls back to the sum. The lock comes back each time the child's screens are shown again.
+- **Timetable**: one **Copy day** button (pick the days, or Weekdays / Weekend / Every day). On today's day, **Today only** changes the plan just for today (a dentist visit, a public holiday) without touching the usual week; tomorrow goes back to normal, or tap Undo today's changes. Drag a step by its dots to move it (the times stay put and the steps swap into them), or use Earlier / Later in the Step panel.
+- **Progress** starts with three plain sentences (days used, feelings shared, stories practised and whether the child felt better afterwards). The charts are folded underneath in "Charts and details".
+
 ## Fits any screen
 
 Lumi fills the whole screen on any device held sideways: phones, iPads (any size), Android tablets, laptops and big monitors, with no black bars. It is designed on a 1194 × 834 landscape "stage"; `fit()` in `js/app.js` keeps that height (or width) and stretches the other side to match the screen's shape, so the flexible screens simply grow. The story and lesson pictures are scaled to use the space too (`fitScene()` in `js/stories.js`): on a wide screen such as a phone or a 16:9 laptop the picture fills the height and the words move into a column beside it. The notch and home bar are kept clear, and the strip around them takes the colour of the current screen. Held upright, a phone or tablet shows "Turn me sideways". A desktop browser window narrower than it is tall shows the app with thin edges.
@@ -742,6 +750,8 @@ web/
   js/profiles.js    more than one child on a tablet (Who is playing?)
   js/waitgame.js    the Waiting game
   js/feelchart.js   Progress: feelings and breaks over time, and patterns
+  js/focus.js       what Lumi helps with (focus areas) and the Grown-ups Overview
+  js/grownups-plus.js  Getting started, Share a report, Grown-ups lock, the plain-sentence Progress summary
   js/lang.js        home language: Chinese, Malay and Tamil words and voice
   js/comingup.js    Coming up stories (social stories) with a countdown, in My day on the day
   js/offline.js     backup and restore, and installing Lumi to work without internet
