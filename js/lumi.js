@@ -242,6 +242,7 @@
   const FEELING_FACES = {
     happy: ['#F4D35E', `<circle cx="46" cy="54" r="6" fill="${INK}"/><circle cx="74" cy="54" r="6" fill="${INK}"/><path d="M42 70 Q60 88 78 70" ${FACE_LINE}/>`],
     sad: ['#8EB8E5', `<path d="M38 46 L52 50 M82 46 L68 50" ${FACE_LINE}/><circle cx="46" cy="58" r="6" fill="${INK}"/><circle cx="74" cy="58" r="6" fill="${INK}"/><path d="M44 84 Q60 70 76 84" ${FACE_LINE}/>`],
+    okay: ['#A9D8A0', `<circle cx="46" cy="56" r="6" fill="${INK}"/><circle cx="74" cy="56" r="6" fill="${INK}"/><path d="M45 76 Q60 80 75 76" ${FACE_LINE}/>`],
     angry: ['#EF8A7A', `<path d="M36 42 L54 50 M84 42 L66 50" ${FACE_LINE}/><circle cx="46" cy="58" r="6" fill="${INK}"/><circle cx="74" cy="58" r="6" fill="${INK}"/><path d="M44 82 L76 82" ${FACE_LINE}/>`],
     worried: ['#B9A6E0', `<path d="M36 48 L52 42 M84 48 L68 42" ${FACE_LINE}/><circle cx="46" cy="58" r="6" fill="${INK}"/><circle cx="74" cy="58" r="6" fill="${INK}"/><path d="M42 80 Q51 73 60 80 Q69 87 78 80" ${FACE_LINE}/>`],
     scared: ['#A8D8CF', `<path d="M38 40 L52 36 M82 40 L68 36" ${FACE_LINE}/><circle cx="46" cy="56" r="8" fill="${INK}"/><circle cx="74" cy="56" r="8" fill="${INK}"/><ellipse cx="60" cy="84" rx="8" ry="10" fill="${INK}"/>`]

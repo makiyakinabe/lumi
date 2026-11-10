@@ -145,7 +145,7 @@
           const c = cubbyAt(i);
           const mine = n === 'LUMI';
           const bag = (!mine && i % 2 === 0) || (mine && st.done) ? `<g transform="translate(18 6) scale(.48)">${inner(PR.backpack(mine ? '#E5534B' : ['#7E64C8', '#4A78A8', '#7FB069'][i % 3]))}</g>` : '';
-          return SX.at(c.x, c.y, 100, 94, svgBox('0 0 84 80', `${vol('<rect x="2" y="2" width="80" height="76" rx="6"/>', '#C99A6B')}<rect x="8" y="8" width="68" height="52" rx="4" fill="#6B4A3A"/>${bag}<rect x="14" y="62" width="56" height="13" rx="3" fill="#fff"/>${txt(42, 73, n, 11, mine ? '#E5534B' : '#3B2F2F')}${mine ? '<circle cx="74" cy="12" r="6" fill="#F4D35E"/>' : ''}`), { target: !st.done, id: n, cls: 'sk-cubby', z: 2 });
+          return SX.at(c.x, c.y, 100, 94, svgBox('0 0 84 80', `${vol('<rect x="2" y="2" width="80" height="76" rx="6"/>', '#C99A6B')}<rect x="8" y="8" width="68" height="42" rx="4" fill="#6B4A3A"/>${bag}<rect x="8" y="53" width="68" height="24" rx="6" fill="#fff"/>${txt(42, 70, n, 13, mine ? '#E5534B' : '#3B2F2F')}${mine ? '<circle cx="74" cy="12" r="6" fill="#F4D35E"/>' : ''}`), { target: !st.done, id: n, cls: 'sk-cubby', z: 2 });
         }).join('');
         if (!st.done) h += SX.at(640, 420, 100, 110, PR.backpack('#E5534B'), { cls: 'sx-drag sk-bag', label: 'Lumi\'s bag', z: 8 });
         if (st.s.tipAt) h += SX.bubble(st.s.tipAt.x, st.s.tipAt.y, 'This one is not Lumi\'s. Look for LUMI.', { w: 240 });

@@ -1912,7 +1912,7 @@ button.sx-el:active { transform: scale(0.97); }
 .sx-glow { filter: drop-shadow(0 0 10px rgba(255, 210, 63, 0.95)); animation: sxPulse 1.4s ease-in-out infinite; }
 @keyframes sxPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
 .reduce-motion .sx-glow, .reduce-motion .sx-lumi.walking > svg.lumi { animation: none; }
-.sx-bubble { position: absolute; z-index: 8; background: #fff; border-radius: 22px; padding: 12px 16px; font-size: 20px; font-weight: 800; line-height: 1.25; color: var(--ink); box-shadow: 0 5px 0 rgba(90, 60, 40, 0.12); border: 3px solid #EFE6D8; }
+.sx-bubble { position: absolute; z-index: 8; background: #fff; border-radius: 22px; padding: 12px 18px; overflow-wrap: anywhere; font-size: 20px; font-weight: 800; line-height: 1.25; color: var(--ink); box-shadow: 0 5px 0 rgba(90, 60, 40, 0.12); border: 3px solid #EFE6D8; }
 .sx-bubble::after { content: ''; position: absolute; width: 22px; height: 22px; background: #fff; border: 3px solid #EFE6D8; border-top: 0; border-left: 0; transform: rotate(45deg); }
 .sx-bubble.down::after { left: 40px; bottom: -13px; }
 .sx-bubble.left::after { left: -13px; top: 22px; transform: rotate(135deg); }
@@ -2028,7 +2028,7 @@ svg.pic.person { overflow: hidden; }
 .wg-steam { position: absolute; top: 70px; width: 22px; height: 60px; border-radius: 11px; background: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.9)); animation: wgSteam 2.4s ease-in-out infinite; }
 .wg-steam:nth-child(3) { animation-delay: 0.6s; } .wg-steam:nth-child(4) { animation-delay: 1.2s; }
 @keyframes wgSteam { 0% { transform: translateY(20px) scaleY(0.6); } 50% { transform: translateY(-10px) scaleY(1); } 100% { transform: translateY(20px) scaleY(0.6); } }
-.wg-clock { position: absolute; width: 120px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 34px; font-weight: 900; color: #7FD18A; font-family: 'Nunito', monospace; }
+.wg-clock { position: absolute; width: 120px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 34px; font-weight: 900; color: #7FD18A; font-variant-numeric: tabular-nums; }
 .wg-lumi { position: absolute; z-index: 3; line-height: 0; transition: left 0.6s ease, top 0.6s ease; }
 .wg-bubble { position: absolute; left: 24px; top: 20px; right: 24px; z-index: 4; padding: 12px 18px; border-radius: 20px; background: #fff; font-size: 21px; font-weight: 800; color: var(--ink); box-shadow: 0 5px 0 rgba(90, 60, 40, 0.1); text-align: center; }
 .wg-breath { position: absolute; left: 50%; top: 50%; width: 260px; height: 260px; margin: -130px 0 0 -130px; border-radius: 50%; background: radial-gradient(circle, rgba(201, 184, 238, 0.6), rgba(201, 184, 238, 0)); animation: sxBreath 6s ease-in-out infinite; pointer-events: none; z-index: 2; }
@@ -2237,3 +2237,74 @@ svg.pic.person { overflow: hidden; }
 .pet-tip { height: auto; min-height: 80px; padding: 12px 18px; line-height: 1.25; }
 .pet-tip > span { flex: 1; }
 .reduce-motion .pc-pet > svg, .reduce-motion .pc-room .target, .reduce-motion .pc-tool.on { animation: none !important; }
+
+/* ---------------------------------------------------------------- text fits its box, with room around it */
+/* buttons, chips and tabs never get squeezed by a full panel (the panel scrolls instead) */
+.g-btn, .tag, .day-tab, .g-tab, .chip, .need-btn, .name-btn, .st-nav, .sx-help { flex-shrink: 0; }
+.tag { height: auto; min-height: 28px; padding: 4px 12px; line-height: 1.2; }
+.g-tab { white-space: nowrap; }
+.g-header > .row { min-width: 0; flex: 1 1 auto; }
+.g-header > .row > .col { min-width: 0; }
+.g-header > .g-tabs, .g-header > .g-btn { flex: none; }
+.day-tab { width: auto; min-width: 66px; padding: 0 10px; }
+.g-sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.day-tab .count { height: 20px; min-width: 22px; padding: 0 6px; }
+.mg-name { line-height: 1.15; padding-bottom: 6px; }
+
+/* ---------------------------------------------------------------- doing it for Lumi, doing it for me (stories.js, story-me.js) */
+/* give the idea to Lumi */
+.sx-give { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 14px; border-radius: 28px; background: #fff; border: 4px solid var(--teal); box-shadow: 0 8px 0 rgba(90, 60, 40, 0.14); text-align: center; line-height: 1.2; }
+.sx-give b { font-size: 18px; font-weight: 800; color: var(--ink); }
+.sx-give svg { width: 84px; height: 84px; }
+.sx-give-it > .sx-give { animation: sxPulse 1.6s ease-in-out infinite; }
+/* breathe with Lumi: one tap = in for 3 seconds, out for 3 seconds */
+.sx-breathe-btn { display: flex; align-items: center; justify-content: center; border: 0; padding: 0; background: none; line-height: 1.2; }
+.sx-breathe-btn .sx-bcirc { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #F3EEFF, #C9B8EE); box-shadow: 0 0 0 10px rgba(201, 184, 238, 0.35); transform: scale(0.62); transition: transform 3s ease-in-out; }
+.sx-breathe-btn.in .sx-bcirc { transform: scale(1); }
+.sx-breathe-btn.out .sx-bcirc { transform: scale(0.62); }
+.sx-breathe-btn b { position: relative; max-width: 150px; font-size: 21px; font-weight: 900; color: #4B3A8A; text-align: center; }
+.sx-breathe-btn:not(.in):not(.out) { animation: sxPulse 1.8s ease-in-out infinite; }
+/* "And you? What helps you?" */
+.sx-mine { position: absolute; right: 24px; bottom: 18px; z-index: 9; max-width: 660px; display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border-radius: 24px; background: rgba(255, 255, 255, 0.96); border: 3px solid #EFE6D8; box-shadow: 0 6px 0 rgba(90, 60, 40, 0.1); line-height: 1.2; }
+.sx-mine-q { display: flex; align-items: center; gap: 8px; font-size: 19px; font-weight: 900; color: var(--teal); }
+.sx-mine-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.sx-mine-b { display: flex; align-items: center; gap: 8px; min-height: 52px; padding: 6px 16px 6px 8px; border-radius: 18px; border: 3px solid #EFE6D8; background: #FFFDF8; font-size: 17px; font-weight: 800; color: var(--ink); }
+.sx-mine-b.on { border-color: var(--teal); background: var(--teal-soft); }
+.sx-mine-art { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; line-height: 0; }
+.sx-mine-art svg { width: 40px; height: 40px; }
+/* tap Lumi */
+.sx-lumi-hit { position: absolute; left: 22%; top: 22%; width: 56%; height: 70%; border: 0; padding: 0; border-radius: 50%; background: transparent; pointer-events: auto; cursor: pointer; }
+.sx-lumi > svg.sx-wiggle { animation: menuGiggle 0.7s ease-in-out; transform-origin: 50% 90%; }
+.sx-lumi.flip > svg.sx-wiggle { animation: none; }
+.sx-heart { position: absolute; left: 50%; top: 4%; margin-left: -17px; color: #E5739A; line-height: 0; pointer-events: none; animation: sxHeart 1.2s ease-out forwards; }
+@keyframes sxHeart { from { transform: translateY(10px) scale(0.6); opacity: 0; } 20% { opacity: 1; } to { transform: translateY(-60px) scale(1.1); opacity: 0; } }
+/* before and after the story: about me */
+.me-chip { display: inline-flex; align-items: center; gap: 12px; height: 100%; padding: 6px 20px 6px 6px; border-radius: 999px; background: #fff; border: 3px solid #EFE6D8; box-shadow: 0 4px 0 rgba(90, 60, 40, 0.1); font-size: 22px; font-weight: 900; color: var(--ink); line-height: 1.2; white-space: nowrap; }
+.me-chip.wide small { font-size: 16px; font-weight: 800; color: var(--muted); }
+.me-photo { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; flex: none; }
+.me-star { display: flex; align-items: center; justify-content: center; background: #FFF1C2; color: #C98A1E; }
+.me-big .sx-choice { min-width: 290px; min-height: 104px; font-size: 26px; }
+.me-feel { display: grid; grid-template-columns: repeat(2, 200px); gap: 14px; }
+.me-feel.row { grid-template-columns: repeat(4, 184px); gap: 16px; }
+.me-feel .sx-choice { min-width: 0; min-height: 92px; padding: 10px 14px 10px 10px; font-size: 22px; }
+.me-feel.row .sx-choice { flex-direction: column; justify-content: center; min-height: 170px; padding: 14px; gap: 8px; }
+.me-slot { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 44px; border-radius: 26px; border: 4px dashed #D8CDBB; background: rgba(255, 255, 255, 0.55); line-height: 1.2; }
+.me-slot.next { border-color: var(--teal); background: rgba(255, 255, 255, 0.85); animation: sxPulse 1.6s ease-in-out infinite; }
+.me-slot.filled { border-style: solid; border-color: #7FD18A; background: #fff; padding-top: 36px; }
+.me-num { position: absolute; left: 12px; top: 10px; width: 34px; height: 34px; border-radius: 50%; background: var(--teal); color: #fff; font-size: 19px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
+.me-slot.filled .me-num { background: #3FA45A; }
+.me-when { position: absolute; left: 54px; top: 14px; font-size: 17px; font-weight: 900; color: var(--muted); }
+.me-card { border-radius: 26px; background: #fff; border: 4px solid #EFE6D8; box-shadow: 0 8px 0 rgba(90, 60, 40, 0.12); }
+.me-card-in { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 12px 14px; text-align: center; line-height: 1.2; }
+.me-slot .me-card-in { height: auto; padding-top: 4px; }
+.me-card-in b { font-size: 19px; font-weight: 800; color: var(--ink); }
+.me-card-in svg { flex: none; }
+/* grown-ups: what the child told Lumi */
+.mt-list { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.mt-list li { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px 10px; padding: 10px 12px; border-radius: 12px; background: #FBF7F1; }
+.mt-list li .g-note { grid-column: 1 / -1; }
+.mt-feel { display: flex; align-items: center; gap: 6px; color: var(--muted); }
+.mt-helps-t { margin: 12px 0 6px; }
+.sx-lumi > svg.lumi { transition: transform 3s ease-in-out; }
+.sx-lumi.breathe-in > svg.lumi { transform: scale(1.08); }
+.sx-lumi.flip.breathe-in > svg.lumi { transform: scale(-1.08, 1.08); }

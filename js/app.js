@@ -1787,7 +1787,7 @@
     <div class="row gap6">${dayTabs}</div>
     <div class="row gap8">
       <button class="g-btn small" data-a="bPreview">${ic('play', 18)}<span>Try as child</span></button>
-      <span class="g-note">Copy to</span>
+      <span class="g-note" style="white-space:nowrap">Copy to</span>
       <button class="g-btn small outline" data-a="bCopy" data-v="weekdays">Weekdays</button>
       <button class="g-btn small outline" data-a="bCopy" data-v="weekend">Weekend</button>
       <button class="g-btn small outline" data-a="bCopy" data-v="all">All</button>
@@ -1866,8 +1866,53 @@
     if (same && screenEl.firstElementChild) screenEl.firstElementChild.classList.add('no-fade');
     if (AFTER[S.screen]) AFTER[S.screen]();
     if (A.afterRender) A.afterRender();
+    fitSvgText(screenEl);
     applyGuide();
   }
+
+  // Words drawn inside pictures (a BUS STOP sign, a shop name, a screen) must sit inside their sign with room to
+  // spare, whatever font and size the device draws. For each SVG text, find the shape it sits on (the smallest
+  // shape drawn before it that holds the text's middle) and, if the words are too wide or tall for it, make them
+  // smaller until there is a margin all round. The original size is remembered, so it is re-checked each time.
+  function fitSvgText(root) {
+    const texts = (root || screenEl).querySelectorAll('svg text');
+    if (!texts.length) return;
+    const shapesOf = new Map();
+    texts.forEach((tx) => {
+      if (tx.closest('[data-nofit]')) return;
+      const svg = tx.ownerSVGElement;
+      if (!svg) return;
+      if (tx.dataset.fit) { tx.style.fontSize = ''; delete tx.dataset.fit; }
+      const r = tx.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      const sr = svg.getBoundingClientRect();
+      if (!shapesOf.has(svg)) shapesOf.set(svg, [...svg.querySelectorAll('rect, path, ellipse, circle, polygon')]);
+      const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      let plate = null, best = Infinity;
+      for (const sh of shapesOf.get(svg)) {
+        if (!(sh.compareDocumentPosition(tx) & Node.DOCUMENT_POSITION_FOLLOWING)) break; // only shapes drawn before the words
+        const fill = sh.getAttribute('fill');
+        if (fill === 'none' || fill === 'transparent' || sh.closest('defs, clipPath, mask')) continue;
+        const sc = getComputedStyle(sh);
+        if ((parseFloat(sc.opacity) || 1) * (parseFloat(sc.fillOpacity) || 1) < 0.6) continue; // a shine or shadow
+        const b = sh.getBoundingClientRect();
+        if (b.height < r.height * 0.7) continue; // a thin stripe
+        const area = b.width * b.height;
+        if (cx < b.left || cx > b.right || cy < b.top || cy > b.bottom || area >= best) continue;
+        if (area > sr.width * sr.height * 0.45 || b.width < r.width * 0.5) continue; // the background, or a dot
+        best = area; plate = b;
+      }
+      if (!plate) return;
+      const fs = parseFloat(getComputedStyle(tx).fontSize) || 16;
+      const pad = Math.max(r.height * 0.22, 2);
+      const room = Math.min((plate.width - 2 * pad) / r.width, (plate.height - pad) / r.height);
+      if (room >= 1) return;
+      tx.dataset.fit = '1';
+      tx.style.fontSize = `${(fs * Math.max(0.45, room)).toFixed(2)}px`;
+    });
+  }
+  A.fitSvgText = fitSvgText;
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => fitSvgText(screenEl));
 
   // ================================================================ GAME ACTIONS
   function startDay(opts) {

@@ -44,8 +44,8 @@
     if (k === 'bus') {
       s += `<circle cx="600" cy="80" r="40" fill="#FFD84D" opacity=".9"/>${[[90, 110], [330, 70]].map(([x, y]) => `<g opacity=".9"><ellipse cx="${x}" cy="${y}" rx="60" ry="20" fill="#fff"/><ellipse cx="${x + 30}" cy="${y - 12}" rx="34" ry="18" fill="#fff"/></g>`).join('')}
         <rect y="300" width="700" height="220" fill="#9CCB7A"/><rect y="352" width="700" height="96" fill="#8A929C"/><path d="M0 400h700" stroke="#fff" stroke-width="6" stroke-dasharray="40 30"/>
-        ${LP.vol('<rect x="520" y="170" width="12" height="190" rx="5"/>', '#9AA6B2')}${LP.vol('<rect x="486" y="150" width="80" height="54" rx="10"/>', '#3E8E5E', { shade: 'v' })}
-        <text x="526" y="184" text-anchor="middle" font-family="Nunito, ui-rounded, sans-serif" font-weight="900" font-size="16" fill="#fff">BUS STOP</text><text x="526" y="200" text-anchor="middle" font-family="Nunito, ui-rounded, sans-serif" font-weight="800" font-size="13" fill="#DFF3E6">83139</text>`;
+        ${LP.vol('<rect x="520" y="196" width="12" height="164" rx="5"/>', '#9AA6B2')}${LP.vol('<rect x="462" y="132" width="128" height="74" rx="14"/>', '#3E8E5E', { shade: 'v' })}
+        <text x="526" y="164" text-anchor="middle" font-weight="900" font-size="20" letter-spacing="1" fill="#fff">BUS STOP</text><text x="526" y="190" text-anchor="middle" font-weight="800" font-size="17" fill="#DFF3E6">83139</text>`;
     } else if (k === 'cook') {
       s += `<rect y="300" width="700" height="220" fill="#E8D6BC"/>${LP.vol('<rect x="40" y="250" width="620" height="70" rx="12"/>', '#F2F4F6', { shade: 'v' })}
         ${LP.vol('<rect x="220" y="230" width="260" height="30" rx="8"/>', '#3E4A5A')}${[270, 430].map((x) => `<ellipse cx="${x}" cy="236" rx="40" ry="8" fill="#20262E"/>`).join('')}
@@ -53,7 +53,7 @@
         ${LP.vol('<rect x="520" y="110" width="120" height="60" rx="10"/>', '#2B2F4A')}`;
     } else {
       s += `<rect y="320" width="700" height="200" fill="#EAD9E3"/>${LP.vol('<rect x="20" y="60" width="300" height="70" rx="14"/>', '#E58BA6', { shade: 'v' })}
-        <text x="170" y="106" text-anchor="middle" font-family="Nunito, ui-rounded, sans-serif" font-weight="900" font-size="30" fill="#fff" letter-spacing="1">ICE CREAM</text>
+        <text x="170" y="106" text-anchor="middle" font-weight="900" font-size="30" fill="#fff" letter-spacing="1">ICE CREAM</text>
 `;
     }
     return `<svg class="wg-bg" viewBox="0 0 700 520" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${s}</svg>`;
@@ -88,7 +88,7 @@
     const frac = g.total ? Math.max(0, g.left / g.total) : 1;
     return `<svg class="wg-ring" viewBox="0 0 180 180" width="180" height="180" role="img" aria-label="${Math.ceil(g.left)} seconds left"><circle cx="90" cy="90" r="${r}" fill="#fff" stroke="#E6EEF5" stroke-width="18"/>
       <circle id="wgArc" cx="90" cy="90" r="${r}" fill="none" stroke="#5B8FD9" stroke-width="18" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c * (1 - frac)}" transform="rotate(-90 90 90)"/>
-      <text id="wgSecs" x="90" y="104" text-anchor="middle" font-family="Nunito, ui-rounded, sans-serif" font-weight="900" font-size="44" fill="#3B2F2F">${Math.max(0, Math.ceil(g.left))}</text></svg>`;
+      <text id="wgSecs" x="90" y="104" text-anchor="middle" font-weight="900" font-size="44" fill="#3B2F2F">${Math.max(0, Math.ceil(g.left))}</text></svg>`;
   }
 
   // ---------------------------------------------------------------- the screen

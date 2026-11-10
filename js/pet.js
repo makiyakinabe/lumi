@@ -141,7 +141,7 @@
   A.PARENT.pet = 'fun';
   A.VOICE.pet = () => {
     const id = S.petId;
-    if (!id) return '';
+    if (!id || !A.ownedPets().includes(id)) return A.ownedPets().length ? '' : 'No pet yet. Get a pet in your Room.';
     const p = petState(id);
     if (!p.name) return `Your new ${D.PETS[id].name.toLowerCase()}! Pick a name.`;
     if (care().mode) return tipFor(id, p);
@@ -150,6 +150,15 @@
   };
   A.SCREENS.pet = () => {
     const owned = A.ownedPets();
+    if (!owned.length) {
+      // no pet yet: say how to get one
+      return `<section class="screen" aria-label="Pet corner">${A.srTitle('Pet corner')}
+        <div class="row between" style="height:60px">${A.backBtn()}<span></span></div>
+        <div class="panel grow col center gap16" style="justify-content:center;align-items:center;text-align:center">
+          ${ic('paw', 90)}<div class="label">No pet yet</div><p class="g-note" style="font-size:20px;max-width:520px">Get a pet in your Room with your stars. Then you can feed it, play, wash it and put it to bed here.</p>
+          <button class="primary" data-a="nav" data-to="room" style="height:76px">${ic('kRoom', 34)}<span>Go to my Room</span></button>
+        </div></section>`;
+    }
     if (!S.petId || !owned.includes(S.petId)) S.petId = owned[0];
     const id = S.petId;
     const info = D.PETS[id];
@@ -238,7 +247,7 @@
   };
   A.GUIDE.pet = () => {
     const id = S.petId;
-    if (!id) return null;
+    if (!id || !A.ownedPets().includes(id)) return A.ownedPets().length ? null : { sel: '[data-a="nav"][data-to="room"]', say: 'Go to your Room to get a pet.' };
     const p = petState(id);
     if (!p.name) return { sel: '[data-a="petName"]', say: 'Tap a name.' };
     const c = care();

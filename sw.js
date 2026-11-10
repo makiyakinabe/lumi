@@ -4,7 +4,7 @@
   quietly fetches any newer version in the background, which shows the next time Lumi is opened.
   When you add or rename a file, add it to FILES and change VERSION.
 */
-const VERSION = 'lumi-2026-11-09-1';
+const VERSION = 'lumi-2026-11-10-1';
 const FILES = [
   './',
   'index.html',
@@ -25,6 +25,7 @@ const FILES = [
   'css/tg-little.css',
   'css/tg-primary.css',
   'css/tg-teen.css',
+  'fonts/Nunito-Variable.ttf',
   'js/aac.js',
   'js/agepacks.js',
   'js/app.js',
@@ -69,6 +70,7 @@ const FILES = [
   'js/story-out.js',
   'js/story-school.js',
   'js/story-life.js',
+  'js/story-me.js',
   'js/teamgames.js',
   'js/tg-little.js',
   'js/tg-primary.js',

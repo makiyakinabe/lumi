@@ -286,28 +286,95 @@
 
   // ---------------------------------------------------------------- ready-made steps
   // "What could help?": the child picks a way to cope, and it really happens (headphones go on Lumi)
+  // "What could help Lumi?": the child picks an idea, then does it for Lumi (gives it to him, puts the
+  // headphones on his head, or breathes slowly with him), and then Lumi asks what helps the child.
+  // What the child says helps them is kept for the grown-ups (Grown-ups > Progress).
+  const breathText = (st) => (st.s.breath === 'in' ? 'Breathe in...' : st.s.breath === 'out' ? 'And out...' : 'Tap to breathe with Lumi');
   SX.copeStep = (o) => ({
     id: o.id || 'cope',
     bg: o.bg,
-    text: o.text,
-    task: o.task || 'What could help Lumi? Tap one.',
+    text: (st) => {
+      if (st.done) return val(o.text, st);
+      const opt = st.s.pick != null ? o.options[st.s.pick] : null;
+      if (opt && opt.breathe) return 'Let’s breathe slowly with Lumi. In through your nose, out through your mouth.';
+      if (opt) return `Good idea: ${opt.label.toLowerCase()}. Give it to Lumi.`;
+      return val(o.text, st);
+    },
+    task: (st) => {
+      const opt = st.s.pick != null ? o.options[st.s.pick] : null;
+      if (opt && opt.breathe) return `Tap the circle and breathe with Lumi (${Math.min(2, st.s.breaths || 0)} of 2).`;
+      if (opt) return `Drag it to Lumi.`;
+      return o.task || 'What could help Lumi? Tap one.';
+    },
     lumi: o.lumi || ((st) => ({ x: 300, y: 540, h: 240, mood: st.done ? 'calm' : 'worried' })),
     draw(st) {
-      const c = SX.choices(o.options, 'cope', { on: st.s.pick, style: 'right:24px;top:24px;', cls: 'col' });
-      const reply = st.s.pick != null ? SX.bubble(330, 120, o.options[st.s.pick].reply, { tail: 'left', w: 300 }) : '';
-      return (o.draw ? o.draw(st) : '') + c + reply + (st.s.breathing ? '<div class="sx-breath" style="left:190px;top:270px"></div>' : '');
+      const opt = st.s.pick != null ? o.options[st.s.pick] : null;
+      let h = o.draw ? o.draw(st) : '';
+      if (!opt || st.done) h += SX.choices(o.options, 'cope', { on: st.s.pick, style: 'right:24px;top:24px;', cls: 'col' });
+      if (opt && !st.done && !opt.breathe) h += SX.at(900, 40, 180, 180, `<div class="sx-give">${opt.art || ''}<b>${esc(opt.label)}</b></div>`, { cls: 'sx-drag sx-give-it', label: opt.label, z: 9 });
+      if (opt && opt.breathe && !st.done) h += SX.at(560, 150, 260, 260, `<span class="sx-bcirc"></span><b>${breathText(st)}</b>`, { k: 'breathe', cls: `sx-breathe-btn ${st.s.breath || ''}`, label: 'Breathe with Lumi', z: 9 });
+      if (st.done && opt) h += SX.bubble(330, 120, opt.reply, { tail: 'left', w: 300 });
+      if (st.done) h += mineBar(o, st);
+      if (opt && opt.breathe && (st.s.breath || st.done)) h += '<div class="sx-breath" style="left:190px;top:270px"></div>';
+      return h;
     },
     tap(st, k, el, d) {
-      if (k !== 'cope') return;
-      const i = Number(d.v);
-      const opt = o.options[i];
-      st.s.pick = i;
-      if (opt.apply) opt.apply(st);
-      st.s.breathing = !!opt.breathe;
-      SX.ok();
-      SX.done(st, opt.reply);
+      if (k === 'cope' && !st.done) {
+        const i = Number(d.v);
+        st.s.pick = i;
+        st.s.breaths = 0;
+        SX.ok();
+        SX.render();
+        const opt = o.options[i];
+        say(opt.breathe ? 'Let’s breathe with Lumi. Tap the circle.' : `Good idea. Drag it to Lumi.`);
+        return;
+      }
+      if (k === 'breathe' && !st.s.breath && !st.done) {
+        // one slow breath: in for 3 seconds, out for 3 seconds; the child breathes along
+        st.s.breath = 'in';
+        tone(392, 0.5, 0.04);
+        SX.render();
+        SX.later(st, () => { st.s.breath = 'out'; tone(330, 0.6, 0.04); SX.render(); }, 3000);
+        SX.later(st, () => {
+          st.s.breath = null;
+          st.s.breaths = (st.s.breaths || 0) + 1;
+          if (st.s.breaths >= 2) { const opt = o.options[st.s.pick]; SX.done(st, opt.reply); return; }
+          SX.render();
+          say('Good. One more slow breath. Tap the circle.');
+        }, 6000);
+        return;
+      }
+      if (k === 'mine') {
+        const opt = o.options[Number(d.v)];
+        const kid = state.childName || 'you';
+        st.s.mine = Number(d.v);
+        state.myHelps = state.myHelps || {};
+        state.myHelps[opt.label] = (state.myHelps[opt.label] || 0) + 1;
+        save();
+        track('myHelps', opt.label, { quiet: true });
+        SX.ok();
+        SX.render();
+        say(`Good to know. ${opt.label} helps ${kid} too. I’ll remember that.`);
+      }
     },
-    guide: () => ({ sel: '.sx-choice', say: o.task || 'What could help Lumi?' }),
+    after(st, box) {
+      const opt = st.s.pick != null ? o.options[st.s.pick] : null;
+      if (o.after) o.after(st, box);
+      const lumiEl = box.querySelector('.sx-lumi');
+      if (lumiEl) lumiEl.classList.toggle('breathe-in', st.s.breath === 'in');
+      if (!opt || st.done || opt.breathe) return;
+      SX.dragTo(box, '.sx-give-it', '.sx-lumi', () => {
+        if (opt.apply) opt.apply(st);
+        SX.done(st, opt.reply);
+        return false;
+      }, { pad: 40, miss: () => say('Drag it all the way to Lumi.'), tap: () => say('Drag it to Lumi.') });
+    },
+    guide: (st) => {
+      const opt = st.s.pick != null ? o.options[st.s.pick] : null;
+      if (opt && opt.breathe) return { sel: '.sx-breathe-btn', say: 'Tap the circle and breathe with Lumi.' };
+      if (opt) return { sel: '.sx-give-it', say: 'Drag it to Lumi.', to: '.sx-lumi' };
+      return { sel: '.sx-choice', say: o.task || 'What could help Lumi?' };
+    },
     // "Do it with me": Lumi picks the first idea with the child
     auto(st) {
       const opt = o.options[0];
@@ -317,6 +384,10 @@
       SX.done(st, opt.reply);
     }
   });
+  // after helping Lumi: "And you? What helps you?" (the same ideas, small; optional)
+  function mineBar(o, st) {
+    return `<div class="sx-mine"><span class="sx-mine-q">${ic('person', 22)}<span>And you? What helps you?</span></span><div class="sx-mine-row">${o.options.map((c, i) => `<button class="sx-mine-b ${st.s.mine === i ? 'on' : ''}" data-a="sx" data-k="mine" data-v="${i}">${c.art ? `<span class="sx-mine-art">${c.art}</span>` : ''}<span>${esc(c.label)}</span></button>`).join('')}</div></div>`;
+  }
   SX.HEADPHONES = { label: 'Wear headphones', art: SX.ART.headphones, reply: 'Headphones make the noise softer.', apply: (st) => { st.data.phones = true; } };
   SX.BREATHE = { label: 'Take slow breaths', art: SX.ART.breathe, reply: 'Breathe in, and out. Slowly. Lumi feels calmer.', breathe: true };
 

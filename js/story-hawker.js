@@ -262,7 +262,7 @@
       lumi: (st) => { const t = TABLES.find((x) => x.id === st.data.table) || TABLES[1]; return st.done ? { x: t.x + TW + 40, y: t.y + 150, h: 180, z: 3 } : { x: 130, y: 560, h: 200 }; },
       draw(st) {
         let h = crowd() + TABLES.map((t) => tableHtml(t, st, { target: !st.done })).join('');
-        const tb = TABLES.find((t) => t.id === st.data.table);
+        const tb = TABLES.find((t) => t.id === st.data.table) || TABLES[1];
         if (!st.done) h += SX.at(170, 450, 200, 110, SX.prop.tray(trayFood(st)), { cls: 'sx-drag hk-tray', label: 'Tray with food', z: 8 });
         else h += SX.at(tb.x + 30, tb.y - 30, 180, 100, SX.prop.tray(trayFood(st)), { z: 4 });
         if (st.s.tipAt) h += SX.bubble(st.s.tipAt.x, st.s.tipAt.y, 'This is not Lumi\'s table.', { w: 230 });

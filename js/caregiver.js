@@ -294,7 +294,7 @@
     return `<figure class="chart"><figcaption class="g-sub-h">${title}</figcaption><svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${title}: ${days.map((d, i) => d.label + ' ' + vals[i]).join(', ')}">${grid}${bars}</svg></figure>`;
   }
   const ago = (t) => { const m = Math.round((Date.now() - t) / 60000); if (m < 1) return 'just now'; if (m < 60) return m + ' min ago'; const h = Math.round(m / 60); if (h < 24) return h + ' h ago'; return Math.round(h / 24) + ' d ago'; };
-  const EVENT_NAMES = { breaks: 'Asked for a break during', steps: 'Finished a step', parts: 'Finished part of the day', checklists: 'Got ready (checklist)', talk: 'Said', calm: 'Calmed down with', feelings: 'Felt', changes: 'Handled a change', games: 'Played', tutorials: 'Learned', together: 'Together:', petCare: 'Pet care:', comingUp: 'Coming up story:', moveBreak: 'Moved with Lumi:' };
+  const EVENT_NAMES = { breaks: 'Asked for a break during', steps: 'Finished a step', parts: 'Finished part of the day', checklists: 'Got ready (checklist)', talk: 'Said', calm: 'Calmed down with', feelings: 'Felt', changes: 'Handled a change', games: 'Played', tutorials: 'Learned', together: 'Together:', petCare: 'Pet care:', comingUp: 'Coming up story:', moveBreak: 'Moved with Lumi:', meTalk: 'Told Lumi how they feel:' };
   const SKILL_EVENTS = { routines: ['steps', 'checklists', 'parts'], communication: ['talk'], emotions: ['calm', 'feelings', 'changes'], lifeskills: ['tutorials', 'petCare'], social: ['together'], thinking: ['games'] };
 
   const pct = (a, b) => (a + b ? Math.round((a / (a + b)) * 100) : null);
@@ -374,6 +374,7 @@
       ${skills}
       <h2 class="g-h top-gap">Feelings shared</h2>
       <div class="row wrap gap8">${feelHtml}</div>
+      ${A.meTalkHtml ? A.meTalkHtml() : ''}
       <h2 class="g-h top-gap">Recent activity</h2>
       <ul class="ev-list">${events || '<li class="g-note">Nothing yet. Play a little and come back!</li>'}</ul>
     </div>

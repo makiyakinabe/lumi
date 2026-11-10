@@ -448,7 +448,16 @@ Fun › Stories. Each story is a set of scenes the child acts out with Lumi, wit
 - Everyone in the stories is a full-body character (`js/people.js`): parents, grandparents, teachers, dentist, doctor, hairdresser, hawker uncle and aunty, cashier, MRT staff and more.
 - Payments use one guided step for all stories (`SX.payStep`): cash (drag notes and coins until it adds up, then take the change), card (tap on the reader) or phone (scan the QR code).
 
-Code: the engine is `js/stories.js` (the `A.SX` helpers are explained at the top); each story is its own file (`js/story-hawker.js`, `js/story-care.js`, `js/story-out.js`, `js/story-school.js`, `js/story-life.js`).
+**Doing it for Lumi, then for me.** Every story and every Learn lesson links Lumi's practice to the child's own life (`js/story-me.js`):
+
+- **Before:** at home, Lumi asks "Have you been to the dentist?" (Yes / Not yet / Not sure; for lessons: By myself / With help / Not yet) and "How do you feel about going to the dentist?" (Happy, Okay, Worried, Scared). Lumi says how he feels too, often the same ("I feel a bit worried too. You can help me.").
+- **During:** tap Lumi any time and he answers: how he feels now, and thank you for helping. "What could help Lumi?" is no longer just a tap: the child gives the idea to Lumi (drags it to him; headphones go on his head), or breathes slowly with him (tap the circle: in for 3 seconds, out for 3, twice; Lumi's body breathes too). Then Lumi asks "And you? What helps you?".
+- **After:** "Now it's your turn, Mia!" The child drags four pictures into order (First, Next, Then, Last) to make their own plan for when they do it, Lumi reads the plan back, and the child says how they feel now. Lumi compares: "Before, you felt worried. Now you feel okay. Practising helps!"
+- **For the grown-ups:** Grown-ups › Progress › "What Mia told Lumi" lists each story with the feeling before and after, whether the child has done it, and what the child says helps them.
+
+To add this to a new story, give it a line in `ME` in `js/story-me.js` (the question, the feeling words, and four plan pictures in order).
+
+Code: the engine is `js/stories.js` (the `A.SX` helpers are explained at the top); each story is its own file (`js/story-hawker.js`, `js/story-care.js`, `js/story-out.js`, `js/story-school.js`, `js/story-life.js`), and `js/story-me.js` adds the before and after steps.
 
 ## No emoji: drawn pictures everywhere
 
@@ -543,6 +552,10 @@ Code: `js/teamgames.js` (the shared frame and helpers), `js/tg-little.js`, `js/t
 
 - **Bath and shower** end with pyjamas: after drying off with the towel, the child slides the pyjamas onto Lumi. Bedtime starts with Lumi already in pyjamas (story, lights off, blanket).
 - **Reading** lets the child pick *My own book* (Lumi reads on the beanbag, then the child reads a real book) or *Today's Lumi story* (a different story from the Stories shelf each day, or *Pick another story*). At "The end" the child taps *Back to My day* and the reading step is ticked off. Grown-ups set this in Settings > Play and breaks: *Child chooses*, *Their own book* or *A Lumi story*.
+
+## One font, words that fit
+
+Everything in Lumi uses one font, Nunito (in `fonts/`, free under the SIL Open Font License), so every device shows the same letters. Words drawn inside pictures (a BUS STOP sign, a shop name, a cubby label) are checked after each screen is drawn (`fitSvgText` in `js/app.js`): if they are too wide or tall for their sign on that device, they are made a little smaller so there is always a margin around them. Buttons, chips and tabs keep their padding and never get squeezed.
 
 ## One icon style
 
@@ -710,6 +723,7 @@ web/
   js/people.js      full-body people (parents, teachers, dentist, hawker uncle...)
   js/stories.js     the interactive story engine (A.SX)
   js/story-life.js  stories: taking the bus, the library, a vaccination, thunder, swimming lesson, if I get lost
+  js/story-me.js    before and after every story and lesson: "Have you...? How do you feel?", tap Lumi, "Now it's your turn" plan
   js/story-*.js     the stories: hawker centre, care (dentist, haircut, polyclinic), outings, school and work
   js/native.js      native app extras (Android voice, notifications, back button); nothing in a browser
   js/store.js       grown-ups-only check, privacy summary
