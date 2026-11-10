@@ -2308,3 +2308,15 @@ svg.pic.person { overflow: hidden; }
 .sx-lumi > svg.lumi { transition: transform 3s ease-in-out; }
 .sx-lumi.breathe-in > svg.lumi { transform: scale(1.08); }
 .sx-lumi.flip.breathe-in > svg.lumi { transform: scale(-1.08, 1.08); }
+
+/* ---------------------------------------------------------------- story and lesson cards: a real scene from each one (stories.js storyPreview) */
+.story-grid, .learn-grid { grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)); grid-auto-rows: auto; align-content: start; overflow-y: auto; min-height: 0; padding: 4px 6px 28px 4px; gap: 22px; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+.story-card, .learn-card { justify-content: flex-start; align-items: stretch; gap: 12px; padding: 14px 14px 18px; text-align: left; }
+.sx-mini { position: relative; display: block; width: 100%; aspect-ratio: 1114 / 570; flex: none; border-radius: 22px; overflow: hidden; background: #fff; box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.9), 0 6px 0 rgba(90, 60, 40, 0.1); pointer-events: none; }
+.sx-mini * { animation: none !important; transition: none !important; pointer-events: none !important; }
+.sx-mini .sx-mini-scene { position: absolute; left: 0; top: 0; transform-origin: 0 0; margin: 0; }
+.sx-mini.plain { display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.55); }
+.sc-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 6px; }
+.story-card .story-name, .learn-card .learn-name { font-size: calc(24px * var(--ts, 1)); line-height: 1.2; text-align: left; }
+.sc-snip { padding: 0 6px; font-size: 17px; font-weight: 700; line-height: 1.35; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.learn-card .learn-meta { padding: 0 6px; }

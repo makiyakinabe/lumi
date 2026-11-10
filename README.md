@@ -441,7 +441,7 @@ Grown-ups › **Progress** › Feelings and breaks: a week at a glance (feelings
 
 ## Story adventures (interactive real-life practice)
 
-Fun › Stories. Each story is a set of scenes the child acts out with Lumi, with guidance at every step: Lumi says what is happening and what to do, the guide hand shows where, and wrong tries get a kind hint instead of a "no". Choices carry through the story.
+Fun › Stories. Each card shows a real scene from its story (with Lumi and the people in it) and the first words of the story; the list scrolls. Learn with Lumi's lesson cards work the same way. Each story is a set of scenes the child acts out with Lumi, with guidance at every step: Lumi says what is happening and what to do, the guide hand shows where, and wrong tries get a kind hint instead of a "no". Choices carry through the story.
 
 - **Lunch at the hawker centre:** choose what helps with the noise (headphones really go on), chope a free table by dragging the tissue packet (busy and already-choped tables explain why not), pick a stall, wait in the queue and step forward when it moves, order from the menu (one dish is sold out), say the order with a talk card, pay by cash, card or phone, carry the tray to your table, eat, take the tissue back and return the tray.
 - **Dentist, Haircut (with the mirror view), Polyclinic, Supermarket, MRT, Birthday party, New teacher, Fire drill, Asking for help at work:** the same kind of hands-on scenes for each place.

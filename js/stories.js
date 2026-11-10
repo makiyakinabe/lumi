@@ -504,15 +504,65 @@
     return `<svg class="story-cover-bg" viewBox="${s.coverView || `0 0 ${W} ${H}`}" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${bg}</svg>`;
   };
   A.storyCover = coverOf;
+
+  // ---------------------------------------------------------------- a preview of each story: one of its real scenes, small
+  // The scene is drawn exactly as in the story (background, people, things and Lumi), then shrunk to fit the card.
+  // Nothing in it can be tapped: the whole card opens the story. A story can choose its preview step with
+  // `preview: 'stepId'`; otherwise it is the first scene of the story itself.
+  const previewCache = new Map();
+  // the scene that shows each story best (when it is not the first one)
+  const PREVIEW = { mrt: 'platform', swim: 'steps', thunder: 'boom', party: 'present', firedrill: 'line', library: 'find', jab: 'plaster', shop: 'queue', work: 'customer', bus: 'tapin', 'learn-teeth': 'top', 'learn-hands': 'wet', 'learn-dress': 'shirt', 'learn-canteen': 'order', 'learn-laundry': 'load' };
+  const previewIndex = (s) => {
+    const want = s.preview != null ? s.preview : PREVIEW[s.id];
+    if (want != null) { const i = typeof want === 'number' ? want : s.steps.findIndex((p) => p.id === want); if (i >= 0) return i; }
+    const i = s.steps.findIndex((p) => !p.meStep);
+    return i < 0 ? 0 : i;
+  };
+  const safe = (fn, fallback) => { try { return fn(); } catch (e) { return fallback; } };
+  function previewOf(sid) {
+    const s = D.STORIES.find((x) => x.id === sid);
+    if (!s) return null;
+    const i = previewIndex(s);
+    const key = `${sid}|${i}|${JSON.stringify(state.look || {})}`;
+    if (previewCache.has(key)) return previewCache.get(key);
+    const step = s.steps[i];
+    const st = { id: s.id, i, s: {}, data: {}, done: false, preview: true, lumiAt: null };
+    const bg = safe(() => (typeof step.bg === 'function' ? step.bg(st) : SX.bg[step.bg] ? SX.bg[step.bg](st) : ''), '');
+    const l = safe(() => val(step.lumi, st), null);
+    const spot = l ? Object.assign({ x: 220, y: 540, h: 220 }, l) : null;
+    const lumi = spot ? safe(() => `<div class="sx-lumi ${spot.flip ? 'flip' : ''} ${spot.cls || ''}" style="left:${Math.round(spot.x - spot.h / 2)}px;top:${Math.round(spot.y - spot.h * (244 / 268))}px;width:${spot.h}px;height:${spot.h}px;z-index:${spot.z != null ? spot.z : 5};">${SX.lumi(st, spot)}</div>`, '') : '';
+    const draw = safe(() => (step.draw ? step.draw(st) : ''), '');
+    let words = safe(() => val(step.text, st), '') || '';
+    if (words.length > 120) words = `${words.slice(0, 117).replace(/\s+\S*$/, '')}...`;
+    // a picture, not controls: buttons become plain shapes and lose their actions
+    const html = `<svg class="sx-bg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice">${bg}</svg>${lumi}<div class="sx-layer">${draw}</div>`
+      .replace(/<button\b/g, '<span').replace(/<\/button>/g, '</span>')
+      .replace(/\s(data-a|data-k|data-to|tabindex|role|aria-label)="[^"]*"/g, '');
+    const out = { html: `<span class="sx-mini" aria-hidden="true"><span class="sx-scene sx-mini-scene sx-${esc(step.id || 'step')}" style="width:${W}px;height:${H}px">${html}</span></span>`, words };
+    previewCache.set(key, out);
+    return out;
+  }
+  A.storyPreview = previewOf;
+  // shrink each preview to its card
+  function fitPreviews() {
+    A.stage.querySelectorAll('.sx-mini').forEach((m) => {
+      const sc = m.querySelector('.sx-mini-scene');
+      if (sc && m.clientWidth) sc.style.transform = `scale(${(m.clientWidth / W).toFixed(4)})`;
+    });
+  }
+  A.fitPreviews = fitPreviews;
+  const resizePrev = A.onStageResize;
+  A.onStageResize = () => { if (resizePrev) resizePrev(); fitPreviews(); };
   A.PARENT.stories = 'fun';
   A.VOICE.stories = () => 'Pick a story to play with Lumi.';
   A.SCREENS.stories = () => {
     const cards = A.storiesForAge().map((s) => {
       const read = state.stats.storyDone && state.stats.storyDone[s.id];
+      const pv = previewOf(s.id);
       return `<button class="story-card sx-card" data-a="stOpen" data-v="${s.id}" style="background:${s.tint}">
-        <span class="story-cover">${coverOf(s)}<span class="cover-lumi">${L.svg({ look: A.lookWith(), mood: 'happy', size: 84 })}</span></span>
-        <span class="story-name">${esc(s.title)}</span>
-        ${read ? `<span class="tag green">${ic('check', 14)}<span>Played</span></span>` : `<span class="tag">${s.steps.length} steps</span>`}</button>`;
+        ${pv.html}
+        <span class="sc-foot"><span class="story-name">${esc(s.title)}</span>${read ? `<span class="tag green">${ic('check', 14)}<span>Played</span></span>` : `<span class="tag">${s.steps.length} steps</span>`}</span>
+        ${pv.words ? `<span class="sc-snip">${esc(pv.words)}</span>` : ''}</button>`;
     }).join('');
     return `
 <section class="screen" aria-label="Stories">
@@ -525,6 +575,7 @@
 </section>`;
   };
   A.GUIDE.stories = () => ({ sel: '.story-card', say: 'Tap a story.', delay: state.settings.guideDelay * 1000 + 3000 });
+  A.AFTER.stories = () => fitPreviews();
 
   // ---------------------------------------------------------------- playing a story
   const storyNow = () => D.STORIES.find((s) => s.id === S.sx.id);

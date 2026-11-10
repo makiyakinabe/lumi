@@ -44,8 +44,8 @@
   A.SCREENS.learn = () => {
     const count = (name) => state.events.filter((e) => e.kind === 'tutorials' && e.detail === name).length;
     const cards = lessonList().map((t) => `<button class="learn-card" ${sceneFor(t) ? `data-a="stOpen" data-v="${sceneFor(t)}"` : `data-a="lesOpen" data-v="${t.id}"`} style="background:${t.tint}">
-      <span class="learn-art">${lessonArt(t, 110)}</span><span class="learn-name">${esc(t.name)}</span>
-      ${sceneFor(t) ? `<span class="learn-steps">${(D.STORIES.find((x) => x.id === sceneFor(t)) || { steps: [] }).steps.length} small steps</span>` : ''}
+      ${sceneFor(t) && A.storyPreview && A.storyPreview(sceneFor(t)) ? A.storyPreview(sceneFor(t)).html : `<span class="sx-mini plain"><span class="learn-art">${lessonArt(t, 110)}</span></span>`}
+      <span class="sc-foot"><span class="learn-name">${esc(t.name)}</span>${sceneFor(t) ? `<span class="learn-steps">${(D.STORIES.find((x) => x.id === sceneFor(t)) || { steps: [] }).steps.length} small steps</span>` : ''}</span>
       <span class="learn-meta">${dots(Math.min(count(t.name), 5), 5, 'var(--gold)', 14)}</span>
       ${t.custom ? `<span class="tag mine">${ic('camera', 14)}<span>Ours</span></span>` : ''}</button>`).join('');
     return `
@@ -59,6 +59,8 @@
 </section>`;
   };
   A.GUIDE.learn = () => ({ sel: '.learn-card', say: 'Tap one to learn with Lumi.', delay: state.settings.guideDelay * 1000 + 3000 });
+  const afterLearn = A.AFTER.learn;
+  A.AFTER.learn = () => { if (afterLearn) afterLearn(); if (A.fitPreviews) A.fitPreviews(); };
 
   // ---------------------------------------------------------------- the lesson player
   function stepNow() { return S.les.steps[S.les.i]; }
