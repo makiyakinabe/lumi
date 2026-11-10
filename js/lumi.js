@@ -46,15 +46,23 @@
     starcape: '<path d="M44 112 L16 230 L224 230 L196 112 Z" fill="#33406A"/><path d="M30 190l3 7 7 1-5 5 1 7-6-4-6 4 1-7-5-5 7-1zM204 168l3 7 7 1-5 5 1 7-6-4-6 4 1-7-5-5 7-1z" fill="#F4D35E"/>',
     wings: '<path d="M60 128 C24 76 -6 104 8 138 C20 166 50 162 60 150 Z" fill="#EAF4FB" stroke="#8EB8E5" stroke-width="4"/><path d="M180 128 C216 76 246 104 232 138 C220 166 190 162 180 150 Z" fill="#EAF4FB" stroke="#8EB8E5" stroke-width="4"/>',
     backpack: '<rect x="178" y="112" width="44" height="78" rx="16" fill="#E07A5F"/><rect x="186" y="148" width="28" height="24" rx="7" fill="#EF8A7A"/>',
-    heartbag: '<path d="M206 196 C182 180 186 156 198 158 C202 158 205 161 206 164 C207 161 210 158 214 158 C226 156 230 180 206 196 Z" fill="#EF8A7A"/>'
+    heartbag: '<path d="M206 196 C182 180 186 156 198 158 C202 158 205 161 206 164 C207 161 210 158 214 158 C226 156 230 180 206 196 Z" fill="#EF8A7A"/>',
+    balloon: '<path d="M204 150 Q216 112 214 76" stroke="#B9AC9C" stroke-width="2.5" fill="none"/><ellipse cx="216" cy="46" rx="24" ry="29" fill="#8EB8E5"/><path d="M216 74 l-6 8 h12 z" fill="#5E8FC4"/><ellipse cx="207" cy="35" rx="6" ry="10" fill="#fff" opacity=".5"/>',
+    guitar: '<path d="M60 168 L196 34" stroke="#8B5A3C" stroke-width="14" stroke-linecap="round"/><rect x="188" y="14" width="26" height="30" rx="7" transform="rotate(45 201 29)" fill="#6B4430"/><circle cx="34" cy="176" r="38" fill="#E09A2E"/><circle cx="62" cy="146" r="26" fill="#E09A2E"/><circle cx="40" cy="170" r="11" fill="#6B4430"/><path d="M14 196 l14 -14" stroke="#B5543B" stroke-width="6" stroke-linecap="round"/>',
   };
-  const BACK_FRONT = {
-    backpack: '<path d="M164 100 Q186 150 172 198" stroke="#B5543B" stroke-width="7" fill="none" stroke-linecap="round"/>',
-    heartbag: '<path d="M70 104 Q140 150 202 164" stroke="#D9644F" stroke-width="5" fill="none" stroke-linecap="round"/>'
+  // shoes and slippers
+  const FEET = {
+    boots: '<path d="M62 204 h46 v16 q0 10 -10 10 h-28 q-8 0 -8 -8 z" fill="#F4D35E" stroke="#C98A1E" stroke-width="3"/><path d="M132 204 h46 v18 q0 8 -8 8 h-28 q-10 0 -10 -10 z" fill="#F4D35E" stroke="#C98A1E" stroke-width="3"/>',
+    sneakers: '<path d="M62 210 q0-8 9-8 h26 q16 0 19 17 v3 H62 z" fill="#8EB8E5"/><path d="M62 220 h56 v4 q0 7 -7 7 h-42 q-7 0 -7 -7 z" fill="#fff" stroke="#D8E6F2" stroke-width="2"/><path d="M78 206 l10 6 M86 204 l10 6" stroke="#fff" stroke-width="3" stroke-linecap="round"/><g transform="translate(240 0) scale(-1 1)"><path d="M62 210 q0-8 9-8 h26 q16 0 19 17 v3 H62 z" fill="#8EB8E5"/><path d="M62 220 h56 v4 q0 7 -7 7 h-42 q-7 0 -7 -7 z" fill="#fff" stroke="#D8E6F2" stroke-width="2"/><path d="M78 206 l10 6 M86 204 l10 6" stroke="#fff" stroke-width="3" stroke-linecap="round"/></g>',
+    slippers: '<ellipse cx="78" cy="203" rx="6" ry="12" fill="#F2A7BE"/><ellipse cx="98" cy="203" rx="6" ry="12" fill="#F2A7BE"/><ellipse cx="142" cy="203" rx="6" ry="12" fill="#F2A7BE"/><ellipse cx="162" cy="203" rx="6" ry="12" fill="#F2A7BE"/><ellipse cx="88" cy="220" rx="26" ry="12" fill="#F7C6D4"/><ellipse cx="152" cy="220" rx="26" ry="12" fill="#F7C6D4"/><circle cx="82" cy="216" r="2.5" fill="#3B2F2F"/><circle cx="94" cy="216" r="2.5" fill="#3B2F2F"/><circle cx="146" cy="216" r="2.5" fill="#3B2F2F"/><circle cx="158" cy="216" r="2.5" fill="#3B2F2F"/>'
   };
+  // nothing is drawn across Lumi's front any more (the bag straps were removed: they looked like a line on the face)
+  const BACK_FRONT = {};
   const BODY = {
     scarf: '<path d="M44 172 Q120 196 196 172 L198 190 Q120 216 42 190 Z" fill="#E09A2E"/><path d="M150 196 L162 236 L178 232 L170 192 Z" fill="#E09A2E"/><path d="M60 180 L60 194 M90 188 L90 202 M150 188 L150 202 M180 180 L180 194" stroke="#fff" stroke-opacity=".55" stroke-width="4"/>',
     bravescarf: '<path d="M44 172 Q120 196 196 172 L198 190 Q120 216 42 190 Z" fill="#F4B400"/><path d="M150 196 L162 236 L178 232 L170 192 Z" fill="#F4B400"/><path d="M96 192 l3 7 7 1-5 5 1 7-6-4-6 4 1-7-5-5 7-1z" fill="#fff"/>',
+    bowtie: '<g transform="translate(120 182)"><path d="M0 0 L-26 -14 L-26 14 Z" fill="#EF8A7A"/><path d="M0 0 L26 -14 L26 14 Z" fill="#EF8A7A"/><circle r="8" fill="#D9644F"/></g>',
+    beads: `${[...Array(11)].map((_, t) => `<circle cx="${60 + 12 * t}" cy="${(172 + 18 * Math.sin((Math.PI * t) / 10)).toFixed(1)}" r="6.5" fill="${['#8EB8E5', '#F4D35E', '#F2A7BE', '#9CCB7A'][t % 4]}"/>`).join('')}`,
     raincoat: '<path d="M42 166 Q36 222 72 226 L168 226 Q204 222 198 166 Q120 194 42 166 Z" fill="#F4D35E"/><path d="M120 184 L120 224" stroke="#E0B83A" stroke-width="4"/><circle cx="110" cy="198" r="4" fill="#C98A1E"/><circle cx="110" cy="214" r="4" fill="#C98A1E"/>'
   };
   const HEAD = {
@@ -65,6 +73,10 @@
     partyhat: '<path d="M94 70 L120 2 L146 70 Z" fill="#7E64C8"/><path d="M103 50 L137 50 M110 30 L130 30" stroke="#F4D35E" stroke-width="5" stroke-linecap="round"/><circle cx="120" cy="4" r="8" fill="#F4D35E"/>',
     bow: '<g transform="translate(152 50)"><path d="M0 0 L-24 -15 L-24 15 Z" fill="#F2A7BE"/><path d="M0 0 L24 -15 L24 15 Z" fill="#F2A7BE"/><circle r="8" fill="#D9849E"/></g>',
     buckethat: '<path d="M74 72 Q74 20 120 20 Q166 20 166 72 Z" fill="#8EB8E5"/><path d="M50 72 H190 L178 86 H62 Z" fill="#5E8FC4"/>',
+    beanie: '<path d="M70 78 Q70 20 120 20 Q170 20 170 78 Z" fill="#7E64C8"/><rect x="64" y="66" width="112" height="18" rx="9" fill="#5B45A8"/><circle cx="120" cy="16" r="12" fill="#B9A6E0"/>',
+    sunhat: '<ellipse cx="120" cy="76" rx="94" ry="15" fill="#E3BE6F"/><path d="M80 76 Q82 28 120 28 Q158 28 160 76 Z" fill="#F0D38F"/><path d="M81 64 Q120 72 159 64 L160 75 Q120 83 80 75 Z" fill="#EF8A7A"/>',
+    bunnyears: '<ellipse cx="94" cy="22" rx="13" ry="36" fill="#fff" stroke="#E8DCCB" stroke-width="3"/><ellipse cx="94" cy="24" rx="6" ry="25" fill="#F2A7BE"/><ellipse cx="146" cy="22" rx="13" ry="36" fill="#fff" stroke="#E8DCCB" stroke-width="3"/><ellipse cx="146" cy="24" rx="6" ry="25" fill="#F2A7BE"/><path d="M70 64 Q120 42 170 64" stroke="#F2A7BE" stroke-width="9" fill="none" stroke-linecap="round"/>',
+    starclips: '<path d="M80 60l4 9 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1z" fill="#F4D35E" stroke="#E0A91E" stroke-width="2" stroke-linejoin="round"/><path d="M160 60l4 9 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1z" fill="#8EB8E5" stroke="#5E8FC4" stroke-width="2" stroke-linejoin="round"/>',
     crown: '<path d="M84 74 L90 28 L106 50 L120 20 L134 50 L150 28 L156 74 Z" fill="#F4B400" stroke="#C98A1E" stroke-width="3" stroke-linejoin="round"/><circle cx="120" cy="60" r="6" fill="#EF8A7A"/>',
     calmcrown: '<path d="M84 74 L90 28 L106 50 L120 20 L134 50 L150 28 L156 74 Z" fill="#B9A6E0" stroke="#7E64C8" stroke-width="3" stroke-linejoin="round"/><path d="M108 66 h24 a7 7 0 0 0 0-14 a10 10 0 0 0-19 1 a6 6 0 0 0-5 13z" fill="#fff"/>'
   };
@@ -222,16 +234,16 @@
     // feet
     if (o.noFeet) {
       // movement breaks draw their own legs and feet (movebreak.js)
-    } else if (look.feet !== 'boots' && art !== 'soft' && art !== 'diorama') {
+    } else if (FEET[look.feet]) {
+      s += FEET[look.feet];
+    } else if (art !== 'soft' && art !== 'diorama') {
       s += feetFor(art, c);
-    } else if (look.feet === 'boots') {
-      s += '<path d="M62 204 h46 v16 q0 10 -10 10 h-28 q-8 0 -8 -8 z" fill="#F4D35E" stroke="#C98A1E" stroke-width="3"/><path d="M132 204 h46 v18 q0 8 -8 8 h-28 q-10 0 -10 -10 z" fill="#F4D35E" stroke="#C98A1E" stroke-width="3"/>';
     } else {
       s += `<ellipse cx="88" cy="218" rx="22" ry="12" fill="${c.feet}"/><ellipse cx="152" cy="218" rx="22" ry="12" fill="${c.feet}"/>`;
     }
     if (HEAD[look.head]) s += HEAD[look.head];
     // the spark moves to the side when a hat is in the way
-    const clear = look.head === 'none' || look.head === 'bow' || look.head === 'flowers';
+    const clear = ['none', 'bow', 'flowers', 'bunnyears', 'starclips'].includes(look.head);
     if (look.spark && look.spark !== 'none') s += clear ? spark(look.spark, mood, 120, 18) : spark(look.spark, mood, 214, 24);
     s += '</svg>';
     return s;
@@ -276,6 +288,16 @@
     backpack: '<rect x="5" y="6" width="14" height="15" rx="4" fill="#E07A5F"/><path d="M9 6 V4 H15 V6" fill="none" stroke="#B5543B" stroke-width="2"/><rect x="8" y="13" width="8" height="5" rx="1.5" fill="#EF8A7A"/>',
     heartbag: '<path d="M12 21C4 15 3 8 7.5 6 9.5 5 11 6.5 12 8c1-1.5 2.5-3 4.5-2C21 8 20 15 12 21z" fill="#EF8A7A"/><path d="M5 7 Q12 -1 19 7" stroke="#D9644F" stroke-width="1.5" fill="none"/>',
     boots: '<path d="M4 4 H9 V16 H12 Q12 20 9 20 H4 Z" fill="#F4D35E"/><path d="M13 4 H18 V16 H21 Q21 20 18 20 H13 Z" fill="#F4D35E"/>',
+    sneakers: '<path d="M3 12 q0-3 3-3 h6 q6 0 8 6 v2 H3 z" fill="#8EB8E5"/><path d="M3 16 h19 v1.5 q0 2.5 -2.5 2.5 h-14 q-2.5 0 -2.5 -2.5 z" fill="#fff" stroke="#5E8FC4" stroke-width="1.2"/><path d="M8 9.5 l2.5 2 M10.5 9 l2.5 2" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/>',
+    slippers: '<ellipse cx="12" cy="16" rx="9" ry="5" fill="#F7C6D4"/><ellipse cx="9" cy="9" rx="2" ry="4.5" fill="#F2A7BE"/><ellipse cx="15" cy="9" rx="2" ry="4.5" fill="#F2A7BE"/><circle cx="10" cy="15" r="1" fill="#3B2F2F"/><circle cx="14" cy="15" r="1" fill="#3B2F2F"/>',
+    beanie: '<path d="M5 16 Q5 6 12 6 Q19 6 19 16 Z" fill="#7E64C8"/><rect x="4" y="14" width="16" height="4" rx="2" fill="#5B45A8"/><circle cx="12" cy="5" r="2.6" fill="#B9A6E0"/>',
+    sunhat: '<ellipse cx="12" cy="16" rx="11" ry="3" fill="#E3BE6F"/><path d="M7 16 Q7 7 12 7 Q17 7 17 16 Z" fill="#F0D38F"/><path d="M7 13.5 h10 v2 h-10 z" fill="#EF8A7A"/>',
+    bunnyears: '<ellipse cx="8.5" cy="10" rx="3" ry="8" fill="#fff" stroke="#D9C8B4" stroke-width="1"/><ellipse cx="8.5" cy="10.5" rx="1.3" ry="5.5" fill="#F2A7BE"/><ellipse cx="15.5" cy="10" rx="3" ry="8" fill="#fff" stroke="#D9C8B4" stroke-width="1"/><ellipse cx="15.5" cy="10.5" rx="1.3" ry="5.5" fill="#F2A7BE"/><path d="M4 20 Q12 15 20 20" stroke="#F2A7BE" stroke-width="2.4" fill="none" stroke-linecap="round"/>',
+    starclips: '<path d="M7 5l1.6 3.4 3.6.4-2.7 2.4.8 3.6L7 13l-3.3 1.8.8-3.6L1.8 8.8l3.6-.4z" fill="#F4D35E"/><path d="M17 10l1.6 3.4 3.6.4-2.7 2.4.8 3.6L17 18l-3.3 1.8.8-3.6-2.7-2.4 3.6-.4z" fill="#F2A7BE"/>',
+    bowtie: '<path d="M12 12 L3 7 V17 Z" fill="#EF8A7A"/><path d="M12 12 L21 7 V17 Z" fill="#EF8A7A"/><circle cx="12" cy="12" r="2.8" fill="#D9644F"/>',
+    beads: '<path d="M4 8 Q12 20 20 8" fill="none" stroke="#E8DCCB" stroke-width="1"/><circle cx="4.5" cy="9" r="2" fill="#8EB8E5"/><circle cx="7.5" cy="13" r="2" fill="#F4D35E"/><circle cx="12" cy="14.6" r="2" fill="#F2A7BE"/><circle cx="16.5" cy="13" r="2" fill="#9CCB7A"/><circle cx="19.5" cy="9" r="2" fill="#8EB8E5"/>',
+    balloon: '<ellipse cx="12" cy="9" rx="6" ry="7" fill="#8EB8E5"/><path d="M12 16 l-1.5 2 h3 z" fill="#5E8FC4"/><path d="M12 18 q-2 2 0 5" stroke="#9C8B7A" stroke-width="1.2" fill="none"/><ellipse cx="10" cy="6.5" rx="1.4" ry="2.4" fill="#fff" opacity=".6"/>',
+    guitar: '<g transform="rotate(35 12 12)"><rect x="11" y="1" width="2.4" height="12" rx="1" fill="#8B5A3C"/><rect x="10" y="0" width="4.4" height="3" rx="1" fill="#6B4430"/><circle cx="12.2" cy="17" r="5.4" fill="#E09A2E"/><circle cx="12.2" cy="16.4" r="1.6" fill="#6B4430"/></g>',
     'spark-star': '<polygon points="12 3 14.6 8.6 20.6 9.2 16 13.2 17.3 19.2 12 16.1 6.7 19.2 8 13.2 3.4 9.2 9.4 8.6" fill="#FFC727" stroke="#F2A100" stroke-width="2.2" stroke-linejoin="round"/><path d="M5.4 9.9 9.8 9.5 11.6 5.3" fill="none" stroke="#fff" stroke-width=".9" stroke-linecap="round" opacity=".85"/>',
     'spark-heart': '<path d="M12 21C4 15 3 8 7.5 6 9.5 5 11 6.5 12 8c1-1.5 2.5-3 4.5-2C21 8 20 15 12 21z" fill="#F4B400"/>',
     'spark-flower': '<circle cx="17" cy="12" r="4" fill="#F4B400"/><circle cx="13.5" cy="16.8" r="4" fill="#F4B400"/><circle cx="8" cy="15" r="4" fill="#F4B400"/><circle cx="8" cy="9" r="4" fill="#F4B400"/><circle cx="13.5" cy="7.2" r="4" fill="#F4B400"/><circle cx="12" cy="12" r="3" fill="#FFF1C2"/>',
@@ -285,6 +307,17 @@
     beanbag: '<path d="M3 19c0-7 4-12 9-12s9 5 9 12c0 2-18 2-18 0z" fill="#EF8A7A"/><path d="M8 12 q4 -2 8 0" stroke="#D9644F" stroke-width="1.2" fill="none"/>',
     bookshelf: '<rect x="4" y="3" width="16" height="18" rx="2" fill="#C9A27E"/><rect x="6" y="5" width="3" height="6" fill="#8EB8E5"/><rect x="10" y="6" width="3" height="5" fill="#F4D35E"/><rect x="14" y="5" width="3" height="6" fill="#B9A6E0"/><rect x="6" y="13" width="12" height="6" fill="#E8CDB0"/>',
     rainbow: '<path d="M3 18a9 9 0 0 1 18 0" stroke="#EF8A7A" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M6 18a6 6 0 0 1 12 0" stroke="#F4D35E" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M9 18a3 3 0 0 1 6 0" stroke="#8EB8E5" stroke-width="2.4" fill="none" stroke-linecap="round"/>',
+    clock: '<circle cx="12" cy="12" r="9" fill="#fff" stroke="#E07A5F" stroke-width="2.4"/><path d="M12 7v5l3 2" stroke="#3B2F2F" stroke-width="1.8" fill="none" stroke-linecap="round"/>',
+    teddy: '<circle cx="7" cy="6" r="2.6" fill="#A87B50"/><circle cx="17" cy="6" r="2.6" fill="#A87B50"/><circle cx="12" cy="9" r="5.5" fill="#C99A6B"/><ellipse cx="12" cy="18" rx="6.5" ry="5" fill="#C99A6B"/><ellipse cx="12" cy="11" rx="2.2" ry="1.6" fill="#E8CDB0"/><circle cx="10" cy="8.4" r=".9" fill="#3B2F2F"/><circle cx="14" cy="8.4" r=".9" fill="#3B2F2F"/><ellipse cx="12" cy="18.5" rx="3" ry="2.6" fill="#E8CDB0"/>',
+    toybox: '<rect x="3" y="9" width="18" height="12" rx="2" fill="#5E8FC4"/><rect x="2" y="7" width="20" height="4" rx="1.5" fill="#8EB8E5"/><circle cx="8" cy="15" r="2" fill="#F4D35E"/><rect x="12" y="13" width="5" height="4" rx="1" fill="#EF8A7A"/><path d="M9 7 l2-4 2 4z" fill="#9CCB7A"/>',
+    bed: '<rect x="2" y="12" width="20" height="6" rx="2" fill="#B9A6E0"/><rect x="2" y="7" width="4" height="14" rx="1.5" fill="#C9A27E"/><rect x="18" y="10" width="4" height="11" rx="1.5" fill="#C9A27E"/><rect x="6" y="9" width="5" height="3.5" rx="1.5" fill="#fff"/><path d="M11 12 h11 v6 h-11z" fill="#8EB8E5"/>',
+    desk: '<rect x="2" y="9" width="20" height="3" rx="1" fill="#C9A27E"/><path d="M4 12v9M20 12v9" stroke="#A87B50" stroke-width="2" stroke-linecap="round"/><rect x="13" y="12" width="6" height="5" fill="#E8CDB0"/><rect x="5" y="4" width="5" height="5" rx="1" fill="#8EB8E5"/><path d="M14 9V5l3-1" stroke="#6B5A4E" stroke-width="1.4" fill="none"/>',
+    fairylights: '<path d="M1 5 Q6 10 12 6 Q18 2 23 7" stroke="#6B5A4E" stroke-width="1" fill="none"/><circle cx="4" cy="8" r="1.8" fill="#F4D35E"/><circle cx="8.5" cy="8.8" r="1.8" fill="#EF8A7A"/><circle cx="13" cy="6" r="1.8" fill="#8EB8E5"/><circle cx="17.5" cy="4.4" r="1.8" fill="#9CCB7A"/><circle cx="21.5" cy="6.5" r="1.8" fill="#F2A7BE"/>',
+    balloons: '<path d="M8 13 L12 22 M16 12 L12 22 M12 10 V22" stroke="#9C8B7A" stroke-width=".9"/><ellipse cx="8" cy="8" rx="4" ry="5" fill="#EF8A7A"/><ellipse cx="16" cy="7.5" rx="4" ry="5" fill="#8EB8E5"/><ellipse cx="12" cy="5.5" rx="4" ry="5" fill="#F4D35E"/>',
+    tulips: '<path d="M8 13v6M12 11v8M16 13v6" stroke="#7FB069" stroke-width="1.6"/><path d="M6 9 q2 -4 4 0 q-2 5 -4 0z" fill="#EF8A7A"/><path d="M10 7 q2 -4 4 0 q-2 5 -4 0z" fill="#F4D35E"/><path d="M14 9 q2 -4 4 0 q-2 5 -4 0z" fill="#F2A7BE"/><path d="M6 17h12l-1.5 5h-9z" fill="#8EB8E5"/>',
+    bonsai: '<path d="M12 18 Q11 13 14 10" stroke="#8B5A3C" stroke-width="2" fill="none"/><ellipse cx="9" cy="9" rx="5" ry="3" fill="#7FB069"/><ellipse cx="16" cy="8" rx="5" ry="3" fill="#5E9E45"/><ellipse cx="13" cy="5" rx="4" ry="2.4" fill="#9CCB7A"/><path d="M5 18h14l-2 4H7z" fill="#5E8FC4"/>',
+    tree: '<circle cx="12" cy="7" r="5.5" fill="#7FB069"/><circle cx="8" cy="10" r="4" fill="#5E9E45"/><circle cx="16" cy="10" r="4" fill="#5E9E45"/><path d="M12 12v6" stroke="#8B5A3C" stroke-width="2.4"/><path d="M7 17h10l-1.5 5h-7z" fill="#E07A5F"/>',
+    birdcage: '<path d="M5 20 V11 a7 7 0 0 1 14 0 V20" fill="#FFF8E8" stroke="#C9A27E" stroke-width="1.4"/><path d="M9 20V6.5M12 20V4M15 20V6.5" stroke="#C9A27E" stroke-width="1"/><rect x="4" y="19" width="16" height="2.5" rx="1" fill="#C9A27E"/><circle cx="12" cy="14" r="3" fill="#F4D35E"/><path d="M14.6 14 l1.8 .8 -1.8 .8z" fill="#EE964B"/><circle cx="12.9" cy="13.2" r=".6" fill="#3B2F2F"/>',
     plant: '<circle cx="12" cy="9" r="6" fill="#7FB069"/><path d="M8 14h8l-1 7H9z" fill="#E07A5F"/>',
     sunflower: '<path d="M12 12v9" stroke="#7FB069" stroke-width="2"/><circle cx="12" cy="8" r="6" fill="#F4D35E"/><circle cx="12" cy="8" r="2.6" fill="#A87B50"/><path d="M12 16 q-4 -1 -5 2" stroke="#7FB069" stroke-width="2" fill="none"/>',
     cactus: '<rect x="10" y="4" width="4" height="14" rx="2" fill="#7FB069"/><path d="M10 12 H7 V8" stroke="#7FB069" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M14 10 H17 V7" stroke="#7FB069" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M7 17h10l-1 4H8z" fill="#E07A5F"/>',
@@ -320,7 +353,7 @@
     // things closer to us are drawn last
     const earZ = (side) => -side * 52 * sin;
     const ears = [-1, 1].sort((p, q) => earZ(p) - earZ(q));
-    const offCentre = look.back === 'backpack' || look.back === 'heartbag';
+    const offCentre = look.back === 'backpack' || look.back === 'heartbag' || look.back === 'balloon';
     const backItem = BACK[look.back] ? `<g transform="translate(${cos >= 0 ? 0 : offCentre ? -80 - 70 * sin : 0} 0)">${BACK[look.back]}</g>` : '';
     let s = `<svg class="lumi" width="${size}" height="${size}" viewBox="-14 -14 268 268" role="img" aria-label="${o.label || 'Lumi'}">`;
     s += `<defs><clipPath id="${id}"><ellipse cx="120" cy="136" rx="90" ry="84"/></clipPath>

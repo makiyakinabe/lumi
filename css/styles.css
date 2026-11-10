@@ -2445,3 +2445,18 @@ svg.pic.person { overflow: hidden; }
 .tl-row.dragging .tl-card { box-shadow: 0 10px 24px rgba(60, 40, 20, 0.2); }
 .tl-row.drop-before { box-shadow: inset 0 3px 0 var(--teal); }
 .tl-row.drop-after { box-shadow: inset 0 -3px 0 var(--teal); }
+
+/* room: a longer shop list scrolls; the size buttons for the thing picked in the room */
+.room-grid { overflow-y: auto; min-height: 0; grid-auto-rows: 132px; padding: 2px; }
+.room-scene .movable.size-pick { outline: 4px dashed rgba(47, 126, 121, 0.75); outline-offset: 4px; border-radius: 16px; }
+.size-bar { display: flex; align-items: center; gap: 14px; height: 104px; padding: 0 16px; border-radius: var(--r-md); background: #fff; border: 3px solid #CFE8E3; }
+.size-btn { flex: none; width: 76px; height: 76px; border-radius: 50%; border: 0; background: var(--teal); color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 0 #235F5B; }
+.size-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #235F5B; }
+.size-btn[disabled] { background: #D8D2C8; box-shadow: 0 5px 0 #BDB5A8; }
+.size-mid { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0; }
+.size-mid .item-art svg { width: 56px; height: 56px; }
+.size-dots { display: flex; align-items: center; gap: 5px; }
+.size-dots i { border-radius: 50%; background: #E3DCD1; }
+.size-dots i.one { box-shadow: 0 0 0 2px #CFE8E3; }
+.size-dots i.on { background: var(--teal); }
+.size-done { flex: none; }

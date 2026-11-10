@@ -394,6 +394,12 @@ Lumi is for children and youths with a range of special needs, not only non-verb
 - **Timetable**: one **Copy day** button (pick the days, or Weekdays / Weekend / Every day). On today's day, **Today only** changes the plan just for today (a dentist visit, a public holiday) without touching the usual week; tomorrow goes back to normal, or tap Undo today's changes. Drag a step by its dots to move it (the times stay put and the steps swap into them), or use Earlier / Later in the Step panel.
 - **Progress** starts with three plain sentences (days used, feelings shared, stories practised and whether the child felt better afterwards). The charts are folded underneath in "Charts and details".
 
+## Lumi's room: bigger or smaller
+
+In Lumi's room, tap anything (or Lumi) and big **−** and **+** buttons appear under the shop. Each thing can be made smaller or bigger in 8 steps (half size to just over double); it grows from where it stands, so its feet stay on the floor. Sizes are saved with the room (`state.roomSize`) and show on the home screen too. Undo puts back the last move or size change. Tap the tick to put the buttons away. Owned things tapped in the shop are picked too.
+
+The room shop now has 20 things: a clock, teddy bear, fairy lights, balloons, toy box, desk, bed, tulips, a little tree, a big plant and a bird, as well as the first nine. The clothes shop adds star clips, a bow tie, bunny slippers, a bead necklace, a beanie, sneakers, a balloon, a sun hat, bunny ears and a guitar. Bags no longer draw a strap across Lumi's front.
+
 ## Fits any screen
 
 Lumi fills the whole screen on any device held sideways: phones, iPads (any size), Android tablets, laptops and big monitors, with no black bars. It is designed on a 1194 × 834 landscape "stage"; `fit()` in `js/app.js` keeps that height (or width) and stretches the other side to match the screen's shape, so the flexible screens simply grow. The story and lesson pictures are scaled to use the space too (`fitScene()` in `js/stories.js`): on a wide screen such as a phone or a 16:9 laptop the picture fills the height and the words move into a column beside it. The notch and home bar are kept clear, and the strip around them takes the colour of the current screen. Held upright, a phone or tablet shows "Turn me sideways". A desktop browser window narrower than it is tall shows the app with thin edges.

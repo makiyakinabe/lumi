@@ -555,13 +555,17 @@
 
   // the things Lumi owns, where the child put them (state.roomPos[id] = { l, t, z } in % of the room),
   // or where they start. In the room itself (edit) each one can be dragged anywhere.
+  // how big the child made each thing in the room (1 = as it came); Lumi too
+  const ROOM_SIZES = [0.5, 0.65, 0.8, 1, 1.25, 1.5, 1.8, 2.2];
+  const roomSize = (id) => ((state.roomSize || {})[id] || 1);
   function roomDecor(edit) {
     const walkers = A.buddyPets ? A.buddyPets() : []; // the puppy and kitten walk with Lumi instead
     const placed = state.roomPos || {};
     return D.ROOM.filter((r) => state.owned.includes(r.id) && !walkers.includes(r.id)).map((r) => {
       const p = r.pos;
       const c = placed[r.id];
-      const pos = c ? `left:${c.l}%;top:${c.t}%;width:${p.w}%;z-index:${2 + (c.z || 0)}` : `left:${p.left}%;${p.top != null ? 'top:' + p.top + '%' : 'bottom:' + p.bottom + '%'};width:${p.w}%`;
+      const w = Math.round(p.w * roomSize(r.id) * 10) / 10; // the child can make each thing bigger or smaller
+      const pos = c ? `left:${c.l}%;top:${c.t}%;width:${w}%;z-index:${2 + (c.z || 0)}` : `left:${p.left}%;${p.top != null ? 'top:' + p.top + '%' : 'bottom:' + p.bottom + '%'};width:${w}%`;
       const art = L.item(r.id, '100%').replace('height="100%"', '');
       return edit
         ? `<div class="decor movable" data-id="${r.id}" style="${pos}" role="button" tabindex="-1" aria-label="${esc(r.name)}. Drag to move it.">${art}</div>`
@@ -1396,21 +1400,50 @@
     <div class="panel scene room-scene" style="width:690px">
       <div class="floor" style="height:24%"></div>
       ${roomDecor(true)}
-      <div class="lumi-pos bob movable room-lumi" data-id="lumi" role="button" tabindex="-1" aria-label="Lumi. Drag to move Lumi." style="${state.roomLumi ? `left:${state.roomLumi.l}%;top:${state.roomLumi.t}%` : 'left:33%;bottom:6%'};z-index:30">${L.svg({ look: lookWith(), mood: 'happy', size: 230 })}</div>
+      <div class="lumi-pos bob movable room-lumi" data-id="lumi" role="button" tabindex="-1" aria-label="Lumi. Drag to move Lumi." style="${state.roomLumi ? `left:${state.roomLumi.l}%;top:${state.roomLumi.t}%` : 'left:33%;bottom:6%'};z-index:30">${L.svg({ look: lookWith(), mood: 'happy', size: Math.round(230 * roomSize('lumi')) })}</div>
       ${state.roomMoved ? '' : `<span class="room-hint">${ic('hand', 26)}<span>Drag things to move them</span></span>`}
       ${S.roomUndo ? `<button class="room-undo" data-a="roomUndo" aria-label="Undo the last move">${ic('undo', 26)}<span>Undo</span></button>` : ''}
     </div>
     <div class="col grow gap16">
       <div class="row gap12">${tabHtml}</div>
-      <div class="item-grid grow">${items}</div>
-      ${String(S.roomSel || '').startsWith('rug:') && A.rugBuyBar ? A.rugBuyBar() : sel ? buyBar(sel, 'roomBuy') : `<div class="goal" role="img" aria-label="Goal: ${esc(state.goal.name)}, ${Math.min(state.stats.totalEarned, state.goal.target)} of ${state.goal.target} stars">
-        <span class="goal-ic">${L.item('plant', 40)}</span>
-        <div class="col grow gap8"><div class="bar-track"><div class="bar-fill" style="width:${goalPct}%"></div></div><span class="small" style="color:#3C6E30">${esc(state.goal.name)} · ${Math.min(state.stats.totalEarned, state.goal.target)} / ${state.goal.target}</span></div>
-      </div>`}
+      <div class="item-grid grow room-grid">${items}</div>
+      <div class="room-foot">${roomFoot(sel)}</div>
     </div>
   </div>
 </section>`;
   };
+
+  // the bar under the shop: the size buttons for the thing picked in the room, what to buy, or the star goal
+  function roomFoot(sel) {
+    const goalPct = Math.min(100, Math.round((state.stats.totalEarned / state.goal.target) * 100));
+    if (S.roomPick && !S.roomSel) {
+      const id = S.roomPick;
+      const name = id === 'lumi' ? 'Lumi' : (D.ROOM.find((r) => r.id === id) || {}).name || '';
+      const k = ROOM_SIZES.indexOf(roomSize(id));
+      const art = id === 'lumi' ? L.svg({ look: lookWith(), mood: 'happy', size: 56 }) : L.item(id, 56);
+      return `<div class="size-bar" role="group" aria-label="Size of ${esc(name)}">
+        <button class="size-btn" data-a="roomSize" data-v="-1" ${k <= 0 ? 'disabled' : ''} aria-label="Make ${esc(name)} smaller">${ic('minus', 36)}</button>
+        <span class="size-mid"><span class="item-art">${art}</span><span class="size-dots" aria-hidden="true">${ROOM_SIZES.map((z, i) => `<i class="${i === k ? 'on' : ''} ${z === 1 ? 'one' : ''}" style="width:${8 + i * 2}px;height:${8 + i * 2}px"></i>`).join('')}</span></span>
+        <button class="size-btn" data-a="roomSize" data-v="1" ${k >= ROOM_SIZES.length - 1 ? 'disabled' : ''} aria-label="Make ${esc(name)} bigger">${ic('plus', 36)}</button>
+        <button class="icon-btn size-done" data-a="roomPickDone" aria-label="Done">${ic('check', 30)}</button>
+      </div>`;
+    }
+    return String(S.roomSel || '').startsWith('rug:') && A.rugBuyBar ? A.rugBuyBar() : sel ? buyBar(sel, 'roomBuy') : `<div class="goal" role="img" aria-label="Goal: ${esc(state.goal.name)}, ${Math.min(state.stats.totalEarned, state.goal.target)} of ${state.goal.target} stars">
+        <span class="goal-ic">${L.item('plant', 40)}</span>
+        <div class="col grow gap8"><div class="bar-track"><div class="bar-fill" style="width:${goalPct}%"></div></div><span class="small" style="color:#3C6E30">${esc(state.goal.name)} · ${Math.min(state.stats.totalEarned, state.goal.target)} / ${state.goal.target}</span></div>
+      </div>`;
+  }
+  // pick a thing in the room to resize it (no full redraw, so "tap instead of drag" keeps its pick)
+  function roomPick(id) {
+    S.roomPick = id;
+    S.roomSel = null;
+    const box = stage.querySelector('.room-scene');
+    if (!box) return;
+    box.querySelectorAll('.movable').forEach((m) => m.classList.toggle('size-pick', m.dataset.id === id));
+    stage.querySelectorAll('.item-tile.sel').forEach((t) => t.classList.remove('sel'));
+    const foot = stage.querySelector('.room-foot');
+    if (foot) foot.innerHTML = roomFoot(null);
+  }
 
   function itemTile(it, owned, selected, action) {
     const afford = state.stars >= it.price;
@@ -1437,6 +1470,8 @@
     box.querySelectorAll('.movable').forEach((el) => {
       const id = el.dataset.id;
       const name = id === 'lumi' ? 'Lumi' : (D.ROOM.find((r) => r.id === id) || {}).name || '';
+      if (S.roomPick === id) el.classList.add('size-pick');
+      el.addEventListener('pointerup', () => { if (S.roomPick !== id) roomPick(id); });
       A.SG.drag(el, box, {
         start: () => { el.classList.add('lifted'); el.style.zIndex = 60; tone(520, 0.08, 0.04); },
         tap: () => { el.classList.remove('lifted'); el.classList.remove('wiggle-once'); void el.offsetWidth; el.classList.add('wiggle-once'); say(id === 'lumi' ? 'Hi! Drag me anywhere.' : `${name}. Drag it anywhere.`); },
@@ -1451,7 +1486,9 @@
           y = Math.max(0, Math.min(H - h, y));
           const pct = { l: Math.round((x / W) * 1000) / 10, t: Math.round((y / H) * 1000) / 10 };
           const before = id === 'lumi' ? state.roomLumi || null : (state.roomPos || {})[id] || null;
-          S.roomUndo = { id, before };
+          S.roomUndo = { id, before, size: roomSize(id) };
+          S.roomPick = id;
+          S.roomSel = null;
           if (id === 'lumi') state.roomLumi = pct;
           else {
             state.roomPos = state.roomPos || {};
@@ -2240,9 +2277,36 @@
 
     // room
     roomTab: (d) => { S.roomTab = d.t; S.roomSel = null; render(); },
+    // bigger or smaller: it grows from where it stands (its feet stay on the same spot)
+    roomSize: (d) => {
+      const id = S.roomPick;
+      const box = stage.querySelector('.room-scene');
+      const el = box && box.querySelector(`.movable[data-id="${id}"]`);
+      if (!el) return;
+      const f1 = roomSize(id);
+      const k = ROOM_SIZES.indexOf(f1) + Number(d.v);
+      if (k < 0 || k >= ROOM_SIZES.length) return;
+      const f2 = ROOM_SIZES[k];
+      const W = box.offsetWidth, H = box.offsetHeight;
+      const w = el.offsetWidth, h = el.offsetHeight, nw = (w * f2) / f1, nh = (h * f2) / f1;
+      const x = Math.max(-nw * 0.15, Math.min(W - nw * 0.85, el.offsetLeft + w / 2 - nw / 2));
+      const y = Math.max(-nh * 0.1, Math.min(H - nh * 0.6, el.offsetTop + h - nh));
+      const pct = { l: Math.round((x / W) * 1000) / 10, t: Math.round((y / H) * 1000) / 10 };
+      const before = id === 'lumi' ? state.roomLumi || null : (state.roomPos || {})[id] || null;
+      S.roomUndo = { id, before, size: f1 };
+      if (id === 'lumi') state.roomLumi = pct;
+      else { state.roomPos = state.roomPos || {}; state.roomPos[id] = Object.assign(pct, { z: before && before.z != null ? before.z : Math.max(0, ...Object.values(state.roomPos).map((q) => q.z || 0)) + 1 }); }
+      state.roomSize = state.roomSize || {};
+      state.roomSize[id] = f2;
+      tone(f2 > f1 ? 700 : 440, 0.1, 0.05);
+      say(f2 === 1 ? 'Just right.' : f2 > f1 ? 'Bigger!' : 'Smaller!');
+      save();
+      render();
+    },
+    roomPickDone: () => { S.roomPick = null; render(); },
     roomItem: (d) => {
       const it = D.ROOM.find((r) => r.id === d.id);
-      if (state.owned.includes(it.id)) { S.roomSel = null; render(); say(it.name); return; }
+      if (state.owned.includes(it.id)) { S.roomSel = null; S.roomPick = (A.buddyPets ? A.buddyPets() : []).includes(it.id) ? null : it.id; render(); say(it.name); return; }
       S.roomSel = it.id;
       render();
       say(state.stars >= it.price ? `${it.name}. ${it.price} stars. Tap to buy it.` : `${it.name}. You need ${it.price - state.stars} more stars.`);
@@ -2270,6 +2334,7 @@
       if (u.id === 'lumi') state.roomLumi = u.before;
       else if (u.before) state.roomPos[u.id] = u.before;
       else delete state.roomPos[u.id];
+      if (u.size != null) { state.roomSize = state.roomSize || {}; state.roomSize[u.id] = u.size; }
       S.roomUndo = null;
       save();
       render();
