@@ -54,26 +54,44 @@
 
   // ---------------------------------------------------------------- Play hub
   A.PARENT.play = 'fun';
-  A.VOICE.play = () => (S.playTab === 'lumi' ? 'Play a game with Lumi. You take turns.' : 'Pick a game to play with Lumi.');
-  A.SCREENS.play = () => {
-    // two shelves: puzzles you play by yourself, and turn-taking games you play with Lumi (teamgames.js)
+  // The games sit on four shelves, so a child never faces a wall of 18 cards:
+  // Calm (slow, soothing), Think (memory and puzzles), Everyday (skills for real life), With Lumi (taking turns).
+  const SHELVES = [
+    ['calm', 'Calm', 'kCalm', 'Slow, gentle games.'],
+    ['think', 'Think', 'kPuzzle', 'Puzzles and memory games.'],
+    ['life', 'Everyday', 'kLife', 'Practise things you do every day.'],
+    ['lumi', 'With Lumi', 'kDuo', 'Take turns with Lumi.']
+  ];
+  const SHELF_OF = { bubbles: 'calm', wait: 'calm', tune: 'calm', catch: 'calm', match: 'think', jigsaw: 'think', pattern: 'think', maze: 'think', find: 'think', feed: 'think', sort: 'life', weather: 'life' };
+  const shelfOf = (g) => g.cat || SHELF_OF[g.id] || 'think';
+  A.gameShelves = () => SHELVES.filter(([id]) => id !== 'lumi').map(([id, name]) => ({ id, name, games: D.GAMES.filter((g) => shelfOf(g) === id) }));
+  function hubState() {
+    const on = D.GAMES.filter((g) => state.profile.games[g.id] !== false);
     const withLumi = A.TG && A.TG.forAge().length;
-    const tab = withLumi && S.playTab === 'lumi' ? 'lumi' : 'puzzles';
-    const tabs = withLumi ? `<div class="seg play-tabs" role="tablist">
-      <button class="seg-opt ${tab === 'puzzles' ? 'on' : ''}" data-a="playTab" data-v="puzzles" role="tab" aria-selected="${tab === 'puzzles'}">${ic('kPuzzle', 30)}<span>Puzzles</span></button>
-      <button class="seg-opt ${tab === 'lumi' ? 'on' : ''}" data-a="playTab" data-v="lumi" role="tab" aria-selected="${tab === 'lumi'}">${ic('kDuo', 30)}<span>With Lumi</span></button></div>` : '';
+    const shelves = SHELVES.filter(([id]) => (id === 'lumi' ? withLumi : on.some((g) => shelfOf(g) === id)));
+    let tab = shelves.some(([id]) => id === S.playTab) ? S.playTab : null;
+    if (!tab) { const f = on.find((g) => state.profile.targets[g.skill]); tab = f ? shelfOf(f) : (shelves[0] || ['think'])[0]; }
+    return { on, shelves, tab };
+  }
+  A.VOICE.play = () => { const h = hubState(); const sh = SHELVES.find(([id]) => id === h.tab); return sh ? `${sh[1]} games. ${sh[3]} Pick one.` : 'Pick a game.'; };
+  A.SCREENS.play = () => {
+    const h = hubState();
+    const tab = h.tab;
+    const tabs = h.shelves.length > 1 ? `<div class="shelf-tabs" role="tablist" aria-label="Kinds of games">${h.shelves.map(([id, name, icon]) => `<button class="tab shelf-tab ${tab === id ? 'on' : ''}" data-a="playTab" data-v="${id}" role="tab" aria-selected="${tab === id}">${ic(icon, 34)}<span>${name}</span></button>`).join('')}</div>` : '<span></span>';
+    const head = `<div class="row between" style="height:64px;flex:none">
+    <div class="row gap12">${A.backBtn()}${A.speakBtn(A.VOICE.play())}</div>
+    ${tabs}
+  </div>`;
     if (tab === 'lumi') {
       return `
 <section class="screen" aria-label="Play with Lumi">
   ${A.srTitle('Play with Lumi')}
-  <div class="row between" style="height:60px">
-    <div class="row gap12">${A.backBtn()}${A.speakBtn(A.VOICE.play())}</div>
-    ${tabs}
-  </div>
+  ${head}
   <div class="game-grid tg-grid grow n${A.TG.forAge().length}">${A.tgHubGrid()}</div>
 </section>`;
     }
-    const games = D.GAMES.filter((g) => state.profile.games[g.id] !== false);
+    const games = h.on.filter((g) => shelfOf(g) === tab);
+    const cols = games.length <= 3 ? Math.max(1, games.length) : games.length === 4 ? 2 : games.length <= 6 ? 3 : 4;
     const cards = games.map((g) => `<button class="game-card" data-a="gOpen" data-v="${g.id}" style="background:${g.tint}">
       <span class="game-ic" style="color:${g.ink}">${ic(g.icon, 92)}</span>
       <span class="game-name">${g.name}</span>
@@ -82,17 +100,14 @@
       ${state.profile.targets[g.skill] ? `<span class="tile-focus">${ic('star', 22)}</span>` : ''}
     </button>`).join('');
     return `
-<section class="screen" aria-label="Play">
-  ${A.srTitle('Play with Lumi')}
-  <div class="row between" style="height:60px">
-    <div class="row gap12">${A.backBtn()}${A.speakBtn('Pick a game to play with Lumi.')}</div>
-    ${tabs || '<span></span>'}
-  </div>
+<section class="screen" aria-label="Games">
+  ${A.srTitle('Games')}
+  ${head}
   <div class="row gap24 grow">
-    <div class="game-grid grow n${games.length} ${games.length > 6 ? 'many' : ''}">${cards || '<p class="muted">No games turned on. Ask a grown-up.</p>'}</div>
-    <div class="panel scene" style="width:280px">
+    <div class="game-grid grow" style="grid-template-columns:repeat(${cols}, minmax(0, 1fr))">${cards || '<p class="muted">No games turned on. Ask a grown-up.</p>'}</div>
+    <div class="panel scene lumi-room" style="width:270px">
       <div class="floor" style="height:22%"></div>
-      <div class="lumi-pos bob" style="left:20px;bottom:30px">${L.svg({ look: A.lookWith(), mood: 'excited', wave: true, size: 240 })}</div>
+      <div class="lumi-pos bob" style="left:38px;bottom:30px">${L.svg({ look: A.lookWith(), mood: 'excited', wave: true, size: 210 })}</div>
     </div>
   </div>
 </section>`;

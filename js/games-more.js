@@ -59,6 +59,7 @@
     });
   }
   const restartOn = (id) => { if (A.RESTART) A.RESTART['g-' + id] = () => A.ACTIONS.gAgain({ v: id }, { dataset: {} }); };
+  Object.assign(A.GAME, { draggable, inside, wiggle, lumi, scale, restartOn });
 
   // ================================================================ 1. Feed Lumi (counting)
   const FOODS = [
@@ -629,13 +630,15 @@
   restartOn('weather');
 
   // a game screen reached any other way (going back, a restart) gets a fresh game of its own
-  Object.keys(A.GAME_MAKERS).filter((id) => id !== 'wait' && A.SCREENS['g-' + id]).forEach((id) => {
+  A.GAME.guard = (ids) => ids.filter((id) => id !== 'wait' && A.SCREENS['g-' + id] && !A.SCREENS['g-' + id].guarded).forEach((id) => {
     const draw = A.SCREENS['g-' + id];
     A.SCREENS['g-' + id] = () => {
       if (!S.g || S.gId !== id) { if (!S.gLevel) S.gLevel = A.GAME.levelOf(id); S.g = A.GAME_MAKERS[id](); S.gId = id; }
       return draw();
     };
+    A.SCREENS['g-' + id].guarded = true;
   });
+  A.GAME.guard(Object.keys(A.GAME_MAKERS));
 
   // ---------------------------------------------------------------- the new games on the Play shelf
   D.GAMES.push(

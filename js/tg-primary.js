@@ -71,10 +71,39 @@
     const line = g.order.length === 1 ? `One ${lc(dish(g.order[0]).name)}, please!` : `One ${lc(dish(g.order[0]).name)} and one ${lc(dish(g.order[1]).name)}, please!`;
     g.bubble = { who: customer(g), text: line };
     hkCounter(g);
-    g.phase = 'serve';
+    // the uncle cooks first (chop, then stir), then finds the order on the counter
+    const K = A.KITCHEN;
+    g.phase = K ? 'cook' : 'serve';
+    g.cook = { step: 'chop', cut: [], p: 0, n: { 1: 2, 2: 3, 3: 4 }[T.level()] || 3 };
     T.render();
     T.say(line);
-    T.later(() => { if (T.cur() === g) T.setTurn(g, uncle(g)); }, 1700);
+    T.later(() => { if (T.cur() === g) T.setTurn(g, uncle(g), g.phase === 'cook' ? 'Time to cook! Chop the carrot.' : undefined); }, 1700);
+  }
+  function hkCooked(g) {
+    if (g.phase !== 'cook') return;
+    g.cook.step = 'done';
+    T.cheer();
+    T.later(() => {
+      if (T.cur() !== g) return;
+      g.phase = 'serve';
+      g.bubble = { who: uncle(g), text: 'All cooked!' };
+      T.render();
+      T.say('All cooked! Now find the order on the counter.');
+      if (T.solo() && uncle(g) !== 'child') T.later(() => { if (T.cur() === g) T.setTurn(g, uncle(g)); }, 900);
+    }, 900);
+  }
+  function hkCut(g, i) {
+    const c = g.cook;
+    if (g.phase !== 'cook' || c.step !== 'chop' || c.cut.includes(i)) return;
+    c.cut.push(i);
+    T.tone(300 + c.cut.length * 40, 0.08, 0.1);
+    if (c.cut.length >= c.n) T.later(() => { if (T.cur() !== g || g.phase !== 'cook') return; c.step = 'stir'; T.render(); T.say('Now stir it in the wok. Round and round.'); }, 700);
+  }
+  function hkStir(g, dp) {
+    const c = g.cook;
+    if (g.phase !== 'cook' || c.step !== 'stir') return;
+    c.p = Math.min(1, c.p + dp);
+    if (c.p >= 1) hkCooked(g);
   }
   function hkServe(g, id, el) {
     if (g.phase !== 'serve') return;
@@ -130,7 +159,7 @@
   }
   const roleName = (g, who) => (who === customer(g) ? 'Customer' : 'Uncle');
   T.register({
-    id: 'hawker', name: 'Hawker uncle', icon: 'sNoodles', tint: '#FCE6D6', ink: '#B4572E', kind: 'Pretend play', sub: 'Order, serve and pay at a food stall',
+    id: 'hawker', name: 'Hawker uncle', icon: 'sNoodles', tint: '#FCE6D6', ink: '#B4572E', kind: 'Pretend play', sub: 'Order, cook and serve at a food stall',
     ages: ['primary'], skill: 'social',
     init(g) {
       g.total = T.level() === 3 ? 4 : 2;
@@ -140,6 +169,7 @@
     voice(g) {
       const c = customer(g);
       if (g.phase === 'order') return c === 'child' ? `You are the customer. What would you like? Pick ${g.need > 1 ? 'two things' : 'from the menu'}.` : (T.solo() ? 'Lumi is the customer. Lumi is choosing.' : `${nm(c)} is the customer. What would you like?`);
+      if (g.phase === 'cook') { const who = g.turn === 'child' ? 'You are' : `${nm(g.turn)} is`; return g.cook.step === 'chop' ? `${who} the uncle. Slice the carrot along the dotted lines.` : `${who} the uncle. Stir the wok, round and round.`; }
       if (g.phase === 'serve') { const left = g.order.filter((x) => !g.served.includes(x)).map((x) => lc(dish(x).name)).join(' and the '); return g.turn === 'child' ? `You are the uncle. Find the ${left}.` : `${nm(g.turn)} is the uncle. Find the ${left}.`; }
       if (g.phase === 'pay') return T.level() === 3 ? `That's $${hkTotal(g)}. Pay with the coins.` : 'Pay with the card. Tap the card.';
       if (g.phase === 'thanks') return 'Say thank you!';
@@ -154,6 +184,11 @@
       if (g.phase === 'order') {
         mid = `<div class="hk-board"><div class="hk-board-title">Menu</div><div class="hk-menu">${DISHES.map((d) => `<button class="hk-dish ${g.order.includes(d.id) ? 'on' : ''}" data-a="tg" data-k="order" data-v="${d.id}">
             <span class="hk-art">${d.art()}</span><b>${d.name}</b>${T.level() === 3 ? `<span class="hk-price">$${d.price}</span>` : ''}</button>`).join('')}</div></div>`;
+      } else if (g.phase === 'cook' && A.KITCHEN) {
+        const K = A.KITCHEN;
+        const c = g.cook;
+        mid = `<div class="hk-ticket">${ic('journal', 30)}<span>${g.order.map((x) => esc(dish(x).name)).join(' + ')}</span></div>
+          <div class="hk-cook"><span class="hk-cook-title">${c.step === 'chop' ? 'Chop' : c.step === 'stir' ? 'Stir' : 'Cooked!'}</span>${c.step === 'chop' ? K.chopHtml('carrot', c.n, c.cut) : K.wokHtml(['carrot', 'broccoli'], c.p) + K.bar(c.p)}</div>`;
       } else if (g.phase === 'serve') {
         mid = `<div class="hk-ticket">${ic('journal', 30)}<span>${g.order.map((x) => esc(dish(x).name)).join(' + ')}</span></div>
           <div class="hk-counter">${g.counter.map((id) => g.served.includes(id) ? '<span class="hk-gap"></span>' : `<button class="hk-dish plain" data-a="tg" data-k="serve" data-v="${id}" aria-label="${esc(dish(id).name)}"><span class="hk-art">${dish(id).art()}</span><b>${dish(id).name}</b></button>`).join('')}</div>
@@ -174,8 +209,24 @@
       return `<div class="hk-awning"><span class="hk-sign">${ic('cutlery', 32)}<span>Lumi's Food Stall</span></span></div>
         <div class="hk-row">${person(c, 'left')}<div class="hk-mid">${mid}</div>${person(u, 'right')}</div>`;
     },
+    after(g, box) {
+      const K = A.KITCHEN;
+      if (!K || !box || g.phase !== 'cook' || g.turn !== uncle(g) || (T.solo() && g.turn !== 'child')) return; // only the uncle cooks
+      const c = g.cook;
+      if (c.step === 'chop') K.chopWire(box, (i) => hkCut(g, i));
+      else if (c.step === 'stir') K.wokWire(box, 1400, (dp) => {
+        hkStir(g, dp);
+        const wok = box.querySelector('.ck-wok');
+        if (!wok) return;
+        wok.style.setProperty('--p', c.p);
+        wok.querySelector('.ck-wok-in').style.transform = `rotate(${Math.round(c.p * 540)}deg)`;
+        const m = box.querySelector('.ev-meter i');
+        if (m) m.style.width = c.p * 100 + '%';
+      });
+    },
     guide(g) {
       if (g.phase === 'order') return { sel: '.hk-dish:not(.on)', say: 'Pick from the menu.' };
+      if (g.phase === 'cook') return g.cook.step === 'chop' ? { sel: '.ck-cut:not(.done)', say: 'Slice along the dotted line.' } : g.cook.step === 'stir' ? { sel: '.ck-wok', say: 'Stir round and round.' } : null;
       if (g.phase === 'serve') { const id = g.order.find((x) => !g.served.includes(x)); return id ? { sel: `.hk-counter [data-v="${id}"]`, say: `Find the ${lc(dish(id).name)}.` } : null; }
       if (g.phase === 'pay') return T.level() === 3 ? { sel: '.hk-coin', say: 'Tap the coins to pay.' } : { sel: '.hk-card', say: 'Tap the card.' };
       if (g.phase === 'thanks') return { sel: '[data-k="word"][data-v="thanks"]', say: 'Say thank you.' };
@@ -193,6 +244,24 @@
         const pickOne = () => { const left = DISHES.filter((d) => !g.order.includes(d.id)); hkOrder(g, rnd(left).id); };
         pickOne();
         if (g.need > 1) T.later(() => { if (T.cur() === g && g.phase === 'order') pickOne(); }, 1100);
+      } else if (g.phase === 'cook') {
+        // Lumi cooks: chop, chop, chop, then a good stir
+        const c = g.cook;
+        const chop = () => {
+          if (T.cur() !== g || g.phase !== 'cook' || c.step !== 'chop') return;
+          const i = [...Array(c.n).keys()].find((k) => !c.cut.includes(k));
+          if (i == null) { T.later(stir, 1400); return; }
+          hkCut(g, i);
+          T.render();
+          if (c.cut.length < c.n) T.later(chop, 650);
+          else T.later(stir, 1400);
+        };
+        const stir = () => {
+          if (T.cur() !== g || g.phase !== 'cook' || c.step !== 'stir') return;
+          hkStir(g, 0.26);
+          if (g.phase === 'cook' && c.step === 'stir') { T.render(); T.later(stir, 450); }
+        };
+        T.later(chop, 700);
       } else if (g.phase === 'serve') {
         const step = () => { if (T.cur() !== g || g.phase !== 'serve') return; const id = g.order.find((x) => !g.served.includes(x)); if (id) { hkServe(g, id); if (g.phase === 'serve') T.later(step, 900); } };
         step();

@@ -81,3 +81,4 @@
 .ch-help-ic { line-height: 0; }
 .reduce-motion .ch-lumi > svg, .reduce-motion .ch-open-dots i { animation: none !important; }
 .ch-wave { line-height: 0; display: block; }
+.ch-btns { padding: 12px; margin: -12px; }

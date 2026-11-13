@@ -43,8 +43,10 @@
     const p = state.profile;
     const skills = Object.keys(D.SKILLS).map((k) => toggle(p.targets[k], 'cgTarget', k, D.SKILLS[k].name, `<span style="color:${D.SKILLS[k].color}">${ic(D.SKILLS[k].icon, 20)}</span>`)).join('');
     const tiles = Object.keys(TILE_NAMES).map((k) => toggle(p.show[k] !== false, 'cgShow', k, TILE_NAMES[k])).join('');
-    const games = D.GAMES.map((g) => toggle(p.games[g.id] !== false, 'cgGame', g.id, g.name)).join('')
-      + (A.TG ? Object.values(A.TG.defs).filter((d) => d.ages.includes(p.age || 'primary')).map((d) => toggle(p.games[d.id] !== false, 'cgGame', d.id, d.name + ' (with Lumi or together)')).join('') : '');
+    // the same shelves the child sees in Fun › Games: Calm, Think, Everyday, then the turn-taking games
+    const games = (A.gameShelves ? A.gameShelves().map((sh) => `<div class="g-sub-h">${sh.name} games</div>` + sh.games.map((g) => toggle(p.games[g.id] !== false, 'cgGame', g.id, `${g.name} · ${g.kind.toLowerCase()}`)).join('')).join('') : D.GAMES.map((g) => toggle(p.games[g.id] !== false, 'cgGame', g.id, g.name)).join(''))
+      + (A.TG ? '<div class="g-sub-h">Games with Lumi or together</div>' : '')
+      + (A.TG ? Object.values(A.TG.defs).filter((d) => d.ages.includes(p.age || 'primary')).map((d) => toggle(p.games[d.id] !== false, 'cgGame', d.id, `${d.name} · ${d.kind.toLowerCase()}`)).join('') : '');
     const tuts = D.LEARN.map((t) => toggle(A.tutOn(t), 'cgTut', t.id, t.name)).join('');
 
     // our own activities (photo tutorials)
@@ -82,7 +84,7 @@
       ${skills}
       <h2 class="g-h top-gap">What the child sees</h2>
       ${tiles}
-      <div class="g-sub-h">Games</div>${games}
+      ${games}
       <div class="g-sub-h">Learn with Lumi</div>${tuts}
     </div>
     <div class="g-panel grow scroll">

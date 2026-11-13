@@ -394,22 +394,54 @@ Lumi is for children and youths with a range of special needs, not only non-verb
 - **Timetable**: one **Copy day** button (pick the days, or Weekdays / Weekend / Every day). On today's day, **Today only** changes the plan just for today (a dentist visit, a public holiday) without touching the usual week; tomorrow goes back to normal, or tap Undo today's changes. Drag a step by its dots to move it (the times stay put and the steps swap into them), or use Earlier / Later in the Step panel.
 - **Progress** starts with three plain sentences (days used, feelings shared, stories practised and whether the child felt better afterwards). The charts are folded underneath in "Charts and details".
 
-## Games: more of them, and three levels each
+## Games: four shelves, three levels each
 
-Fun › Games › Puzzles now has 12 games. Every game has **Easy**, **Medium** and **Hard** buttons (one, two or three stars) in its top bar. A game opens at the level the grown-ups chose; the child can change it, and each game remembers its own level (`state.gameLevels`). Finishing a game offers **Harder** next to Again. Still no timers that end a game and no losing.
+Fun › Games has 17 games on four shelves, so a child sees at most 7 cards at a time. The shelves are tabs in the same style as the room's tabs:
+
+| Shelf | Games |
+| --- | --- |
+| **Calm** | Bubbles, Copy the tune, Catch stars, Waiting game |
+| **Think** | Match, Jigsaw, What next?, Feed Lumi, Way home, Find it |
+| **Everyday** | Sort it, Weather, Lumi's kitchen, Go shopping, Cross the road, Tell the time, Zip and button |
+| **With Lumi** | the turn-taking games (Hawker uncle, Find it, Music echo...) |
+
+Grown-ups › Activities lists the game switches under the same shelf names.
+
+Every game has **Easy**, **Medium** and **Hard** buttons (one, two or three stars) in its top bar. A game opens at the level the grown-ups chose; the child can change it, and each game remembers its own level (`state.gameLevels`). Finishing a game offers **Harder** next to Again. No timers end a game and nothing is lost.
+
+### Everyday games (js/games-life.js)
+
+These are done with the hands, not by pressing "next":
 
 | Game | What the child does | Easy | Medium | Hard |
 | --- | --- | --- | --- | --- |
-| Feed Lumi | Drag (or tap) food to Lumi's plate, the number Lumi asks for | 1 to 3 of one food | 2 to 5, with a wrong food in the tray | two foods at once ("2 apples and 1 banana") |
-| Copy the tune | Lumi rings bells; ring them back in order | 3 bells, 2 to 4 notes | 4 bells, 3 to 5 notes | 5 bells, 4 to 6 notes, quicker |
+| Lumi's kitchen | Rub the carrot under the tap, slice along dotted lines, stir the wok in circles, drag the noodles to Lumi's bowl. A step strip shows what is done and what is next | chop, stir, serve | wash first | find 3 things from the recipe card, two vegetables to chop |
+| Go shopping | Drag what is on the list into the basket, then drag coins and notes onto the tray | 2 things at $1, pay with $1 coins | 3 things, $1 coins and $2 notes, exact money | 4 things with 50¢ prices, $5 notes, gets change |
+| Cross the road | Press the crossing button, wait for the green man, look, then press and hold Walk | one "look both ways" | look right, left, right in order | a zebra crossing with no lights: wait until the cars stop |
+| Tell the time | Turn the clock's hands with a finger to the time of something in Lumi's day | o'clock, short hand only | half past, both hands | quarter past and quarter to, words only |
+| Zip and button | Pull the zip up, drag buttons into their holes, push the buckle together, pull the laces tight | zip and 2 buttons | 3 buttons and a buckle | 4 buttons from the top down, plus laces |
+
+Walking too early in Cross the road, the wrong coin, or a button in the wrong hole gets a short spoken reason and another go. The chopping and stirring are shared with **Hawker uncle** through `A.KITCHEN`: after the customer orders, the uncle (the child, their partner, or Lumi) chops and stirs before serving.
+
+### The other games (js/play.js, js/games-more.js)
+
+| Game | What the child does | Easy | Medium | Hard |
+| --- | --- | --- | --- | --- |
+| Feed Lumi | Drag (or tap) food to Lumi's plate, the number Lumi asks for | 1 to 3 of one food | 2 to 5, with a wrong food in the tray | two foods at once |
+| Copy the tune | Lumi rings bells; ring them back in order | 3 bells | 4 bells | 5 bells, quicker |
 | Way home | Slide Lumi through a maze to the house | 4 × 3 maze | 6 × 4 with bonus stars | 8 × 5, collect all stars first |
-| Catch stars | Move Lumi to catch falling stars | slow, big stars, catch 8 | faster, catch 12 | fastest, dodge raindrops, catch 15 |
+| Catch stars | Move Lumi to catch falling stars | slow, catch 8 | faster, catch 12 | fastest, dodge raindrops, catch 15 |
 | Find it | Find the thing Lumi names in a room | 4 big things, picture shown | 8 things | 12 small, tilted things, word only |
-| Weather | Drag the right clothes onto Lumi for sun, rain or cold | 1 thing, 2 choices | 2 things, 4 choices | 2 things, 6 choices |
+| Weather | Drag the right clothes onto Lumi | 1 thing, 2 choices | 2 things, 4 choices | 2 things, 6 choices |
 
-The first games gained levels too: Bubbles (Hard: pop only the colour Lumi names), Match (3, 6 or 8 pairs), Jigsaw (4, 6 or 9 pieces; Hard has no faint picture), Sort it, What next? and the Waiting game (waits start at 10, 20 or 30 seconds). New games are in `js/games-more.js`; grown-ups can switch any game off in Activities.
+Bubbles (Hard: pop only the colour Lumi names), Match (3, 6 or 8 pairs), Jigsaw (4, 6 or 9 pieces), Sort it, What next? and the Waiting game (10, 20 or 30 seconds) have levels too.
 
-The clothes shop and room shop scroll, so the longer lists never squash.
+Lists that scroll (stories, lessons, the shops, dress-up rows) leave room around their tiles, so the yellow guide glow and selected rings are never cut off.
+
+## Lumi's room: wallpaper, floors and a 3D view (js/roomstyle.js)
+
+- **Walls tab** (the paint roller): 8 wallpapers (cream, stripy, spotty, sky, rainbow, leafy, purple, night sky) and 6 floors (wood, pale wood, tiles, green, pink and blue carpet). Cream walls and the wood floor are free; the others cost 2 to 6 stars. The choice also shows at home and beside the games. Saved in `state.roomStyle`.
+- **3D button** (the cube, next to the music button): turns the flat picture into a little 3D room built from the same saved places and sizes. Things hung on the wall stay on the back wall; things on the floor stand up in the room, nearer or further by where they sit on the flat floor. Drag anywhere, or use the two arrows, to turn the room. Tap a thing to hear its name; tap the lamp or fairy lights to switch the light off and on. **Flat** goes back. Moving, resizing and buying work as before (move things in the flat view).
 
 ## Lumi's room: bigger or smaller
 
@@ -776,6 +808,8 @@ web/
   js/focus.js       what Lumi helps with (focus areas) and the Grown-ups Overview
   js/grownups-plus.js  Getting started, Share a report, Grown-ups lock, the plain-sentence Progress summary
   js/games-more.js  six more Play games (Feed Lumi, Copy the tune, Way home, Catch stars, Find it, Weather)
+  js/games-life.js  the Everyday games (kitchen, shopping, road, clock, zip and button) and A.KITCHEN
+  js/roomstyle.js   wallpaper, floors and the 3D view of Lumi's room
   js/lang.js        home language: Chinese, Malay and Tamil words and voice
   js/comingup.js    Coming up stories (social stories) with a countdown, in My day on the day
   js/offline.js     backup and restore, and installing Lumi to work without internet

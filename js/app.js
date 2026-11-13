@@ -926,7 +926,7 @@
   </div>
   <div class="row gap24 grow">
     <div class="col gap16" style="width:540px">
-      <div class="panel scene grow">
+      <div class="panel scene grow lumi-room">
         <div class="window"><div class="window-sun"></div><div class="window-cloud"></div></div>
         <div class="floor"></div>
         ${roomDecor()}
@@ -1379,29 +1379,29 @@
   A.roomMusic = roomMusic;
   A.ROOM_SCREENS = ROOM_SCREENS;
   SCREENS.room = () => {
-    const tabs = [['furniture', 'Furniture', 'rSofa'], ['plants', 'Plants', 'rPlant'], ['rugs', 'Rugs', 'rRug'], ['clothes', 'Clothes', 'shirt'], ['pets', 'Pets', 'kPet']];
+    const tabs = [['furniture', 'Furniture', 'rSofa'], ['plants', 'Plants', 'rPlant'], ['rugs', 'Rugs', 'rRug'], ...(A.wallTiles ? [['walls', 'Walls and floor', 'rWall']] : []), ['clothes', 'Clothes', 'shirt'], ['pets', 'Pets', 'kPet']];
     const tabHtml = tabs.map(([id, name, inner]) => {
       const svg = ic(inner, 36);
       return id === 'clothes'
         ? `<button class="tab" data-a="nav" data-to="dressup" aria-label="Clothes for Lumi">${svg}</button>`
         : `<button class="tab ${S.roomTab === id ? 'on' : ''}" data-a="roomTab" data-t="${id}" aria-label="${name}" aria-pressed="${S.roomTab === id}">${svg}</button>`;
     }).join('');
-    const items = S.roomTab === 'rugs' && A.rugTiles ? A.rugTiles() : D.ROOM.filter((r) => r.tab === S.roomTab).map((r) => itemTile(r, state.owned.includes(r.id), S.roomSel === r.id, 'roomItem')).join('');
+    const items = S.roomTab === 'rugs' && A.rugTiles ? A.rugTiles() : S.roomTab === 'walls' && A.wallTiles ? A.wallTiles() : D.ROOM.filter((r) => r.tab === S.roomTab).map((r) => itemTile(r, state.owned.includes(r.id), S.roomSel === r.id, 'roomItem')).join('');
     const sel = D.ROOM.find((r) => r.id === S.roomSel);
     const goalPct = Math.min(100, Math.round((state.stats.totalEarned / state.goal.target) * 100));
     return `
 <section class="screen" aria-label="Lumi's room">
   ${srTitle("Lumi's room")}
   <div class="row between" style="height:60px">
-    <div class="row gap12">${backBtn()}${speakBtn("This is Lumi's room.")}<button class="icon-btn room-music ${S.roomMusic ? 'on' : ''}" data-a="roomMusicToggle" aria-label="${S.roomMusic ? 'Turn the music off' : 'Turn the music on'}" aria-pressed="${!!S.roomMusic}">${ic(S.roomMusic ? 'music' : 'mute', 30)}</button></div>
+    <div class="row gap12">${backBtn()}${speakBtn("This is Lumi's room.")}<button class="icon-btn room-music ${S.roomMusic ? 'on' : ''}" data-a="roomMusicToggle" aria-label="${S.roomMusic ? 'Turn the music off' : 'Turn the music on'}" aria-pressed="${!!S.roomMusic}">${ic(S.roomMusic ? 'music' : 'mute', 30)}</button>${A.room3dBtn ? A.room3dBtn() : ''}</div>
     ${starChip(true)}
   </div>
   <div class="row gap24 grow">
-    <div class="panel scene room-scene" style="width:690px">
+    <div class="panel scene room-scene lumi-room ${state.room3d && A.room3dBtn ? 'is3d' : ''}" style="width:690px">
       <div class="floor" style="height:24%"></div>
       ${roomDecor(true)}
       <div class="lumi-pos bob movable room-lumi" data-id="lumi" role="button" tabindex="-1" aria-label="Lumi. Drag to move Lumi." style="${state.roomLumi ? `left:${state.roomLumi.l}%;top:${state.roomLumi.t}%` : 'left:33%;bottom:6%'};z-index:30">${L.svg({ look: lookWith(), mood: 'happy', size: Math.round(230 * roomSize('lumi')) })}</div>
-      ${state.roomMoved ? '' : `<span class="room-hint">${ic('hand', 26)}<span>Drag things to move them</span></span>`}
+      ${state.roomMoved || state.room3d ? '' : `<span class="room-hint">${ic('hand', 26)}<span>Drag things to move them</span></span>`}
       ${S.roomUndo ? `<button class="room-undo" data-a="roomUndo" aria-label="Undo the last move">${ic('undo', 26)}<span>Undo</span></button>` : ''}
     </div>
     <div class="col grow gap16">
@@ -1428,7 +1428,7 @@
         <button class="icon-btn size-done" data-a="roomPickDone" aria-label="Done">${ic('check', 30)}</button>
       </div>`;
     }
-    return String(S.roomSel || '').startsWith('rug:') && A.rugBuyBar ? A.rugBuyBar() : sel ? buyBar(sel, 'roomBuy') : `<div class="goal" role="img" aria-label="Goal: ${esc(state.goal.name)}, ${Math.min(state.stats.totalEarned, state.goal.target)} of ${state.goal.target} stars">
+    return String(S.roomSel || '').startsWith('rug:') && A.rugBuyBar ? A.rugBuyBar() : /^(wall|floor):/.test(String(S.roomSel || '')) && A.wallBuyBar ? A.wallBuyBar() : sel ? buyBar(sel, 'roomBuy') : `<div class="goal" role="img" aria-label="Goal: ${esc(state.goal.name)}, ${Math.min(state.stats.totalEarned, state.goal.target)} of ${state.goal.target} stars">
         <span class="goal-ic">${L.item('plant', 40)}</span>
         <div class="col grow gap8"><div class="bar-track"><div class="bar-fill" style="width:${goalPct}%"></div></div><span class="small" style="color:#3C6E30">${esc(state.goal.name)} · ${Math.min(state.stats.totalEarned, state.goal.target)} / ${state.goal.target}</span></div>
       </div>`;
