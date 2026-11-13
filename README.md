@@ -375,6 +375,14 @@ It focuses on routines, communication and emotional regulation, with three modes
 
 It is plain HTML, CSS and JavaScript. There is nothing to install and no build step.
 
+## Lumi's hello story (js/intro.js)
+
+The first thing a child sees. A short loading screen ("Lumi is waking up…", then **Start**), four story pictures (Lumi up in the night sky, wishing for a friend, sliding down a shooting star, landing in the room), then Lumi says "I am your buddy", asks **What is your name?** and greets the child by name before opening the home page.
+
+- The child sets the pace: nothing moves on until they tap the arrow. Every line can be heard again with the speaker button.
+- It plays once per child (`state.introDone`): straight after a grown-up finishes setting up, or the first time an existing child opens Lumi. **Skip** is in the corner, and typing a name is optional ("Hello, my friend!").
+- Play it again from Grown-ups › Child › **Play Lumi's hello story again**.
+
 ## Set up around each child: "What should Lumi help with?"
 
 Lumi is for children and youths with a range of special needs, not only non-verbal children. Grown-ups pick one or more focus areas, by need rather than diagnosis (nothing is shown to the child): Communicating, Feelings and calm, Routines and getting ready, Sensory comfort, Going out and new places, Focus and waiting, Everyday life skills, Friends and turn-taking, Easier touch. It is step 2 of first-run setup and on Grown-ups › Overview (`js/focus.js`). Each focus:
@@ -809,6 +817,7 @@ web/
   js/games-more.js  six more Play games (Feed Lumi, Copy the tune, Way home, Catch stars, Find it, Weather)
   js/games-life.js  the Everyday games (kitchen, shopping, road, clock, zip and button) and A.KITCHEN
   js/roomstyle.js   wallpaper and floors for Lumi's room
+  js/intro.js       Lumi's hello story: loading screen, story pictures, name and greeting (css/intro.css)
   js/lang.js        home language: Chinese, Malay and Tamil words and voice
   js/comingup.js    Coming up stories (social stories) with a countdown, in My day on the day
   js/offline.js     backup and restore, and installing Lumi to work without internet

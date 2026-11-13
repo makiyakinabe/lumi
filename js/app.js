@@ -90,6 +90,7 @@
       childName: '',
       childPhoto: null, // a photo of the child for the menu (stays on this tablet)
       setupDone: false,
+      introDone: false, // Lumi's hello story has played for this child (intro.js)
       sparkOff: false,
       // set by grown-ups: age group, difficulty, look, and what the child sees
       profile: {
@@ -2637,7 +2638,7 @@
   });
   const emojiArt = (e) => `<span class="emoji" style="font-size:34px">${e}</span>`;
   function checkReminders() {
-    const quietScreens = ['setup', 'builder', 'calm', 'menu'];
+    const quietScreens = ['setup', 'intro', 'builder', 'calm', 'menu'];
     if (!state.setupDone || quietScreens.includes(S.screen) || /^cg/.test(S.screen)) return;
     // never in the middle of a story or lesson step, or a game: it waits, and shows once that step is done
     if ((S.screen === 'story' && S.sx && !S.sx.ended && !S.sx.done) || /^(g-|tg-|lesson$)/.test(S.screen) || S.picked) return;

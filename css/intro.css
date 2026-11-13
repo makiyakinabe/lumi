@@ -1,0 +1,74 @@
+/* intro.css: Lumi's story, the loading screen and saying hello (js/intro.js) */
+.screen.intro { padding: 0; gap: 0; background: #FFF6E9; overflow: hidden; }
+.screen.intro.dark { background: linear-gradient(#232C55, #3D4A82 70%, #56639C); color: #fff; }
+.in-art { position: relative; flex: 1; min-height: 0; overflow: hidden; }
+.in-sky::before { content: ''; position: absolute; inset: 0; background:
+  radial-gradient(circle, #fff 0 2px, transparent 3px) 0 0 / 140px 120px,
+  radial-gradient(circle, #F7D774 0 2.5px, transparent 3.5px) 60px 50px / 190px 160px,
+  radial-gradient(circle, rgba(255,255,255,0.7) 0 1.5px, transparent 2.5px) 30px 80px / 90px 110px;
+  animation: inTwinkle 3.6s ease-in-out infinite; }
+.in-moon { position: absolute; right: 9%; top: 9%; width: 96px; height: 96px; border-radius: 50%; background: #FBEFC4; box-shadow: 0 0 50px rgba(251, 239, 196, 0.55), inset -14px -8px 0 #EEDC9A; }
+.in-glow { position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%); display: flex; padding: 46px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 233, 160, 0.75) 0 40%, rgba(255, 233, 160, 0.25) 58%, transparent 72%); }
+.in-glow > svg { animation: bob 3.4s ease-in-out infinite; }
+.in-sky.p2 .in-glow { top: 36%; left: 36%; }
+.in-sky.p3 .in-glow { top: 50%; left: 58%; animation: inSlide 1.5s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+.in-sky.p3 .in-glow > svg { animation: none; transform: rotate(14deg); }
+.in-trail { position: absolute; left: 4%; top: 6%; width: 52%; height: 22px; border-radius: 11px; background: linear-gradient(90deg, transparent, rgba(255, 233, 160, 0.9)); transform-origin: left center; transform: rotate(24deg); animation: inTrail 1.5s ease-out both; }
+.in-city { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 44%; }
+.in-room .in-floor { position: absolute; left: 0; right: 0; bottom: 0; height: 30%; border-top: 6px solid rgba(90, 60, 40, 0.16); }
+.in-room .in-rug { position: absolute; left: 50%; bottom: 7%; width: 440px; height: 84px; margin-left: -220px; border-radius: 50%; background: #BFD9EC; box-shadow: inset 0 0 0 10px #fff, inset 0 0 0 14px #BFD9EC; }
+.in-window { position: absolute; left: 9%; top: 12%; width: 190px; height: 170px; border-radius: 18px; border: 10px solid #fff; background: linear-gradient(#232C55, #56639C); box-shadow: 0 6px 0 rgba(90, 60, 40, 0.12); overflow: hidden; }
+.in-window i { position: absolute; right: 22px; top: 20px; width: 34px; height: 34px; border-radius: 50%; background: #FBEFC4; }
+.in-window::after { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 8px; margin-left: -4px; background: #fff; }
+.in-lumi { display: flex; }
+.in-room .in-lumi { position: absolute; left: 50%; bottom: 10%; margin-left: -150px; }
+.in-lumi.bobble > svg { animation: bob 3s ease-in-out infinite; }
+.in-lumi.land { animation: inLand 0.9s cubic-bezier(0.3, 1.4, 0.5, 1) both; }
+.in-spark { position: absolute; bottom: 14%; width: 22px; height: 22px; background: #F7D774; clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); animation: inSpark 1.2s ease-out 0.5s both; }
+.in-spark.a { left: 30%; } .in-spark.b { left: 68%; bottom: 22%; } .in-spark.c { left: 50%; bottom: 52%; }
+
+/* the words under each picture */
+.in-cap { flex: none; display: flex; align-items: center; gap: 22px; margin: 0 40px; padding: 18px 22px; border-radius: 32px; background: #fff; color: var(--ink); box-shadow: 0 6px 0 rgba(59, 47, 47, 0.10); }
+.in-cap p { flex: 1; margin: 0; font-size: 34px; font-weight: 800; line-height: 1.25; }
+.in-next { flex: none; width: 96px; padding: 0; }
+.in-dots { flex: none; display: flex; justify-content: center; gap: 10px; padding: 16px 0 22px; }
+.in-dots i { width: 14px; height: 14px; border-radius: 50%; background: rgba(59, 47, 47, 0.18); }
+.intro.dark .in-dots i { background: rgba(255, 255, 255, 0.3); }
+.in-dots i.done { background: var(--teal); opacity: 0.55; } .in-dots i.on { background: var(--teal); width: 34px; border-radius: 7px; }
+.intro.dark .in-dots i.done, .intro.dark .in-dots i.on { background: #F7D774; }
+.in-skip { position: absolute; z-index: 3; right: 28px; top: 24px; height: 48px; padding: 0 22px; border-radius: 24px; font-size: 20px; font-weight: 800; color: var(--muted); background: rgba(255, 255, 255, 0.85); }
+
+/* loading */
+.in-title { flex: none; text-align: center; }
+.in-title h1 { margin: 0; font-size: 104px; font-weight: 900; line-height: 1; color: #FBEFC4; letter-spacing: 2px; }
+.in-title span { font-size: 28px; font-weight: 800; color: rgba(255, 255, 255, 0.85); }
+.in-load { flex: none; height: 170px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+.in-bar { width: 420px; height: 26px; padding: 5px; border-radius: 13px; background: rgba(255, 255, 255, 0.22); }
+.in-bar i { display: block; width: 100%; height: 100%; border-radius: 8px; background: #F7D774; animation: inFill 2.3s ease-in-out both; }
+.in-wait { font-size: 24px; font-weight: 800; color: rgba(255, 255, 255, 0.85); }
+.in-start { min-width: 300px; animation: inPop 0.4s ease both; }
+
+/* name and hello */
+.in-ask { flex: 1; min-height: 0; display: flex; align-items: flex-start; justify-content: center; gap: 48px; padding: 84px 60px 0; }
+.in-form { display: flex; flex-direction: column; gap: 20px; width: 540px; }
+.in-bubble { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 20px 20px 30px; border-radius: 30px; background: #fff; font-size: 40px; font-weight: 900; color: var(--ink); box-shadow: 0 6px 0 rgba(59, 47, 47, 0.10); }
+.in-bubble::before { content: ''; position: absolute; left: -18px; top: 50%; margin-top: -16px; border: 16px solid transparent; border-right-color: #fff; border-left-width: 0; }
+.in-name { height: 96px; padding: 0 28px; border-radius: 28px; border: 4px solid #E3DACB; background: #fff; font: inherit; font-size: 44px; font-weight: 900; color: var(--ink); text-align: center; }
+.in-name:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 6px var(--teal-soft); }
+.in-name::placeholder { color: #B9AC9C; font-weight: 800; font-size: 34px; }
+.in-help { text-align: center; font-size: 20px; font-weight: 700; color: var(--muted); }
+.in-hello { position: relative; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; overflow: hidden; }
+.in-hi { margin: 6px 0 0; font-size: 76px; font-weight: 900; color: var(--ink); line-height: 1.05; text-align: center; }
+.in-hi b { color: var(--teal); }
+.in-hi-sub { font-size: 32px; font-weight: 800; color: var(--muted); margin-bottom: 18px; }
+.in-conf { position: absolute; top: -30px; width: 18px; height: 26px; border-radius: 6px; animation: inConf 2.6s ease-in both; opacity: 0; }
+.in-conf.c0 { background: #F7D774; } .in-conf.c1 { background: #F6BCCB; } .in-conf.c2 { background: #B8DDF8; } .in-conf.c3 { background: #BDEBC8; }
+
+@keyframes inTwinkle { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+@keyframes inFill { from { width: 0; } to { width: 100%; } }
+@keyframes inPop { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes inSlide { from { left: 12%; top: 12%; } to { left: 58%; top: 50%; } }
+@keyframes inTrail { from { transform: rotate(24deg) scaleX(0); } to { transform: rotate(24deg) scaleX(1); } }
+@keyframes inLand { from { transform: translateY(-420px); } to { transform: translateY(0); } }
+@keyframes inSpark { 0% { transform: scale(0); opacity: 0; } 40% { transform: scale(1.6); opacity: 1; } 100% { transform: scale(1) translateY(-30px); opacity: 0; } }
+@keyframes inConf { 0% { transform: translateY(0) rotate(0); opacity: 1; } 100% { transform: translateY(880px) rotate(260deg); opacity: 0; } }

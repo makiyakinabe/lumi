@@ -156,6 +156,7 @@
       ${A.profilesHtml ? A.profilesHtml() : ''}
       <h2 class="g-h top-gap">This child</h2>
       <label class="g-field"><span>Name (Lumi says it)</span><input id="f-child" type="text" data-input="childName" value="${esc(state.childName)}" maxlength="20"></label>
+      <button class="g-link" data-a="introReplay">Play Lumi's hello story again</button>
       <div class="g-field"><span>Age group</span><div class="row gap8">${ages}</div></div>
       ${packBox()}
       <div class="g-field"><span>Difficulty</span>${seg([[1, 'Easy'], [2, 'Medium'], [3, 'Challenge']], p.level, 'cgLevel')}<span class="g-note">${{ 1: 'Fewer, bigger choices and shorter games.', 2: 'The standard amount.', 3: 'More choices, a keyboard, longer games, no glowing hints.' }[p.level]}</span></div>

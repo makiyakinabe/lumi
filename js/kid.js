@@ -15,7 +15,7 @@
 
   // ================================================================ PAUSE
   const GROWN = /^(builder|cg)/;
-  const NO_PAUSE = ['menu', 'setup'];
+  const NO_PAUSE = ['intro', 'menu', 'setup'];
   const childScreen = (s) => !NO_PAUSE.includes(s) && !GROWN.test(s);
 
   const pauseBtn = document.createElement('button');
