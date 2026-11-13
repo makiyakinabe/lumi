@@ -2575,3 +2575,10 @@ svg.pic.person { overflow: hidden; }
 .pw-field { display: flex; flex-direction: column; gap: 4px; width: 100%; font-size: 15px; font-weight: 800; color: var(--muted); text-align: left; }
 .pw-field input { height: 54px; padding: 0 16px; border-radius: 14px; border: 3px solid #E3DACB; font: inherit; font-size: 22px; font-weight: 800; color: var(--ink); background: #fff; }
 .pw-field input:focus { outline: none; border-color: var(--teal); }
+
+/* room: turn and take out */
+.decor-turn { display: block; transition: transform 0.25s ease; }
+.size-bar.tools { justify-content: space-between; gap: 8px; padding: 0 12px; }
+.size-bar.tools .size-btn { width: 62px; height: 62px; }
+.size-btn.away { background: #D9695F; box-shadow: 0 5px 0 #A9483F; }
+.size-btn.away:active { box-shadow: 0 2px 0 #A9483F; }

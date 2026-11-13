@@ -129,6 +129,8 @@
         const isObj = base[k] && typeof base[k] === 'object' && !Array.isArray(base[k]);
         base[k] = isObj ? Object.assign(base[k], saved[k]) : saved[k];
       });
+      // things the feature files keep (room places, sizes and turns, wallpaper, game levels, the Grown-ups password…)
+      Object.keys(saved).forEach((k) => { if (!(k in base)) base[k] = saved[k]; });
     } catch (e) { /* storage unavailable: start fresh */ }
     return base;
   }
@@ -559,15 +561,18 @@
   // how big the child made each thing in the room (1 = as it came); Lumi too
   const ROOM_SIZES = [0.5, 0.65, 0.8, 1, 1.25, 1.5, 1.8, 2.2];
   const roomSize = (id) => ((state.roomSize || {})[id] || 1);
+  const roomRot = (id) => ((state.roomRot || {})[id] || 0);
+  const roomAway = (id) => (state.roomAway || []).includes(id);
   function roomDecor(edit) {
     const walkers = A.buddyPets ? A.buddyPets() : []; // the puppy and kitten walk with Lumi instead
     const placed = state.roomPos || {};
-    return D.ROOM.filter((r) => state.owned.includes(r.id) && !walkers.includes(r.id)).map((r) => {
+    return D.ROOM.filter((r) => state.owned.includes(r.id) && !walkers.includes(r.id) && !roomAway(r.id)).map((r) => {
       const p = r.pos;
       const c = placed[r.id];
       const w = Math.round(p.w * roomSize(r.id) * 10) / 10; // the child can make each thing bigger or smaller
       const pos = c ? `left:${c.l}%;top:${c.t}%;width:${w}%;z-index:${2 + (c.z || 0)}` : `left:${p.left}%;${p.top != null ? 'top:' + p.top + '%' : 'bottom:' + p.bottom + '%'};width:${w}%`;
-      const art = L.item(r.id, '100%').replace('height="100%"', '');
+      const rot = roomRot(r.id);
+      const art = `<span class="decor-turn"${rot ? ` style="transform:rotate(${rot}deg)"` : ''}>${L.item(r.id, '100%').replace('height="100%"', '')}</span>`;
       return edit
         ? `<div class="decor movable" data-id="${r.id}" style="${pos}" role="button" tabindex="-1" aria-label="${esc(r.name)}. Drag to move it.">${art}</div>`
         : `<div class="decor" style="${pos}" role="img" aria-label="${esc(r.name)}">${art}</div>`;
@@ -1422,6 +1427,13 @@
       const name = id === 'lumi' ? 'Lumi' : (D.ROOM.find((r) => r.id === id) || {}).name || '';
       const k = ROOM_SIZES.indexOf(roomSize(id));
       const art = id === 'lumi' ? L.svg({ look: lookWith(), mood: 'happy', size: 56 }) : L.item(id, 56);
+      if (id !== 'lumi') return `<div class="size-bar tools" role="group" aria-label="Change ${esc(name)}">
+        <button class="size-btn" data-a="roomSize" data-v="-1" ${k <= 0 ? 'disabled' : ''} aria-label="Make ${esc(name)} smaller">${ic('minus', 30)}</button>
+        <button class="size-btn" data-a="roomSize" data-v="1" ${k >= ROOM_SIZES.length - 1 ? 'disabled' : ''} aria-label="Make ${esc(name)} bigger">${ic('plus', 30)}</button>
+        <button class="size-btn" data-a="roomTurn" aria-label="Turn ${esc(name)}">${ic('turn', 30)}</button>
+        <button class="size-btn away" data-a="roomAway" aria-label="Take ${esc(name)} out of the room">${ic('trash', 30)}</button>
+        <button class="icon-btn size-done" data-a="roomPickDone" aria-label="Done">${ic('check', 30)}</button>
+      </div>`;
       return `<div class="size-bar" role="group" aria-label="Size of ${esc(name)}">
         <button class="size-btn" data-a="roomSize" data-v="-1" ${k <= 0 ? 'disabled' : ''} aria-label="Make ${esc(name)} smaller">${ic('minus', 36)}</button>
         <span class="size-mid"><span class="item-art">${art}</span><span class="size-dots" aria-hidden="true">${ROOM_SIZES.map((z, i) => `<i class="${i === k ? 'on' : ''} ${z === 1 ? 'one' : ''}" style="width:${8 + i * 2}px;height:${8 + i * 2}px"></i>`).join('')}</span></span>
@@ -1448,9 +1460,10 @@
 
   function itemTile(it, owned, selected, action) {
     const afford = state.stars >= it.price;
-    const status = owned ? `<span class="ic-green">${ic('check', 28)}</span>`
+    const away = owned && action === 'roomItem' && roomAway(it.id);
+    const status = away ? '<span class="rug-wear">Put back</span>' : owned ? `<span class="ic-green">${ic('check', 28)}</span>`
       : `<span class="price ${afford ? '' : 'grey'}">${ic(afford ? 'star' : 'starGrey', 20)}${it.price}</span>`;
-    return `<button class="item-tile ${owned ? 'owned' : ''} ${selected ? 'sel' : ''} ${!owned && !afford ? 'locked' : ''}" data-a="${action}" data-id="${it.id}" aria-label="${esc(it.name)}${owned ? ', yours' : ', ' + it.price + ' stars'}">
+    return `<button class="item-tile ${owned ? 'owned' : ''} ${selected ? 'sel' : ''} ${!owned && !afford ? 'locked' : ''}" data-a="${action}" data-id="${it.id}" aria-label="${esc(it.name)}${away ? ', put away. Tap to put it back' : owned ? ', yours' : ', ' + it.price + ' stars'}">
       <span class="item-art">${L.item(it.id, 58)}</span>${status}</button>`;
   }
 
@@ -2304,9 +2317,40 @@
       save();
       render();
     },
+    // turn it an eighth of the way round each tap
+    roomTurn: () => {
+      const id = S.roomPick;
+      if (!id || id === 'lumi') return;
+      const was = roomRot(id);
+      S.roomUndo = { id, before: (state.roomPos || {})[id] || null, size: roomSize(id), rot: was };
+      state.roomRot = state.roomRot || {};
+      state.roomRot[id] = (was + 45) % 360;
+      tone(587, 0.1, 0.05);
+      save();
+      render();
+      say(state.roomRot[id] === 0 ? 'The right way up.' : 'Turn!');
+    },
+    // out of the room, not gone: it waits in the shop
+    roomAway: () => {
+      const id = S.roomPick;
+      if (!id || id === 'lumi') return;
+      state.roomAway = (state.roomAway || []).filter((x) => x !== id).concat(id);
+      S.roomUndo = { id, before: (state.roomPos || {})[id] || null, size: roomSize(id), rot: roomRot(id), away: true };
+      S.roomPick = null;
+      tone(392, 0.15, 0.05);
+      save();
+      render();
+      say('Put away. Tap it in the shop to bring it back.');
+    },
     roomPickDone: () => { S.roomPick = null; render(); },
     roomItem: (d) => {
       const it = D.ROOM.find((r) => r.id === d.id);
+      if (roomAway(it.id)) {
+        state.roomAway = state.roomAway.filter((x) => x !== it.id);
+        S.roomSel = null; S.roomPick = it.id; S.roomUndo = null;
+        save(); tone(660, 0.12, 0.05); render(); say(`${it.name} is back.`);
+        return;
+      }
       if (state.owned.includes(it.id)) { S.roomSel = null; S.roomPick = (A.buddyPets ? A.buddyPets() : []).includes(it.id) ? null : it.id; render(); say(it.name); return; }
       S.roomSel = it.id;
       render();
@@ -2333,13 +2377,15 @@
       const u = S.roomUndo;
       if (!u) return;
       if (u.id === 'lumi') state.roomLumi = u.before;
-      else if (u.before) state.roomPos[u.id] = u.before;
-      else delete state.roomPos[u.id];
+      else if (u.before) { state.roomPos = state.roomPos || {}; state.roomPos[u.id] = u.before; }
+      else if (state.roomPos) delete state.roomPos[u.id];
       if (u.size != null) { state.roomSize = state.roomSize || {}; state.roomSize[u.id] = u.size; }
+      if (u.rot != null) { state.roomRot = state.roomRot || {}; state.roomRot[u.id] = u.rot; }
+      if (u.away) { state.roomAway = (state.roomAway || []).filter((x) => x !== u.id); S.roomPick = u.id; }
       S.roomUndo = null;
       save();
       render();
-      say('Back where it was.');
+      say(u.away ? 'It is back.' : 'Back where it was.');
     },
 
     // dress up

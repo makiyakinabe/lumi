@@ -72,3 +72,23 @@
 @keyframes inLand { from { transform: translateY(-420px); } to { transform: translateY(0); } }
 @keyframes inSpark { 0% { transform: scale(0); opacity: 0; } 40% { transform: scale(1.6); opacity: 1; } 100% { transform: scale(1) translateY(-30px); opacity: 0; } }
 @keyframes inConf { 0% { transform: translateY(0) rotate(0); opacity: 1; } 100% { transform: translateY(880px) rotate(260deg); opacity: 0; } }
+
+/* full screen: the picture fills everything, the words sit on top of it */
+.screen.intro .in-art { position: absolute; inset: 0; }
+.in-room .in-floor { height: 36%; }
+.in-room .in-rug { bottom: 20%; }
+.in-room .in-lumi { bottom: 23%; margin-left: -160px; }
+.in-window { left: 7%; top: 9%; width: 230px; height: 200px; }
+.in-cap { position: absolute; z-index: 2; left: 40px; right: 40px; bottom: 46px; margin: 0; padding: 0; gap: 18px; background: none; box-shadow: none; }
+.in-cap p { padding: 20px 34px; border-radius: 40px; background: #fff; font-size: 46px; font-weight: 900; text-align: center; box-shadow: 0 6px 0 rgba(59, 47, 47, 0.12); }
+.in-cap .speak-btn { background: #fff; box-shadow: 0 6px 0 rgba(59, 47, 47, 0.12); }
+.in-next { width: 108px; height: 96px; border-radius: 32px; box-shadow: 0 6px 0 var(--teal-dark); }
+.in-dots { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; padding: 0 0 16px; }
+.in-title { position: absolute; z-index: 2; left: 0; right: 0; bottom: 250px; }
+.in-title h1 { font-size: 150px; }
+.in-load { position: absolute; z-index: 2; left: 0; right: 0; bottom: 70px; height: 150px; }
+.intro .in-sky:not(.p1):not(.p2):not(.p3) .in-glow { top: 34%; }
+.in-ask { position: relative; z-index: 2; padding-top: 110px; align-items: center; height: 70%; flex: none; }
+.in-form .primary { height: 96px; }
+.in-hello { z-index: 2; justify-content: flex-start; padding-top: 70px; gap: 6px; }
+.in-hi { font-size: 96px; margin: 0 0 18px; padding: 10px 44px; border-radius: 44px; background: #fff; box-shadow: 0 6px 0 rgba(59, 47, 47, 0.12); }

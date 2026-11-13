@@ -377,7 +377,7 @@ It is plain HTML, CSS and JavaScript. There is nothing to install and no build s
 
 ## Lumi's hello story (js/intro.js)
 
-The first thing a child sees. A short loading screen ("Lumi is waking up…", then **Start**), four story pictures (Lumi up in the night sky, wishing for a friend, sliding down a shooting star, landing in the room), then Lumi says "I am your buddy", asks **What is your name?** and greets the child by name before opening the home page.
+The first thing a child sees. A short loading screen ("Lumi is waking up…", then **Start**), full-screen story pictures with one short line each ("Lumi lived in the sky." "Lumi wanted a friend." "Whoosh! Down came Lumi." "Lumi found you!"), then Lumi says "Hi! I am Lumi, your buddy.", asks **What is your name?** and greets the child by name before opening the home page.
 
 - The child sets the pace: nothing moves on until they tap the arrow. Every line can be heard again with the speaker button.
 - It plays once per child (`state.introDone`): straight after a grown-up finishes setting up, or the first time an existing child opens Lumi. **Skip** is in the corner, and typing a name is optional ("Hello, my friend!").
@@ -449,6 +449,10 @@ Lists that scroll (stories, lessons, the shops, dress-up rows) leave room around
 ## Lumi's room: wallpaper and floors (js/roomstyle.js)
 
 - **Walls tab** (the paint roller): 8 wallpapers (cream, stripy, spotty, sky, rainbow, leafy, purple, night sky) and 6 floors (wood, pale wood, tiles, green, pink and blue carpet). Cream walls and the wood floor are free; the others cost 2 to 6 stars. The choice also shows at home and beside the games. Saved in `state.roomStyle`.
+
+## Lumi's room: turn things and take them out
+
+Tap anything in the room and the bar under the shop shows five buttons: smaller, bigger, **turn** (an eighth of the way round each tap, `state.roomRot`), **take out** (the red bin, `state.roomAway`) and done. A thing that is taken out is not lost and costs nothing to bring back: its shop tile says **Put back**. Undo works for turning and taking out too. Lumi can be made bigger or smaller but stays upright and stays in the room.
 
 ## Lumi's room: bigger or smaller
 

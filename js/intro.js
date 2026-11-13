@@ -12,17 +12,17 @@
   const { L, S, state, ic, esc, say, tone, save, render, go, later } = A;
 
   const STORY = [
-    { sky: true, mood: 'sleepy', text: 'High up in the night sky lived a little one called Lumi.' },
-    { sky: true, mood: 'sad', text: 'Lumi looked down at all the homes. Lumi wished for a friend.' },
-    { sky: true, mood: 'excited', text: 'So one night, Lumi slid down a shooting star. Whoosh!' },
-    { mood: 'happy', text: 'Lumi landed softly in a cosy room. This room!' },
-    { mood: 'excited', wave: true, text: 'Hi! I am Lumi. I am your buddy. We can play, learn and get through the day together.' }
+    { sky: true, mood: 'sleepy', text: 'Lumi lived in the sky.' },
+    { sky: true, mood: 'sad', text: 'Lumi wanted a friend.' },
+    { sky: true, mood: 'excited', text: 'Whoosh! Down came Lumi.' },
+    { mood: 'happy', text: 'Lumi found you!' },
+    { mood: 'excited', wave: true, text: 'Hi! I am Lumi, your buddy.' }
   ];
   const NAME = STORY.length + 1; // step numbers: 0 loading, 1..5 story, then name, then hello
   const HELLO = NAME + 1;
   const it = () => S.intro || (S.intro = { step: 0, ready: false });
   const kid = () => (state.childName || '').trim();
-  const lineOf = (step) => (step === NAME ? 'What is your name?' : step === HELLO ? (kid() ? `Hello, ${kid()}! I am so happy to be your buddy.` : 'Hello, my friend! I am so happy to be your buddy.') : step >= 1 ? STORY[step - 1].text : '');
+  const lineOf = (step) => (step === NAME ? 'What is your name?' : step === HELLO ? (kid() ? `Hello, ${kid()}! Let's play.` : `Hello, my friend! Let's play.`) : step >= 1 ? STORY[step - 1].text : '');
   const lumi = (mood, size, wave) => L.svg({ look: A.lookWith(), mood, size, wave: !!wave });
 
   // a row of flats with lit windows, drawn once
@@ -41,15 +41,18 @@
 
   function picture(step) {
     if (step === 0) return `<div class="in-art in-sky"><span class="in-moon"></span><span class="in-glow">${lumi('sleepy', 230)}</span></div>`;
-    if (step === NAME || step === HELLO) return '';
+    if (step === NAME || step === HELLO) return room('');
     const s = STORY[step - 1];
     if (s.sky) {
       const pos = step === 1 ? 'p1' : step === 2 ? 'p2' : 'p3';
       return `<div class="in-art in-sky ${pos}"><span class="in-moon"></span>${step === 3 ? '<span class="in-trail"></span>' : ''}<span class="in-glow">${lumi(s.mood, step === 3 ? 170 : 210)}</span>${step > 1 ? skyline : ''}</div>`;
     }
+    return room(`<span class="in-rug"></span><span class="in-lumi ${step === 4 ? 'land' : 'bobble'}">${lumi(s.mood, 320, s.wave)}</span>${step === 4 ? '<span class="in-spark a"></span><span class="in-spark b"></span><span class="in-spark c"></span>' : ''}`);
+  }
+  // the child's own room (their wallpaper and floor) fills the whole screen
+  function room(inner) {
     const skin = A.roomSkin ? A.roomSkin() : { wall: '#F6E7D3', floor: '#E8CDB0' };
-    return `<div class="in-art in-room" style="background:${skin.wall}"><span class="in-window"><i></i></span><span class="in-floor" style="background:${skin.floor}"></span><span class="in-rug"></span>
-      <span class="in-lumi ${step === 4 ? 'land' : 'bobble'}">${lumi(s.mood, 300, s.wave)}</span>${step === 4 ? '<span class="in-spark a"></span><span class="in-spark b"></span><span class="in-spark c"></span>' : ''}</div>`;
+    return `<div class="in-art in-room" style="background:${skin.wall}"><span class="in-window"><i></i></span><span class="in-floor" style="background:${skin.floor}"></span>${inner}</div>`;
   }
 
   A.VOICE.intro = () => '';
@@ -60,33 +63,33 @@
     if (step === 0) return `
 <section class="screen intro dark" aria-label="Lumi is getting ready">
   ${picture(0)}
-  <div class="in-title"><h1>Lumi</h1><span>Your buddy for the day</span></div>
+  <div class="in-title"><h1>Lumi</h1></div>
   <div class="in-load">${t.ready
     ? `<button class="primary big in-start" data-a="introNext">${ic('play', 44)}<span>Start</span></button>`
-    : '<span class="in-bar" role="progressbar" aria-label="Getting ready"><i></i></span><span class="in-wait">Lumi is waking up…</span>'}</div>
+    : '<span class="in-bar" role="progressbar" aria-label="Getting ready"><i></i></span>'}</div>
 </section>`;
     const text = lineOf(step);
     if (step === NAME) return `
 <section class="screen intro" aria-label="Tell Lumi your name">
+  ${picture(NAME)}
   <button class="in-skip" data-a="introSkip">Skip</button>
   <div class="in-ask">
     <span class="in-lumi bobble">${lumi('happy', 300, true)}</span>
     <div class="in-form">
       <div class="in-bubble"><span>${esc(text)}</span>${A.speakBtn(text, 52)}</div>
-      <input id="in-name" class="in-name" type="text" data-input="childName" value="${esc(state.childName || '')}" maxlength="20" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="Type your name" aria-label="Your name">
-      <button class="primary big" data-a="introNext">${ic('check', 40)}<span>That is me</span></button>
-      <span class="in-help">A grown-up can help you type.</span>
+      <input id="in-name" class="in-name" type="text" data-input="childName" value="${esc(state.childName || '')}" maxlength="20" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="My name" aria-label="Your name">
+      <button class="primary big" data-a="introNext" aria-label="That is my name">${ic('check', 44)}</button>
     </div>
   </div>
   ${dots}
 </section>`;
     if (step === HELLO) return `
 <section class="screen intro" aria-label="Lumi says hello">
+  ${picture(HELLO)}
   <div class="in-hello">
     ${Array.from({ length: 12 }, (_, i) => `<span class="in-conf c${i % 4}" style="left:${6 + i * 8}%;animation-delay:${(i % 5) * 0.18}s"></span>`).join('')}
     <span class="in-lumi bobble">${lumi('excited', 320, true)}</span>
     <h1 class="in-hi">${kid() ? `Hello, <b>${esc(kid())}</b>!` : 'Hello, my friend!'}</h1>
-    <span class="in-hi-sub">I am so happy to be your buddy.</span>
     <div class="row gap16">${A.speakBtn(text, 64)}<button class="primary big" data-a="introDone"><span>Let's go</span>${ic('arrow', 40)}</button></div>
   </div>
 </section>`;
@@ -96,7 +99,7 @@
   <button class="in-skip" data-a="introSkip">Skip</button>
   ${picture(step)}
   <div class="in-cap">
-    ${A.speakBtn(text, 64)}
+    ${A.speakBtn(text, 72)}
     <p>${esc(text)}</p>
     <button class="primary in-next" data-a="introNext" aria-label="Next">${ic('arrow', 40)}</button>
   </div>

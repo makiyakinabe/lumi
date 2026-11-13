@@ -52,6 +52,7 @@
     x: line('<path d="M6 6l12 12M18 6 6 18"/>', 2.6),
     plus: line('<path d="M12 5v14M5 12h14"/>', 2.6),
     minus: line('<path d="M5 12h14"/>', 2.6),
+    turn: line('<path d="M20 12a8 8 0 1 1-2.7-6"/><path d="M20 4v5h-5"/>', 2.6),
     up: line('<path d="M6 15l6-6 6 6"/>', 2.6),
     down: line('<path d="M6 9l6 6 6-6"/>', 2.6),
     grip: line('<circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/>', 2.4),
