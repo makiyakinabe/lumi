@@ -438,10 +438,9 @@ Bubbles (Hard: pop only the colour Lumi names), Match (3, 6 or 8 pairs), Jigsaw 
 
 Lists that scroll (stories, lessons, the shops, dress-up rows) leave room around their tiles, so the yellow guide glow and selected rings are never cut off.
 
-## Lumi's room: wallpaper, floors and a 3D view (js/roomstyle.js)
+## Lumi's room: wallpaper and floors (js/roomstyle.js)
 
 - **Walls tab** (the paint roller): 8 wallpapers (cream, stripy, spotty, sky, rainbow, leafy, purple, night sky) and 6 floors (wood, pale wood, tiles, green, pink and blue carpet). Cream walls and the wood floor are free; the others cost 2 to 6 stars. The choice also shows at home and beside the games. Saved in `state.roomStyle`.
-- **3D button** (the cube, next to the music button): turns the flat picture into a little 3D room built from the same saved places and sizes. Things hung on the wall stay on the back wall; things on the floor stand up in the room, nearer or further by where they sit on the flat floor. Drag anywhere, or use the two arrows, to turn the room. Tap a thing to hear its name; tap the lamp or fairy lights to switch the light off and on. **Flat** goes back. Moving, resizing and buying work as before (move things in the flat view).
 
 ## Lumi's room: bigger or smaller
 
@@ -809,7 +808,7 @@ web/
   js/grownups-plus.js  Getting started, Share a report, Grown-ups lock, the plain-sentence Progress summary
   js/games-more.js  six more Play games (Feed Lumi, Copy the tune, Way home, Catch stars, Find it, Weather)
   js/games-life.js  the Everyday games (kitchen, shopping, road, clock, zip and button) and A.KITCHEN
-  js/roomstyle.js   wallpaper, floors and the 3D view of Lumi's room
+  js/roomstyle.js   wallpaper and floors for Lumi's room
   js/lang.js        home language: Chinese, Malay and Tamil words and voice
   js/comingup.js    Coming up stories (social stories) with a countdown, in My day on the day
   js/offline.js     backup and restore, and installing Lumi to work without internet

@@ -1393,15 +1393,15 @@
 <section class="screen" aria-label="Lumi's room">
   ${srTitle("Lumi's room")}
   <div class="row between" style="height:60px">
-    <div class="row gap12">${backBtn()}${speakBtn("This is Lumi's room.")}<button class="icon-btn room-music ${S.roomMusic ? 'on' : ''}" data-a="roomMusicToggle" aria-label="${S.roomMusic ? 'Turn the music off' : 'Turn the music on'}" aria-pressed="${!!S.roomMusic}">${ic(S.roomMusic ? 'music' : 'mute', 30)}</button>${A.room3dBtn ? A.room3dBtn() : ''}</div>
+    <div class="row gap12">${backBtn()}${speakBtn("This is Lumi's room.")}<button class="icon-btn room-music ${S.roomMusic ? 'on' : ''}" data-a="roomMusicToggle" aria-label="${S.roomMusic ? 'Turn the music off' : 'Turn the music on'}" aria-pressed="${!!S.roomMusic}">${ic(S.roomMusic ? 'music' : 'mute', 30)}</button></div>
     ${starChip(true)}
   </div>
   <div class="row gap24 grow">
-    <div class="panel scene room-scene lumi-room ${state.room3d && A.room3dBtn ? 'is3d' : ''}" style="width:690px">
+    <div class="panel scene room-scene lumi-room" style="width:690px">
       <div class="floor" style="height:24%"></div>
       ${roomDecor(true)}
       <div class="lumi-pos bob movable room-lumi" data-id="lumi" role="button" tabindex="-1" aria-label="Lumi. Drag to move Lumi." style="${state.roomLumi ? `left:${state.roomLumi.l}%;top:${state.roomLumi.t}%` : 'left:33%;bottom:6%'};z-index:30">${L.svg({ look: lookWith(), mood: 'happy', size: Math.round(230 * roomSize('lumi')) })}</div>
-      ${state.roomMoved || state.room3d ? '' : `<span class="room-hint">${ic('hand', 26)}<span>Drag things to move them</span></span>`}
+      ${state.roomMoved ? '' : `<span class="room-hint">${ic('hand', 26)}<span>Drag things to move them</span></span>`}
       ${S.roomUndo ? `<button class="room-undo" data-a="roomUndo" aria-label="Undo the last move">${ic('undo', 26)}<span>Undo</span></button>` : ''}
     </div>
     <div class="col grow gap16">

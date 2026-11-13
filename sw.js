@@ -4,7 +4,7 @@
   quietly fetches any newer version in the background, which shows the next time Lumi is opened.
   When you add or rename a file, add it to FILES and change VERSION.
 */
-const VERSION = 'lumi-2026-11-13-1';
+const VERSION = 'lumi-2026-11-13-2';
 const FILES = [
   './',
   'index.html',

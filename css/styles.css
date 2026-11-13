@@ -2557,7 +2557,7 @@ svg.pic.person { overflow: hidden; }
 /* lists that scroll leave room around their tiles, so a glow or a selected ring is never cut off */
 .room-grid, .shop-grid { padding: 14px; margin: -14px; }
 
-/* ---------------------------------------------------------------- room: wallpaper, floors and the 3D view (roomstyle.js) */
+/* ---------------------------------------------------------------- room: wallpaper and floors (roomstyle.js) */
 .skin-head { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; height: 34px; font-size: 20px; font-weight: 800; color: var(--muted); }
 .room-grid .skin-head { align-self: end; }
 .skin-swatch { position: relative; overflow: hidden; width: 96px; height: 62px; border-radius: 14px; border: 2px solid rgba(59, 47, 47, 0.15); }
@@ -2567,35 +2567,6 @@ svg.pic.person { overflow: hidden; }
 .room-grid:has(.skin-head) { grid-auto-rows: auto; }
 .room-grid:has(.skin-head) .item-tile { height: 124px; }
 .panel.scene.dark-wall .room-hint { background: #fff; }
-.icon-btn.room-3d { width: auto; padding: 0 16px 0 10px; gap: 6px; font-size: 19px; font-weight: 800; color: var(--ink); }
-.icon-btn.room-3d.on { background: #DCEFED; color: var(--teal); }
-.room-scene.is3d > .decor, .room-scene.is3d > .room-lumi, .room-scene.is3d > .lumi-rug, .room-scene.is3d > .floor { visibility: hidden; pointer-events: none; }
-.room-scene.is3d { background: linear-gradient(#EAF2F6, #DDE7EC) !important; }
-.r3-stage { position: absolute; inset: 0; perspective: 1500px; perspective-origin: 50% 30%; touch-action: none; cursor: grab; z-index: 5; }
-.r3-world { position: absolute; left: 50%; top: 75%; width: 0; height: 0; transform-style: preserve-3d; transform: scale(0.74) rotateX(var(--tilt)) rotateY(var(--ry)); }
-.r3-world.smooth { transition: transform 0.35s ease; }
-.r3-world.smooth .r3-bb { transition: transform 0.35s ease; }
-.r3-world > * { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
-.r3-wall { backface-visibility: hidden; -webkit-backface-visibility: hidden; box-shadow: inset 0 0 0 4px rgba(90, 60, 40, 0.1); }
-.r3-wall.side { filter: brightness(0.93); }
-.r3-floor { box-shadow: inset 0 0 0 4px rgba(90, 60, 40, 0.12), 0 0 60px rgba(59, 47, 47, 0.18); }
-.r3-flat { position: absolute; background: transparent; line-height: 0; padding: 0; }
-.r3-world > .r3-bb { transform-origin: 50% 100%; background: transparent; line-height: 0; padding: 0; transform-style: preserve-3d; }
-.r3-bb > *, .r3-flat > * { pointer-events: none; }
-.r3-bb.r3-wig > :first-child, .r3-flat.r3-wig > :first-child { animation: wiggleOnce 0.5s ease; }
-.r3-rug { pointer-events: none; }
-.r3-window { position: absolute; left: 30%; top: 16%; width: 34%; height: 44%; border-radius: 14px; border: 10px solid #fff; background: linear-gradient(#BFE3F7, #E9F6FD); box-shadow: 0 0 0 3px rgba(90, 60, 40, 0.15); overflow: hidden; }
-.r3-window i { position: absolute; right: 14%; top: 14%; width: 26%; aspect-ratio: 1; border-radius: 50%; background: #F4D35E; }
-.r3-door { position: absolute; left: 34%; bottom: 0; width: 26%; height: 72%; border-radius: 16px 16px 0 0; background: #C9A27E; border: 6px solid #A87B50; border-bottom: 0; }
-.r3-door::after { content: ''; position: absolute; left: 12%; top: 52%; width: 12px; height: 12px; border-radius: 50%; background: #F4D35E; }
-.room-scene.r3-dark .r3-wall, .room-scene.r3-dark .r3-floor { filter: brightness(0.62) saturate(0.9); }
-.room-scene.r3-dark.is3d { background: linear-gradient(#3B4670, #55649A) !important; }
-.room-scene.r3-dark .r3-window { background: linear-gradient(#2F3B66, #55649A); }
-.room-scene.r3-dark .r3-window i { background: #FFF6D6; }
-.r3-ctl { position: absolute; left: 16px; right: 16px; bottom: 14px; z-index: 6; display: flex; align-items: center; justify-content: space-between; pointer-events: none; }
-.r3-ctl .icon-btn { pointer-events: auto; background: #fff; }
-.r3-ctl .r3-right svg { transform: scaleX(-1); }
-.r3-tip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px; background: rgba(255, 255, 255, 0.9); font-size: 17px; font-weight: 800; color: var(--ink); }
 .story-grid, .learn-grid { padding: 14px 14px 30px; margin: -14px -14px 0; }
 .opts { padding: 12px; margin: -12px; }
 .dress-row .opts, .row > .opts { min-width: 0; }
