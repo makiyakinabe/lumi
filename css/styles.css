@@ -2570,3 +2570,8 @@ svg.pic.person { overflow: hidden; }
 .story-grid, .learn-grid { padding: 14px 14px 30px; margin: -14px -14px 0; }
 .opts { padding: 12px; margin: -12px; }
 .dress-row .opts, .row > .opts { min-width: 0; }
+/* Grown-ups password */
+.pw-card { width: 460px; }
+.pw-field { display: flex; flex-direction: column; gap: 4px; width: 100%; font-size: 15px; font-weight: 800; color: var(--muted); text-align: left; }
+.pw-field input { height: 54px; padding: 0 16px; border-radius: 14px; border: 3px solid #E3DACB; font: inherit; font-size: 22px; font-weight: 800; color: var(--ink); background: #fff; }
+.pw-field input:focus { outline: none; border-color: var(--teal); }

@@ -3,7 +3,7 @@
   Small things that make Grown-ups easier to use:
   - Getting started: five steps on Overview that tick themselves, then disappear
   - A one-page report for teachers and therapists (print, save as PDF, or download)
-  - An optional lock for Grown-ups: press and hold (default), a sum, or a 4-digit PIN
+  - A password lock for Grown-ups (made the first time Grown-ups is opened)
   - A short summary in plain sentences for the top of Progress
 */
 (function () {
@@ -166,80 +166,87 @@
     }
   });
 
-  // ================================================================ 3. Grown-ups lock
-  const lk = () => state.lock || (state.lock = { mode: 'hold', pin: '' });
+  // ================================================================ 3. Grown-ups lock: a password
+  // Grown-ups always asks for a password. The first time, the grown-up makes one up (typed twice).
+  // Only a scrambled form is saved on the tablet (state.lock.hash), never the password itself.
+  // "Forgot password?" asks a sum written in words, then lets the grown-up choose a new one.
+  const scramble = (t) => { let a = 2166136261, b = 5381; const x = 'lumi:' + t; for (let k = 0; k < x.length; k++) { a = Math.imul(a ^ x.charCodeAt(k), 16777619); b = (Math.imul(b, 33) + x.charCodeAt(k)) | 0; } return (a >>> 0).toString(36) + (b >>> 0).toString(36); };
+  const lk = () => {
+    const l = state.lock || (state.lock = {});
+    if (l.pin && !l.hash) l.hash = scramble(l.pin); // an earlier 4-digit PIN becomes the password
+    delete l.pin;
+    delete l.mode;
+    return l;
+  };
   const isG = (s) => !!s && (s.indexOf('cg') === 0 || s === 'builder');
   A.gateGo = (screen, voice, opts) => {
     if (!isG(screen)) { S.gUnlocked = false; return false; }
     if (isG(S.screen) || S.gUnlocked) return false;
-    const m = lk().mode;
-    if (m !== 'sum' && m !== 'pin') return false;
-    const pass = () => { S.gUnlocked = true; go(screen, voice, opts); };
-    if (m === 'pin' && lk().pin) pinAsk('enter', pass);
-    else A.parentGate(pass, 'Opening Grown-ups');
+    pwAsk(lk().hash ? 'enter' : 'new', () => { S.gUnlocked = true; go(screen, voice, opts); });
     return true;
   };
 
-  const pinEl = document.createElement('div');
-  pinEl.id = 'pinGate';
-  pinEl.hidden = true;
-  pinEl.setAttribute('role', 'dialog');
-  pinEl.setAttribute('aria-label', 'Grown-ups PIN');
-  stage.appendChild(pinEl);
-  let pin = { mode: 'enter', typed: '', first: '', onPass: null, msg: '' };
-  const TITLES = { enter: 'Grown-ups PIN', new: 'Choose a 4-digit PIN', confirm: 'Type it again' };
-  function drawPin() {
-    const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'x', '0', '<'];
-    pinEl.innerHTML = `<div class="pg-card pin-card">
+  const pwEl = document.createElement('div');
+  pwEl.id = 'pinGate';
+  pwEl.hidden = true;
+  pwEl.setAttribute('role', 'dialog');
+  pwEl.setAttribute('aria-label', 'Grown-ups password');
+  stage.appendChild(pwEl);
+  let pw = { mode: 'enter', onPass: null, msg: '', show: false };
+  const field = (id, label) => `<label class="pw-field"><span>${label}</span><input id="${id}" type="${pw.show ? 'text' : 'password'}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="40"></label>`;
+  function drawPw(keep) {
+    const old = keep ? ['pw1', 'pw2'].map((id) => { const el = document.getElementById(id); return el ? el.value : ''; }) : ['', ''];
+    const isNew = pw.mode !== 'enter';
+    pwEl.innerHTML = `<div class="pg-card pin-card pw-card">
       <span class="pg-ic">${ic('kLock', 48)}</span>
-      <b class="pg-title">${TITLES[pin.mode]}</b>
-      <span class="pin-dots" aria-live="polite">${[0, 1, 2, 3].map((i) => `<i class="${i < pin.typed.length ? 'on' : ''}"></i>`).join('')}</span>
-      <span class="pg-why pin-msg">${esc(pin.msg)}</span>
-      <div class="pin-keys">${keys.map((k) => k === 'x' ? '<span></span>' : k === '<' ? `<button class="pin-key soft" data-a="pinBack" aria-label="Delete">${ic('back', 22)}</button>` : `<button class="pin-key" data-a="pinKey" data-v="${k}">${k}</button>`).join('')}</div>
-      <div class="row gap12">${pin.mode === 'enter' ? '<button class="g-link" data-a="pinForgot">Forgot PIN?</button>' : ''}<button class="g-btn outline" data-a="pinCancel">Cancel</button></div>
+      <b class="pg-title">${pw.mode === 'enter' ? 'Grown-ups password' : pw.mode === 'change' ? 'Choose a new password' : 'Make a password'}</b>
+      ${isNew ? '<span class="pg-why">This keeps the Grown-ups pages for you. At least 4 letters or numbers.</span>' : ''}
+      ${field('pw1', isNew ? 'Password' : 'Type the password')}
+      ${isNew ? field('pw2', 'Type it again') : ''}
+      <span class="pg-why pin-msg" aria-live="polite">${esc(pw.msg)}</span>
+      <div class="row gap12"><button class="g-btn outline" data-a="pwShow" aria-pressed="${pw.show}">${ic('eye', 18)}<span>${pw.show ? 'Hide' : 'Show'}</span></button><button class="g-btn" data-a="pwOk">${ic('check', 18)}<span>${isNew ? 'Save' : 'Open'}</span></button></div>
+      <div class="row gap12">${pw.mode === 'enter' ? '<button class="g-link" data-a="pwForgot">Forgot password?</button>' : ''}<button class="g-link" data-a="pwCancel">Cancel</button></div>
     </div>`;
+    ['pw1', 'pw2'].forEach((id, k) => { const el = document.getElementById(id); if (el) el.value = old[k]; });
   }
-  function pinAsk(mode, onPass) {
-    pin = { mode, typed: '', first: '', onPass, msg: '' };
-    drawPin();
-    pinEl.hidden = false;
+  function pwAsk(mode, onPass) {
+    pw = { mode, onPass, msg: '', show: false };
+    drawPw(false);
+    pwEl.hidden = false;
     if (A.hideHand) A.hideHand();
+    const f = document.getElementById('pw1');
+    if (f) setTimeout(() => { try { f.focus(); } catch (e) { /* ignore */ } }, 50);
   }
-  function pinDone() {
-    const t = pin.typed;
-    if (pin.mode === 'enter') {
-      if (t === lk().pin) { pinEl.hidden = true; const fn = pin.onPass; pin.onPass = null; if (fn) fn(); return; }
-      pin.typed = ''; pin.msg = 'Not quite. Try again.';
-    } else if (pin.mode === 'new') {
-      pin.first = t; pin.typed = ''; pin.mode = 'confirm'; pin.msg = '';
-    } else {
-      if (t === pin.first) {
-        lk().pin = t; lk().mode = 'pin'; save();
-        pinEl.hidden = true; render();
-        A.showToast('<span>PIN saved</span>', 'toast-g');
-        return;
-      }
-      pin.typed = ''; pin.first = ''; pin.mode = 'new'; pin.msg = 'Those did not match. Start again.';
+  function pwOk() {
+    const a = (document.getElementById('pw1') || {}).value || '';
+    const b = (document.getElementById('pw2') || {}).value || '';
+    if (pw.mode === 'enter') {
+      if (scramble(a) === lk().hash) { pwEl.hidden = true; const fn = pw.onPass; pw.onPass = null; if (fn) fn(); return; }
+      pw.msg = 'That is not the password. Try again.';
+      drawPw(false);
+      const f = document.getElementById('pw1');
+      if (f) f.focus();
+      return;
     }
-    drawPin();
+    if (a.length < 4) { pw.msg = 'Use at least 4 letters or numbers.'; drawPw(true); return; }
+    if (a !== b) { pw.msg = 'The two do not match. Type them again.'; drawPw(false); return; }
+    lk().hash = scramble(a);
+    save();
+    pwEl.hidden = true;
+    const fn = pw.onPass;
+    pw.onPass = null;
+    A.showToast('<span>Password saved</span>', 'toast-g');
+    if (fn) fn(); else render();
   }
+  pwEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); pwOk(); } e.stopPropagation(); });
   Object.assign(A.ACTIONS, {
-    pinKey: (d) => { if (pin.typed.length < 4) pin.typed += d.v; pin.msg = ''; drawPin(); if (pin.typed.length === 4) setTimeout(pinDone, 150); return 'keep'; },
-    pinBack: () => { pin.typed = pin.typed.slice(0, -1); drawPin(); return 'keep'; },
-    pinCancel: () => { pinEl.hidden = true; pin.onPass = null; return 'keep'; },
-    pinForgot: () => { const fn = pin.onPass; pinEl.hidden = true; A.parentGate(() => { if (fn) fn(); A.showToast('<span>You can set a new PIN in Child › Grown-ups lock</span>', 'toast-g'); }, 'Forgot the PIN'); return 'keep'; },
-    lockMode: (d) => {
-      if (d.v === 'pin' && !lk().pin) { pinAsk('new', null); return 'keep'; }
-      lk().mode = d.v; save(); render();
-    },
-    lockNewPin: () => { pinAsk('new', null); return 'keep'; }
+    pwOk: () => { pwOk(); return 'keep'; },
+    pwShow: () => { pw.show = !pw.show; drawPw(true); return 'keep'; },
+    pwCancel: () => { pwEl.hidden = true; pw.onPass = null; return 'keep'; },
+    pwForgot: () => { const fn = pw.onPass; pwEl.hidden = true; A.parentGate(() => pwAsk('change', fn), 'Forgot the password'); return 'keep'; },
+    lockChange: () => { pwAsk('change', null); return 'keep'; }
   });
-  A.lockHtml = () => {
-    const m = lk().mode;
-    const seg = [['hold', 'Press and hold'], ['sum', 'Sum question'], ['pin', 'PIN']].map(([v, l]) => `<button class="seg-opt ${m === v ? 'on' : ''}" data-a="lockMode" data-v="${v}" aria-pressed="${m === v}">${l}</button>`).join('');
-    const note = { hold: 'Hold the Grown-ups button for one second. Good for young children.', sum: 'Answer a sum written in words. Good for children who can hold a button.', pin: 'Type a 4-digit PIN. Good for older children and teens.' }[m];
-    return `<div class="seg" role="group" aria-label="Grown-ups lock">${seg}</div><p class="g-note">${note}</p>
-      ${m === 'pin' ? `<button class="g-btn small outline" data-a="lockNewPin">${ic('pencil', 16)}<span>Change PIN</span></button>` : ''}`;
-  };
-  A.lockLabel = () => ({ hold: 'Press and hold', sum: 'Sum question', pin: 'PIN' })[lk().mode] || 'Press and hold';
+  A.lockHtml = () => `<p class="g-note">Grown-ups opens only with your password. If you forget it, tap <b>Forgot password?</b> and answer a sum to choose a new one.</p>
+      <button class="g-btn small outline" data-a="lockChange">${ic('pencil', 16)}<span>Change password</span></button>`;
+  A.lockLabel = () => (lk().hash ? 'Password on' : 'Not set yet');
 })();
