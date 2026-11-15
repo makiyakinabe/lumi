@@ -92,3 +92,57 @@
 .in-form .primary { height: 96px; }
 .in-hello { z-index: 2; justify-content: flex-start; padding-top: 70px; gap: 6px; }
 .in-hi { font-size: 96px; margin: 0 0 18px; padding: 10px 44px; border-radius: 44px; background: #fff; box-shadow: 0 6px 0 rgba(59, 47, 47, 0.12); }
+
+/* title page buttons */
+.in-story { display: flex; align-items: center; gap: 12px; height: 96px; padding: 0 30px; border-radius: 32px; background: #fff; color: var(--ink); font-size: 30px; font-weight: 900; box-shadow: 0 6px 0 rgba(20, 26, 60, 0.35); animation: inPop 0.4s ease 0.1s both; }
+.in-story:active { transform: translateY(3px); }
+.in-start { min-width: 260px; }
+
+/* choice pages: three big pictures */
+.in-choose { position: absolute; z-index: 2; left: 40px; right: 40px; bottom: 52px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.in-q { display: flex; align-items: center; gap: 16px; }
+.in-q p { margin: 0; padding: 16px 34px; border-radius: 36px; background: #fff; color: var(--ink); font-size: 42px; font-weight: 900; box-shadow: 0 6px 0 rgba(59, 47, 47, 0.12); }
+.in-q .speak-btn { background: #fff; box-shadow: 0 6px 0 rgba(59, 47, 47, 0.12); }
+.in-opts { display: flex; gap: 26px; }
+.in-opt { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; width: 230px; height: 220px; border-radius: 40px; border: 6px solid #fff; background: rgba(255, 255, 255, 0.96); box-shadow: 0 8px 0 rgba(59, 47, 47, 0.16); animation: inPop 0.4s ease both; }
+.in-opt:nth-child(2) { animation-delay: 0.1s; } .in-opt:nth-child(3) { animation-delay: 0.2s; }
+.in-opt:active { transform: translateY(4px); box-shadow: 0 4px 0 rgba(59, 47, 47, 0.16); }
+.in-opt b { font-size: 32px; font-weight: 900; color: var(--ink); }
+.in-opt-art { display: flex; align-items: center; justify-content: center; width: 120px; height: 120px; }
+.in-opt-art svg { width: 100%; height: 100%; }
+.in-ic { display: block; }
+.in-ic.star { width: 104px; height: 104px; background: #F4C542; clip-path: polygon(50% 2%, 62% 36%, 98% 38%, 69% 60%, 80% 95%, 50% 74%, 20% 95%, 31% 60%, 2% 38%, 38% 36%); }
+.in-ic.rainbow { width: 120px; height: 62px; border-radius: 120px 120px 0 0; background: radial-gradient(circle at 50% 100%, #fff 0 26%, #B8A6E8 26% 36%, #8FC8F2 36% 46%, #9EDDB0 46% 56%, #F7DC7A 56% 66%, #F5B37A 66% 76%, #F08C98 76% 86%, transparent 86%); }
+.in-ic.cloud, .in-cloud { background: #fff; border-radius: 60px; box-shadow: 0 0 0 0 #fff; position: relative; }
+.in-ic.cloud { width: 116px; height: 52px; margin-top: 30px; }
+.in-ic.cloud::before, .in-cloud::before { content: ''; position: absolute; left: 16%; top: -55%; width: 44%; height: 110%; border-radius: 50%; background: #fff; }
+.in-ic.cloud::after, .in-cloud::after { content: ''; position: absolute; right: 14%; top: -30%; width: 34%; height: 84%; border-radius: 50%; background: #fff; }
+.in-opt .in-ic.cloud, .in-opt .in-ic.cloud::before, .in-opt .in-ic.cloud::after { background: #CFE6F7; }
+
+/* how Lumi comes down */
+.in-bow { position: absolute; left: -6%; top: 2%; width: 86%; height: 120%; border-radius: 50%; background: radial-gradient(closest-side, transparent 0 82%, #B8A6E8 82% 85%, #8FC8F2 85% 88%, #9EDDB0 88% 91%, #F7DC7A 91% 94%, #F5B37A 94% 97%, #F08C98 97% 100%); opacity: 0.9; animation: inPop 0.8s ease both; }
+.in-sky.by-rainbow .in-glow { animation-name: inSlideBow; }
+.in-sky.by-cloud .in-glow { animation: inFloat 2.6s ease-out both; }
+.in-sky.by-cloud .in-glow > svg { transform: none; }
+.in-cloud { position: absolute; left: 8%; right: 8%; bottom: 14px; height: 64px; }
+.in-sky.by-cloud .in-glow { background: none; }
+.in-glow > svg { position: relative; z-index: 1; }
+
+/* how Lumi says hi */
+.in-lumi.dance > svg { transform-origin: 50% 90%; animation: inDance 0.9s ease-in-out infinite; }
+.in-lumi.hug > svg { animation: inHug 1.6s ease-in-out infinite; }
+.in-note { position: absolute; z-index: 1; width: 84px; height: 84px; animation: inNote 1.8s ease-in-out infinite; }
+.in-note svg { width: 100%; height: 100%; }
+.in-note.a { left: 27%; top: 30%; } .in-note.b { right: 27%; top: 22%; animation-delay: 0.5s; }
+@keyframes inSlideBow { from { left: 20%; top: 6%; } to { left: 58%; top: 50%; } }
+@keyframes inFloat { from { left: 30%; top: 10%; } to { left: 58%; top: 50%; } }
+@keyframes inDance { 0%, 100% { transform: rotate(-9deg) translateY(0); } 25% { transform: rotate(0) translateY(-22px); } 50% { transform: rotate(9deg) translateY(0); } 75% { transform: rotate(0) translateY(-22px); } }
+@keyframes inHug { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+@keyframes inNote { 0%, 100% { transform: translateY(0) rotate(-8deg); } 50% { transform: translateY(-18px) rotate(8deg); } }
+
+/* "How does Lumi say hi?": Lumi stands on the left, the three choices on the right */
+.in-side { position: absolute; left: 0; top: 0; bottom: 0; width: 40%; }
+.in-side .in-rug { width: 380px; margin-left: -190px; }
+.intro.pick-hi .in-choose { left: auto; right: 36px; bottom: 90px; }
+.intro.pick-hi .in-opt { width: 216px; }
+.intro.pick-hi .in-opts { gap: 18px; }

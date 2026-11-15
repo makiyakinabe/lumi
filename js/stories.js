@@ -566,7 +566,7 @@
       return `<button class="story-card sx-card" data-a="stOpen" data-v="${s.id}" style="background:${s.tint}">
         ${pv.html}
         ${rec.includes(s.id) ? `<span class="fo-for">${ic('star', 16)}<span>${forKid}</span></span>` : ''}
-        <span class="sc-foot"><span class="story-name">${esc(s.title)}</span>${read ? `<span class="tag green">${ic('check', 14)}<span>Played</span></span>` : `<span class="tag">${s.steps.length} steps</span>`}</span>
+        <span class="sc-foot"><span class="story-name">${esc(s.title)}</span>${read ? `<span class="tag green">${ic('check', 14)}<span>Played</span></span>` : `<span class="tag">${s.steps.filter((p) => !p.when).length} steps</span>`}${A.storyWaysTag ? A.storyWaysTag(s) : ''}</span>
         ${pv.words ? `<span class="sc-snip">${esc(pv.words)}</span>` : ''}</button>`;
     }).join('');
     return `
@@ -585,6 +585,10 @@
   // ---------------------------------------------------------------- playing a story
   const storyNow = () => D.STORIES.find((s) => s.id === S.sx.id);
   const stepNow = () => storyNow().steps[S.sx.i];
+  // a step with when(st) only belongs to the story when the child chose that way (story-paths.js)
+  const inStory = (s, st, i) => { const p = s.steps[i]; return !p.when || !!p.when(st); };
+  const nextIdx = (s, st, i) => { for (let j = i + 1; j < s.steps.length; j++) if (inStory(s, st, j)) return j; return -1; };
+  const prevIdx = (s, st, i) => { for (let j = i - 1; j >= 0; j--) if (inStory(s, st, j)) return j; return -1; };
   function voice() {
     const st = S.sx;
     const step = stepNow();
@@ -634,6 +638,7 @@
           <div class="hop">${SX.lumi(st, { mood: 'excited', h: 230, wave: true })}</div>
           <div class="end-title">${ic('star', 48)}<span>You did it!</span>${ic('star', 48)}</div>
           <div class="end-sub">${esc(s.title)}</div>
+          ${A.storyEndExtra ? A.storyEndExtra(s, st) : ''}
           ${fromDay() ? `<div class="row gap16">
             <button class="primary soft-btn" data-a="stAgain" style="height:84px">${ic('restart', 34)}<span>Play again</span></button>
             <button class="primary" data-a="stDayDone" style="height:84px">${ic('kDay', 40)}<span>Back to My day</span></button>
@@ -652,13 +657,14 @@
     const text = val(step.text, st) || '';
     const task = val(step.task, st);
     const ready = st.done || !task;
-    const last = st.i === s.steps.length - 1;
+    const last = nextIdx(s, st, st.i) < 0;
+    const path = s.steps.map((_, i) => i).filter((i) => inStory(s, st, i));
     return `
 <section class="screen tight sx-screen" aria-label="${esc(s.title)}">
   ${A.srTitle(s.title)}
   <div class="row between" style="height:56px;flex:none">
     <div class="row gap12">${A.backBtn()}${A.speakBtn(voice(), 52)}<span class="game-chip" style="background:${s.tint}">${ic(s.learn ? s.icon || 'kLearn' : 'kStories', 28)}<span>${esc(s.title)}</span></span></div>
-    <div class="sx-steps" role="img" aria-label="Step ${st.i + 1} of ${s.steps.length}">${dots(st.i + 1, s.steps.length, '#A8457A', 15)}</div>
+    <div class="sx-steps" role="img" aria-label="Step ${path.indexOf(st.i) + 1} of ${path.length}">${dots(path.indexOf(st.i) + 1, path.length, '#A8457A', path.length > 13 ? 12 : 15)}</div>
   </div>
   <div class="sx-scene sx-${esc(step.id || 'step')}" style="width:${W}px;height:${H}px">
     <svg class="sx-bg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${bg}</svg>
@@ -666,7 +672,7 @@
     <div class="sx-layer">${step.draw ? step.draw(st) : ''}</div>
   </div>
   <div class="sx-bar">
-    <button class="st-nav prev" data-a="stPrev" aria-label="Back a step" ${st.i === 0 ? 'disabled' : ''}>${ic('back', 38)}</button>
+    <button class="st-nav prev" data-a="stPrev" aria-label="Back a step" ${prevIdx(s, st, st.i) < 0 ? 'disabled' : ''}>${ic('back', 38)}</button>
     <div class="sx-words">
       <p class="sx-text">${esc(text)}</p>
       ${st.done ? `<span class="sx-praise">${ic('check', 26)}<span>${esc(st.praise)}</span></span>` : task ? `<span class="sx-task">${ic('hand', 30)}<span>${esc(task)}</span></span>` : ''}
@@ -827,7 +833,8 @@
       const step = stepNow();
       if (!st.done && val(step.task, st)) { say(val(step.task, st)); A.hintNow(); return 'keep'; }
       const s = storyNow();
-      if (st.i < s.steps.length - 1) { openStep(st.i + 1); return undefined; }
+      const nx = nextIdx(s, st, st.i);
+      if (nx >= 0) { openStep(nx); return undefined; }
       st.ended = true;
       st.real = false;
       if (s.learn) {
@@ -849,7 +856,7 @@
       say('You did it! Well done.');
       return undefined;
     },
-    stPrev: () => { if (S.sx.i > 0) openStep(S.sx.i - 1); },
+    stPrev: () => { const pv = prevIdx(storyNow(), S.sx, S.sx.i); if (pv >= 0) openStep(pv); },
     sx: (d, el) => {
       const st = S.sx;
       const step = stepNow();

@@ -375,13 +375,21 @@ It focuses on routines, communication and emotional regulation, with three modes
 
 It is plain HTML, CSS and JavaScript. There is nothing to install and no build step.
 
-## Lumi's hello story (js/intro.js)
+## Lumi's title page and story (js/intro.js)
 
-The first thing a child sees. A short loading screen ("Lumi is waking up…", then **Start**), full-screen story pictures with one short line each ("Lumi lived in the sky." "Lumi wanted a friend." "Whoosh! Down came Lumi." "Lumi found you!"), then Lumi says "Hi! I am Lumi, your buddy.", asks **What is your name?** and greets the child by name before opening the home page.
+The app opens on Lumi's title page every time: **Play** goes to the home page and **Lumi's story** plays the story, so the child can watch it whenever they like. The first time, there is only **Start**, which plays the story.
 
-- The child sets the pace: nothing moves on until they tap the arrow. Every line can be heard again with the speaker button.
-- It plays once per child (`state.introDone`): straight after a grown-up finishes setting up, or the first time an existing child opens Lumi. **Skip** is in the corner, and typing a name is optional ("Hello, my friend!").
-- Play it again from Grown-ups › Child › **Play Lumi's hello story again**.
+- Full-screen pictures with one short line each: "Lumi lived in the sky." "Lumi wanted a friend." … "Lumi found you!" "Hi! I am Lumi, your buddy."
+- **The child chooses twice and the story follows:** how Lumi comes down (star, rainbow or cloud) and how Lumi says hi (wave, dance or hug). That is nine different tellings.
+- The first time, Lumi asks **What is your name?** and greets the child by name ("Hello, Mia!"). Watching again skips the name.
+- The child sets the pace: nothing moves on until they tap. Every line has a speaker button, and **Skip** is in the corner.
+
+## Stories: "You choose!" (js/story-paths.js)
+
+Every story has two places where the child decides what happens next: which drink Lumi gets, how Lumi says hello, what goes in the cosy corner, which way out of the station. Each choice opens its own short scene where the child does the thing they chose (drags it to Lumi, or taps to do it). Nothing is a wrong answer.
+
+- "You did it!" shows **Your story this time** (the choices as pictures) and stars for how many of the story's ways the child has found, so playing again is a reason to choose something new. Choices not tried yet are marked **New**, and the story shelf shows the count (for example 3/6).
+- The ways found are kept in `state.storyPaths`. To add a fork to a story: `fork(storyId, afterStepId, { key, q, opts })` in js/story-paths.js. A step with `when(st)` is only part of the story when the child chose that way.
 
 ## Set up around each child: "What should Lumi help with?"
 
@@ -821,7 +829,8 @@ web/
   js/games-more.js  six more Play games (Feed Lumi, Copy the tune, Way home, Catch stars, Find it, Weather)
   js/games-life.js  the Everyday games (kitchen, shopping, road, clock, zip and button) and A.KITCHEN
   js/roomstyle.js   wallpaper and floors for Lumi's room
-  js/intro.js       Lumi's hello story: loading screen, story pictures, name and greeting (css/intro.css)
+  js/intro.js       Lumi's title page and story, with two choices (css/intro.css)
+  js/story-paths.js "You choose!" forks for every story
   js/lang.js        home language: Chinese, Malay and Tamil words and voice
   js/comingup.js    Coming up stories (social stories) with a countdown, in My day on the day
   js/offline.js     backup and restore, and installing Lumi to work without internet
