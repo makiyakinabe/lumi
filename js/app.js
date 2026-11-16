@@ -901,7 +901,8 @@
     ['learn', 'Learn', 'kLearn', 'learn', '#D6DAF5', '#5B6ABF', 'lifeskills'],
     ['pet', 'Pet', 'kPet', 'pet', '#F2D2C4', '#C0674A', 'lifeskills'],
     ['me', 'Dress up', 'kDress', 'dressup', '#F2C9D6', '#C2577A', null],
-    ['room', 'Room', 'kRoom', 'room', '#F6D2C8', '#C0574A', null]
+    ['room', 'Room', 'kRoom', 'room', '#F6D2C8', '#C0574A', null],
+    ['sounds', 'Sounds', 'kSound', 'sounds', '#E4DAF6', '#6A55B0', 'emotions']
   ];
   const ownedPets = () => ['puppy', 'kitten', 'fishtank'].filter((id) => state.owned.includes(id));
   // Little ones get fewer choices in Fun (no room shop); grown-ups can still open it from the Pet corner
@@ -2916,7 +2917,7 @@
     }
     document.body.style.background = c;
   }
-  const BASE_W = 1194, BASE_H = 834, MIN_ASPECT = 1.2, MAX_ASPECT = 2.4;
+  const BASE_W = 1194, BASE_H = 834, MIN_ASPECT = 0.95, MAX_ASPECT = 2.7;
   let lastSize = '';
   function fit() {
     const W0 = window.innerWidth, H0 = window.innerHeight;

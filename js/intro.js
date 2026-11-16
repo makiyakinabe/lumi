@@ -162,6 +162,17 @@
     if (t.step === 0 && !t.ready) later(() => { if (S.screen === 'intro' && it().step === 0) { it().ready = true; render(); } }, state.introDone ? 1100 : 2400);
   };
 
+  // on a tablet, the first tap also hides the browser's bars so Lumi fills the whole screen
+  function fullScreen() {
+    try {
+      const el = document.documentElement;
+      const touch = navigator.maxTouchPoints > 0;
+      const app = window.matchMedia && (window.matchMedia('(display-mode: standalone)').matches || window.matchMedia('(display-mode: fullscreen)').matches);
+      if (!touch || app || document.fullscreenElement) return;
+      const go = el.requestFullscreen || el.webkitRequestFullscreen;
+      if (go) { const p = go.call(el); if (p && p.catch) p.catch(() => {}); }
+    } catch (e) { /* not allowed here: Lumi still fills the window */ }
+  }
   function finish() {
     state.introDone = true;
     S.intro = null;
@@ -180,6 +191,7 @@
     introNext: () => {
       const t = it();
       if (t.step === 0 && !t.ready) return;
+      if (t.step === 0) fullScreen();
       if (['how', 'hi'].includes(pageOf(t.step))) { say(lineOf(t.step)); return; } // a choice page waits for a choice
       if (pageOf(t.step) === 'name') { const el = document.getElementById('in-name'); if (el) { state.childName = el.value.trim(); el.blur(); } save(); }
       show(Math.min(pages().length, t.step + 1));
@@ -191,8 +203,8 @@
       if (pg === 'how') t.how = d.v; else if (pg === 'hi') t.hi = d.v; else return;
       show(t.step + 1);
     },
-    introPlay: finish,
-    introWatch: () => { S.intro = { step: 0, ready: true, again: true }; show(1); },
+    introPlay: () => { fullScreen(); finish(); },
+    introWatch: () => { fullScreen(); S.intro = { step: 0, ready: true, again: true }; show(1); },
     introSkip: finish,
     introDone: finish,
     introReplay: () => { S.intro = { step: 0, ready: true, again: true }; go('intro'); show(1); }

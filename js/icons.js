@@ -274,6 +274,7 @@
       <path d="M38 6h5l-5 5h5" fill="none" stroke="#7E64C8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`),
     kFun: art48(`<path d="M24 3.5l6 12.4 13.6 2-9.8 9.6 2.3 13.5L24 34.6l-12.1 6.4 2.3-13.5-9.8-9.6 13.6-2z" fill="#FFD23F" ${K2}/>${SHINE(19, 15, 2.5, 1.6)}${FACE(24, 24, 1)}`),
     kPuzzle: art48(`<path d="M8 13h10a4.5 4.5 0 1 1 9 0h10v10a4.5 4.5 0 1 1 0 9v10H27a4.5 4.5 0 1 0-9 0H8z" fill="#8FD07A" ${K2}/>${SHINE(13, 18, 2.5, 1.6)}${FACE(22, 27, 1)}`),
+    kSound: art48(`<path d="M10 28v-5a14 14 0 0 1 28 0v5" fill="none" stroke="#6A55B0" stroke-width="3.4" stroke-linecap="round"/><rect x="5" y="25" width="11" height="16" rx="5.5" fill="#C9BFF0" ${K2}/><rect x="32" y="25" width="11" height="16" rx="5.5" fill="#C9BFF0" ${K2}/>`),
     kStories: art48(`<path d="M3 13c7-3 14-3 21 1 7-4 14-4 21-1v27c-7-3-14-3-21 1-7-4-14-4-21-1z" fill="#F59FBF" ${K2}/>
       <path d="M6 12c6-2 12-2 18 2v24c-6-4-12-4-18-2zM42 12c-6-2-12-2-18 2v24c6-4 12-4 18-2z" fill="#fff" ${K2}/>
       <path d="M10 19c3-.8 6-.6 9 .6M10 24c3-.8 6-.6 9 .6M29 19.6c3-1.2 6-1.4 9-.6M29 24.6c3-1.2 6-1.4 9-.6" stroke="#D6C4A8" stroke-width="1.8" stroke-linecap="round"/>
@@ -352,7 +353,7 @@
   });
 
   // "Calm minimal" style swaps the colourful kid icons for simple line icons
-  const LINE_FOR = { kDay: 'calendar', kTalk: 'chat', kCalm: 'cloud', kFun: 'fun', kPuzzle: 'puzzle', kStories: 'storybook', kLearn: 'learn', kHint: 'bulb', kPet: 'paw', kDress: 'shirt', kRoom: 'house', kTogether: 'together', kDuo: 'together', kLock: 'lock', kBalloon: 'balloon', kSqueeze: 'squeeze', kCount: 'count', kBell: 'bell', kBubbles: 'bubbles', kCards: 'cards', kSort: 'sort', kShapes: 'shapes', kTurns: 'swap', kHeart: 'heart', kFlag: 'flag', kLife: 'house', rWall: 'pencil', rFloor: 'puzzle', kCook: 'cutlery', kShop: 'shop', kRoad: 'stop', kClock: 'clock', kZip: 'shirt', kFace: 'smile', kFeed: 'apple', kTune: 'music', kMaze: 'puzzle', kCatch: 'star', kFind: 'search', kWeather: 'sun', wMore: 'plus', wDone: 'check', wNext: 'arrow', wDifferent: 'shuffle' };
+  const LINE_FOR = { kSound: 'music', kDay: 'calendar', kTalk: 'chat', kCalm: 'cloud', kFun: 'fun', kPuzzle: 'puzzle', kStories: 'storybook', kLearn: 'learn', kHint: 'bulb', kPet: 'paw', kDress: 'shirt', kRoom: 'house', kTogether: 'together', kDuo: 'together', kLock: 'lock', kBalloon: 'balloon', kSqueeze: 'squeeze', kCount: 'count', kBell: 'bell', kBubbles: 'bubbles', kCards: 'cards', kSort: 'sort', kShapes: 'shapes', kTurns: 'swap', kHeart: 'heart', kFlag: 'flag', kLife: 'house', rWall: 'pencil', rFloor: 'puzzle', kCook: 'cutlery', kShop: 'shop', kRoad: 'stop', kClock: 'clock', kZip: 'shirt', kFace: 'smile', kFeed: 'apple', kTune: 'music', kMaze: 'puzzle', kCatch: 'star', kFind: 'search', kWeather: 'sun', wMore: 'plus', wDone: 'check', wNext: 'arrow', wDifferent: 'shuffle' };
   // ---------- colour pictures for every routine step (same style as the bus, teeth and school) ----------
   Object.assign(ICONS, {
     sShirt: art48(`<path d="M16 7 5 13l4.5 8.5 5-2.2V42h19V19.3l5 2.2L43 13 32 7c-1.2 3.4-4.2 5.4-8 5.4S17.2 10.4 16 7z" fill="#8EB8E5" ${K}/>

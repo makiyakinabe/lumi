@@ -384,6 +384,23 @@ The app opens on Lumi's title page every time: **Play** goes to the home page an
 - The first time, Lumi asks **What is your name?** and greets the child by name ("Hello, Mia!"). Watching again skips the name.
 - The child sets the pace: nothing moves on until they tap. Every line has a speaker button, and **Skip** is in the corner.
 
+## Sound corner (js/sounds.js)
+
+Fun › **Sounds**. Gentle, steady, real-life sounds for a child who wants to settle.
+
+- **Listen** (12): MRT ride, bus ride, rain, beach waves, fan, air-con, washing machine, fish tank, kettle, heartbeat, pencil, soft hum. One tap starts a sound, one tap stops it. Lumi listens along.
+- **Tap** (8): tap, pop, drip, brush, page, bell, blocks, squish. Soft one-off sounds the child makes themselves; they can be played over a Listen sound.
+- **Volume**: three steps, and the loudest is still soft (a limiter sits on the output). **Timer**: 5, 10 or 20 minutes, then the sound fades out by itself. Both choices are remembered.
+- Leaving the Sound corner stops the sound. If sounds are off in Grown-ups, the corner says so and stays quiet. Turn the whole corner off in Grown-ups › Activities.
+
+Why these choices: guidance on children's ASMR and on sound for autistic listeners points the same way: keep sounds predictable and steady with no sudden changes, start quiet, prefer low rumbly sounds (brown noise) and nature sounds such as rain and waves, leave out whispering and mouth sounds, keep sessions to about 10 to 30 minutes rather than all night, and let the listener control what plays and how loud. A child who dislikes a sound should never be made to listen.
+
+**The sounds are made by the app (Web Audio), not recorded**, so the app needs no sound files and works offline; they are close likenesses, not the real thing. To use a real recording, put it in `web/sounds/` and name it in `web/sounds/list.json`, for example `{ "mrt": "mrt.mp3" }` (ids: mrt, bus, rain, waves, fan, aircon, washer, tank, kettle, heart, pencil, hum). That file then plays, looped, in place of the built-in sound. Use recordings you made or have the right to use.
+
+## Full screen
+
+The app fills the whole window with no bars at any tablet or laptop shape (app.js `fit()` reshapes the stage from about square to very wide). On a tablet browser, the first tap on Play also asks the browser to hide its bars. Installed to the home screen, it opens full screen already.
+
 ## Stories: "You choose!" (js/story-paths.js)
 
 Every story has two places where the child decides what happens next: which drink Lumi gets, how Lumi says hello, what goes in the cosy corner, which way out of the station. Each choice opens its own short scene where the child does the thing they chose (drags it to Lumi, or taps to do it). Nothing is a wrong answer.
@@ -831,6 +848,7 @@ web/
   js/roomstyle.js   wallpaper and floors for Lumi's room
   js/intro.js       Lumi's title page and story, with two choices (css/intro.css)
   js/story-paths.js "You choose!" forks for every story
+  js/sounds.js      the Sound corner: listening sounds and tap sounds, made with Web Audio (css/sounds.css)
   js/lang.js        home language: Chinese, Malay and Tamil words and voice
   js/comingup.js    Coming up stories (social stories) with a countdown, in My day on the day
   js/offline.js     backup and restore, and installing Lumi to work without internet
