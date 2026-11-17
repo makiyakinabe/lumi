@@ -397,4 +397,6 @@
     if (S.screen !== 'music' && (clock || (S.mu && S.mu.backing))) { clockStop(); if (S.mu) { S.mu.backing = false; if (S.mu.beat) S.mu.beat.on = false; } }
   };
   A.musicEngine = () => ({ ctx, master }); // for the sound-level test
+  // the same instruments for other games that need a beat (js/rhythm-kitchen.js)
+  A.MUSIC = { on: soundsOn, time: () => { engine(); return ctx.currentTime; }, sound: (name, at, i, f) => { if (!soundsOn()) return; try { engine(); SOUND[name](at == null ? ctx.currentTime + 0.005 : at, i, f); } catch (e) { /* quiet */ } }, note: (at, o) => { if (!soundsOn()) return; try { engine(); note(at, o); } catch (e) { /* quiet */ } }, puff: (at, o) => { if (!soundsOn()) return; try { engine(); puff(at, o); } catch (e) { /* quiet */ } } };
 })();

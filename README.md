@@ -406,7 +406,9 @@ A fifth shelf in Games. Each game is built on a kind of play that research and p
 - **Spin the windmill** (round and round): spin the sails with a finger (or tap them) to fill the meter and light the houses.
 - **Build the train** (lining up, counting): put the carriages in order behind the engine; the train then drives off. Hard counts in twos.
 
-All five have Easy, Medium and Hard, no losing and no clock, and can be switched off one by one in Grown-ups › Activities.
+- **Rhythm kitchen** (js/rhythm-kitchen.js; cook to the beat): a tune plays and notes slide along a track to a ring. Tap anywhere in the kitchen as each note reaches the ring and Lumi cooks in time: chop the carrot, stir the soup, flip the prata. Lunch is then served with one to three chef hats. Easy has a note every two beats; Hard is faster with quick pairs. A missed note just floats past, and lunch is always served. Space or Enter also plays, for a keyboard or switch.
+
+All six have Easy, Medium and Hard, no losing and no clock, and can be switched off one by one in Grown-ups › Activities.
 
 ## Full screen
 
@@ -860,7 +862,8 @@ web/
   js/intro.js       Lumi's title page and story, with two choices (css/intro.css)
   js/story-paths.js "You choose!" forks for every story
   js/music.js       the Music corner: six instruments, Keep the beat, Copy me (css/music.css)
-  js/games-fun.js   the five "Go!" games (css/games-fun.css)
+  js/games-fun.js   five "Go!" games (css/games-fun.css)
+  js/rhythm-kitchen.js  Rhythm kitchen, the sixth (css/rhythm-kitchen.css)
   js/lang.js        home language: Chinese, Malay and Tamil words and voice
   js/comingup.js    Coming up stories (social stories) with a countdown, in My day on the day
   js/offline.js     backup and restore, and installing Lumi to work without internet

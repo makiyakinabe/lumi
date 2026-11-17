@@ -1,0 +1,79 @@
+/* rhythm-kitchen.css: Rhythm kitchen (js/rhythm-kitchen.js) */
+.rk-kitchen { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 14px 18px; overflow: hidden; background: var(--tint, #FDE6D8); touch-action: none; -webkit-user-select: none; user-select: none; transition: background-color 0.5s ease; }
+.rk-top { flex: none; display: flex; align-items: center; gap: 16px; height: 56px; }
+.rk-steps { display: flex; gap: 8px; }
+.rk-steps i { width: 44px; height: 44px; border-radius: 50%; background: #fff; color: var(--muted); font-style: normal; font-weight: 900; font-size: 22px; display: flex; align-items: center; justify-content: center; }
+.rk-steps i.on { background: var(--teal); color: #fff; } .rk-steps i.done { background: #9CCB7A; color: #fff; }
+.rk-name { flex: 1; font-size: 30px; font-weight: 900; color: var(--ink); }
+.rk-score { display: flex; align-items: center; gap: 6px; height: 48px; padding: 0 18px; border-radius: 24px; background: #fff; font-size: 26px; color: var(--ink); }
+/* the track: notes slide from the right to the ring */
+.rk-lane { position: relative; flex: none; height: 96px; border-radius: 48px; background: rgba(255, 255, 255, 0.75); overflow: hidden; }
+.rk-lane::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 6px; margin-top: -3px; background: rgba(59, 47, 47, 0.10); }
+.rk-ring { position: absolute; left: 16%; top: 50%; width: 84px; height: 84px; margin: -42px 0 0 -42px; border-radius: 50%; border: 8px solid var(--teal); background: #fff; }
+.rk-ring.good { animation: rkGood 0.3s ease; }
+.rk-note { position: absolute; left: 0; top: 50%; width: 58px; height: 58px; margin: -29px 0 0 -29px; border-radius: 50%; background: #F4C542; border: 5px solid #C99A1E; will-change: transform; }
+.rk-note.hit { background: #9CCB7A; border-color: #5E9E45; opacity: 0; transition: opacity 0.25s ease; }
+.rk-note.gone { opacity: 0.3; }
+.rk-count { position: absolute; left: 30%; top: 0; bottom: 0; display: flex; align-items: center; font-size: 46px; font-weight: 900; color: var(--teal-dark); }
+/* the kitchen */
+.rk-stage { position: relative; flex: 1; min-height: 0; display: flex; align-items: flex-end; justify-content: center; gap: 40px; }
+.rk-lumi { flex: none; display: flex; align-self: flex-end; margin-bottom: 10px; }
+.rk-lumi.bop { animation: muBop 0.22s ease; }
+.rk-word { position: absolute; right: 6%; top: 8%; font-size: 44px; font-weight: 900; color: var(--teal-dark); opacity: 0; }
+.rk-word.show { animation: rkWord 0.6s ease both; }
+.rk-start { position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%); min-width: 260px; z-index: 5; }
+.rk-chop, .rk-stir, .rk-flip { position: relative; width: 520px; max-width: 58%; height: 100%; max-height: 380px; }
+/* chop */
+.rk-board { position: absolute; left: 0; right: 0; bottom: 8%; height: 46%; border-radius: 26px; background: #E9C9A0; border: 6px solid #B58A5E; box-shadow: 0 8px 0 #B58A5E; }
+.rk-carrot { position: absolute; left: 4%; top: 8%; width: 60%; height: 84%; }
+.rk-carrot svg { width: 100%; height: 100%; }
+.rk-pile { position: absolute; right: 3%; top: 8%; bottom: 8%; width: 30%; }
+.rk-pile i { position: absolute; width: 26px; height: 26px; border-radius: 50%; background: #F3A968; border: 3px solid #D9803F; }
+.rk-knife { position: absolute; left: 30%; bottom: 52%; width: 150px; height: 120px; background: linear-gradient(#DDE4EA, #B9C4CE); border-radius: 6px 60px 8px 8px; transform-origin: 100% 100%; transform: rotate(-24deg); }
+.rk-knife::after { content: ''; position: absolute; right: -92px; top: 6px; width: 96px; height: 30px; border-radius: 12px; background: #5A4B45; }
+.rk-knife.go { animation: rkChop 0.2s ease; }
+/* stir */
+.rk-pot { position: absolute; left: 12%; right: 12%; bottom: 14%; height: 52%; border-radius: 18px 18px 70px 70px; background: #C0674A; border: 7px solid #8A4630; }
+.rk-pot::before, .rk-pot::after { content: ''; position: absolute; top: 14%; width: 46px; height: 22px; border-radius: 12px; background: #8A4630; }
+.rk-pot::before { left: -44px; } .rk-pot::after { right: -44px; }
+.rk-soup { position: absolute; left: 4%; right: 4%; top: -16%; height: 34%; border-radius: 50%; background: #F3C777; border: 6px solid #8A4630; }
+.rk-soup.swirl { animation: rkSwirl 0.3s ease; }
+.rk-spoon { position: absolute; left: 50%; top: 0; width: 0; height: 0; transition: transform 0.2s ease; }
+.rk-spoon i { position: absolute; left: 26px; top: -150px; width: 18px; height: 150px; border-radius: 9px; background: #B58A5E; transform: rotate(14deg); transform-origin: 50% 100%; }
+.rk-steam { position: absolute; top: 2%; width: 26px; height: 70px; border-radius: 14px; background: rgba(255, 255, 255, 0.8); animation: rkSteam 2.4s ease-in-out infinite; }
+.rk-steam.a { left: 36%; } .rk-steam.b { left: 58%; animation-delay: 1.1s; }
+.rk-flame { position: absolute; left: 30%; right: 30%; bottom: 2%; height: 12%; border-radius: 50% 50% 12px 12px; background: linear-gradient(#F4D35E, #EF8A7A); animation: rkFlame 0.5s ease-in-out infinite alternate; }
+/* flip */
+.rk-pan { position: absolute; left: 8%; right: 22%; bottom: 14%; height: 20%; border-radius: 16px 16px 60px 60px; background: #5A4B45; }
+.rk-pan::after { content: ''; position: absolute; right: -38%; top: 12%; width: 40%; height: 26px; border-radius: 13px; background: #8A6A4A; }
+.rk-pan i { position: absolute; left: 3%; right: 3%; top: -30%; height: 60%; border-radius: 50%; background: #3F3431; }
+.rk-pan.go { animation: rkPan 0.25s ease; }
+.rk-prata-fly { position: absolute; left: 16%; right: 30%; bottom: 30%; height: 12%; border-radius: 50%; background: #F6DFA6; border: 5px solid #D9B46A; z-index: 2; }
+.rk-prata-fly.toss { animation: rkToss 0.5s ease; }
+/* served */
+.rk-serve { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; height: 100%; width: 520px; max-width: 58%; }
+.rk-serve b { font-size: 40px; color: var(--ink); }
+.rk-plate { position: relative; width: 320px; height: 150px; border-radius: 50%; background: #fff; border: 8px solid #D9E4EC; animation: inPop 0.5s ease both; }
+.rk-rice { position: absolute; left: 14%; top: 14%; width: 34%; height: 54%; border-radius: 50% 50% 46% 46%; background: #FDF6EA; border: 4px solid #E3DACB; }
+.rk-prata { position: absolute; right: 12%; top: 26%; width: 34%; height: 40%; border-radius: 50%; background: #F6DFA6; border: 4px solid #D9B46A; }
+.rk-bowl { position: absolute; left: 38%; bottom: 10%; width: 26%; height: 38%; border-radius: 10px 10px 40px 40px; background: #F3C777; border: 4px solid #C0674A; }
+.rk-hats { display: flex; gap: 10px; }
+.rk-hats i { width: 60px; height: 54px; background: #E3DACB; clip-path: polygon(18% 100%, 18% 56%, 6% 44%, 8% 22%, 26% 10%, 38% 16%, 50% 4%, 62% 16%, 74% 10%, 92% 22%, 94% 44%, 82% 56%, 82% 100%); }
+.rk-hats i.on { background: #F4C542; animation: inPop 0.4s ease both; } .rk-hats i.on:nth-child(2) { animation-delay: 0.2s; } .rk-hats i.on:nth-child(3) { animation-delay: 0.4s; }
+@keyframes rkGood { 0% { box-shadow: 0 0 0 0 rgba(156, 203, 122, 0.9); } 100% { box-shadow: 0 0 0 26px rgba(156, 203, 122, 0); } }
+@keyframes rkWord { 0% { opacity: 0; transform: scale(0.6); } 30% { opacity: 1; transform: scale(1.1); } 100% { opacity: 0; transform: translateY(-20px); } }
+@keyframes rkChop { 0%, 100% { transform: rotate(-24deg); } 50% { transform: rotate(0deg); } }
+@keyframes rkSwirl { 0%, 100% { transform: scaleX(1); } 50% { transform: scaleX(0.92); } }
+@keyframes rkSteam { 0% { transform: translateY(20px); opacity: 0; } 40% { opacity: 0.8; } 100% { transform: translateY(-30px); opacity: 0; } }
+@keyframes rkFlame { from { transform: scaleY(0.85); } to { transform: scaleY(1.1); } }
+@keyframes rkPan { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-9deg) translateY(-10px); } }
+@keyframes rkToss { 0%, 100% { transform: translateY(0) rotateX(0); } 50% { transform: translateY(-150px) rotateX(180deg); } }
+
+/* after looking at it: a bigger kitchen, a chef's hat for Lumi, and Start sits on the empty track */
+.rk-chop, .rk-stir, .rk-flip, .rk-serve { width: 640px; max-width: 60%; max-height: 470px; }
+.rk-lumi { position: relative; }
+.rk-lumi::before { content: ''; position: absolute; z-index: 2; left: 50%; top: -30px; width: 96px; height: 70px; margin-left: -48px; background: #fff; filter: drop-shadow(0 3px 0 #D9C9B4); clip-path: polygon(18% 100%, 18% 56%, 6% 44%, 8% 22%, 26% 10%, 38% 16%, 50% 4%, 62% 16%, 74% 10%, 92% 22%, 94% 44%, 82% 56%, 82% 100%); }
+.rk-start { left: 50%; top: 50%; bottom: auto; transform: translate(-50%, -50%); height: 76px; min-width: 230px; }
+.rk-start:active { transform: translate(-50%, -46%); }
+.rk-plate { width: 380px; height: 180px; }
+.rk-lumi::before { top: -12px; }
