@@ -384,18 +384,29 @@ The app opens on Lumi's title page every time: **Play** goes to the home page an
 - The first time, Lumi asks **What is your name?** and greets the child by name ("Hello, Mia!"). Watching again skips the name.
 - The child sets the pace: nothing moves on until they tap. Every line has a speaker button, and **Skip** is in the corner.
 
-## Sound corner (js/sounds.js)
+## Music corner (js/music.js)
 
-Fun › **Sounds**. Gentle, steady, real-life sounds for a child who wants to settle.
+Fun › **Music**. Six instruments to play, and two ways to practise rhythm.
 
-- **Listen** (12): MRT ride, bus ride, rain, beach waves, fan, air-con, washing machine, fish tank, kettle, heartbeat, pencil, soft hum. One tap starts a sound, one tap stops it. Lumi listens along.
-- **Tap** (8): tap, pop, drip, brush, page, bell, blocks, squish. Soft one-off sounds the child makes themselves; they can be played over a Listen sound.
-- **Volume**: three steps, and the loudest is still soft (a limiter sits on the output). **Timer**: 5, 10 or 20 minutes, then the sound fades out by itself. Both choices are remembered.
-- Leaving the Sound corner stops the sound. If sounds are off in Grown-ups, the corner says so and stays quiet. Turn the whole corner off in Grown-ups › Activities.
+- **Instruments**: drums (boom, tap, tom, tss, ting), xylophone, piano (with black keys), ukulele (four strings), kompang (dum in the middle, tak at the edge) and shakers. A pad sounds the moment a finger lands, several fingers can play at once, and sliding a finger across the xylophone, piano or ukulele plays each note in turn.
+- **Play**: free play. **Beat** switches on a soft backing beat (slow, medium or fast) with four lights that take turns, so the child can play along.
+- **Keep the beat**: a steady tick and four lights. Tap any pad in time; each tap that lands on the beat fills a star. Taps that miss cost nothing. Easy is 60 beats a minute with a wide window, Hard is 100 with a narrow one.
+- **Copy me**: Lumi plays a short rhythm, shown as dots (a big dot is a long sound, small dots are quick ones). The child plays it back. Only the pattern is judged, not the speed, so a child who taps slowly still gets it right. After one miss Lumi plays it again; after a second try the game moves on with "Good try!". Four rhythms, then stars.
+- Three volume steps; the level (one, two or three stars) sits under the instrument list. Leaving the corner stops the beat. All sounds are made by the app (Web Audio): no sound files, works offline.
 
-Why these choices: guidance on children's ASMR and on sound for autistic listeners points the same way: keep sounds predictable and steady with no sudden changes, start quiet, prefer low rumbly sounds (brown noise) and nature sounds such as rain and waves, leave out whispering and mouth sounds, keep sessions to about 10 to 30 minutes rather than all night, and let the listener control what plays and how loud. A child who dislikes a sound should never be made to listen.
+Why rhythm: school drumming programmes for autistic pupils have reported better timing and dexterity, and better concentration and following of instructions, after ten weeks of short sessions. Steady, predictable beats are also calming for many children.
 
-**The sounds are made by the app (Web Audio), not recorded**, so the app needs no sound files and works offline; they are close likenesses, not the real thing. To use a real recording, put it in `web/sounds/` and name it in `web/sounds/list.json`, for example `{ "mrt": "mrt.mp3" }` (ids: mrt, bus, rain, waves, fan, aircon, washer, tank, kettle, heart, pencil, hum). That file then plays, looped, in place of the built-in sound. Use recordings you made or have the right to use.
+## "Go!" games (js/games-fun.js)
+
+A fifth shelf in Games. Each game is built on a kind of play that research and practice guides say children, and autistic children especially, choose most: things that answer at once when touched, things that roll, spin and drop, a moment of waiting before something happens, catching and collecting, lining things up, and trains.
+
+- **Ball run** (cause and effect): tap a pipe, the ball rolls down and over the bridges. Which pipe leads to the star cup? Hard has five pipes and seven bridges.
+- **Go fishing** (catching): pull the hook down onto a swimming fish. Medium: one colour only. Hard: in number order.
+- **Blow the balloon** (waiting, then whoosh): pump the balloon up to the ring and let it go; it whizzes round. Too much air and it sighs back down. Nothing ever pops.
+- **Spin the windmill** (round and round): spin the sails with a finger (or tap them) to fill the meter and light the houses.
+- **Build the train** (lining up, counting): put the carriages in order behind the engine; the train then drives off. Hard counts in twos.
+
+All five have Easy, Medium and Hard, no losing and no clock, and can be switched off one by one in Grown-ups › Activities.
 
 ## Full screen
 
@@ -848,7 +859,8 @@ web/
   js/roomstyle.js   wallpaper and floors for Lumi's room
   js/intro.js       Lumi's title page and story, with two choices (css/intro.css)
   js/story-paths.js "You choose!" forks for every story
-  js/sounds.js      the Sound corner: listening sounds and tap sounds, made with Web Audio (css/sounds.css)
+  js/music.js       the Music corner: six instruments, Keep the beat, Copy me (css/music.css)
+  js/games-fun.js   the five "Go!" games (css/games-fun.css)
   js/lang.js        home language: Chinese, Malay and Tamil words and voice
   js/comingup.js    Coming up stories (social stories) with a countdown, in My day on the day
   js/offline.js     backup and restore, and installing Lumi to work without internet

@@ -1,0 +1,98 @@
+/* music.css: the Music corner (js/music.js) */
+.mu-screen { background: #F3EEFA; }
+.mu-tabs { display: flex; gap: 10px; flex: 1; }
+.mu-tabs .tab { flex: none; padding: 0 20px; }
+.mu-body { gap: 16px; min-height: 0; }
+.mu-list { flex: none; width: 168px; display: flex; flex-direction: column; gap: 8px; min-height: 0; }
+.mu-inst { flex: 1; min-height: 0; display: flex; align-items: center; gap: 8px; padding: 0 10px; border-radius: 22px; background: #fff; border: 4px solid #fff; box-shadow: 0 4px 0 rgba(59, 47, 47, 0.08); text-align: left; }
+.mu-inst svg { flex: none; width: 46px; height: 46px; max-height: 80%; }
+.mu-inst b { font-size: 18px; font-weight: 900; color: var(--ink); line-height: 1.05; }
+.mu-inst.on { border-color: #6A55B0; background: #EDE7FA; }
+.mu-vol { flex: none; display: flex; gap: 6px; height: 46px; }
+.mu-vol button { flex: 1; border-radius: 14px; background: #fff; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; }
+.mu-vol i { width: 12px; border-radius: 4px; background: #B9A6E0; }
+.mu-vol .on { background: #6A55B0; } .mu-vol .on i { background: #fff; }
+.mu-main { gap: 12px; min-width: 0; min-height: 0; }
+.mu-strip { flex: none; display: flex; align-items: center; gap: 16px; height: 108px; padding: 0 18px 0 8px; border-radius: 28px; background: #fff; box-shadow: 0 4px 0 rgba(59, 47, 47, 0.08); }
+.mu-lumi { flex: none; display: flex; }
+.mu-lumi.hit { animation: muBop 0.22s ease; }
+.mu-toggle { flex: none; display: flex; align-items: center; gap: 8px; height: 72px; padding: 0 24px; border-radius: 24px; background: #EDE7FA; color: #6A55B0; font-size: 24px; font-weight: 900; box-shadow: 0 5px 0 #CFC3EC; }
+.mu-toggle.on { background: #6A55B0; color: #fff; box-shadow: 0 5px 0 #4C3B8A; }
+.mu-toggle.go { background: var(--teal); color: #fff; box-shadow: 0 5px 0 var(--teal-dark); }
+.mu-toggle:active { transform: translateY(3px); }
+.mu-toggle:disabled { opacity: 0.5; }
+.mu-hint { font-size: 22px; font-weight: 800; color: var(--muted); }
+.mu-seg { display: flex; padding: 5px; gap: 4px; border-radius: 20px; background: #F1ECF9; }
+.mu-seg button { height: 52px; padding: 0 16px; border-radius: 16px; font-size: 18px; font-weight: 900; color: #6A55B0; }
+.mu-seg .on { background: #6A55B0; color: #fff; }
+.mu-lights { display: flex; gap: 12px; }
+.mu-light { width: 44px; height: 44px; border-radius: 50%; background: #E6DFF3; border: 4px solid #CFC3EC; transition: transform 0.08s ease; }
+.mu-light.first { border-color: #6A55B0; }
+.mu-light.on { background: #F4D35E; border-color: #C99A1E; transform: scale(1.22); }
+.mu-pips { display: flex; flex-wrap: wrap; gap: 5px; flex: 1; min-width: 0; }
+.mu-pip { width: 22px; height: 22px; background: #E6DFF3; clip-path: polygon(50% 2%, 62% 36%, 98% 38%, 69% 60%, 80% 95%, 50% 74%, 20% 95%, 31% 60%, 2% 38%, 38% 36%); }
+.mu-pip.on { background: #F4C542; animation: inPop 0.3s ease both; }
+.mu-msg { font-size: 22px; font-weight: 900; color: #6A55B0; white-space: nowrap; }
+.mu-rows { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.mu-row { position: relative; display: grid; grid-template-columns: repeat(8, 1fr); align-items: center; height: 40px; padding: 0 6px; border-radius: 20px; background: #F1ECF9; }
+.mu-slot { justify-self: center; width: 10px; height: 10px; border-radius: 50%; background: #D8CEEE; transition: transform 0.1s ease; }
+.mu-slot.on { width: 32px; height: 32px; background: #6A55B0; }
+.mu-slot.on.quick { width: 22px; height: 22px; }
+.mu-slot.now { transform: scale(1.35); box-shadow: 0 0 0 5px rgba(244, 211, 94, 0.9); }
+.mu-row.you { display: block; background: #FFF6DA; }
+.mu-row.you.live { box-shadow: 0 0 0 4px #F4D35E; }
+.mu-dot { position: absolute; top: 50%; width: 24px; height: 24px; margin: -12px 0 0 -12px; border-radius: 50%; background: var(--teal); animation: inPop 0.2s ease both; }
+.mu-round { display: flex; gap: 6px; }
+.mu-round i { width: 14px; height: 14px; border-radius: 50%; background: #E6DFF3; } .mu-round i.on { background: var(--teal); }
+.mu-stage { position: relative; padding: 14px; min-height: 0; overflow: hidden; touch-action: none; background: #FFFDF8; }
+.mu-off { flex: none; display: flex; align-items: center; gap: 10px; padding: 10px 18px; border-radius: 20px; background: #fff; color: var(--muted); font-size: 18px; }
+.mu-pad { touch-action: none; -webkit-user-select: none; user-select: none; }
+.mu-pad b { font-weight: 900; color: rgba(59, 47, 47, 0.75); pointer-events: none; }
+.mu-pad.hit, .mu-pad.good { animation: muHit 0.18s ease; }
+.mu-pad.good { box-shadow: 0 0 0 10px rgba(156, 203, 122, 0.8) !important; }
+
+/* drums */
+.mu-kit { position: relative; width: 100%; height: 100%; }
+.mu-drum { position: absolute; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, #fff 0 46%, var(--c) 47% 100%); border: 7px solid var(--d); box-shadow: 0 8px 0 var(--d); display: flex; align-items: center; justify-content: center; }
+.mu-drum b { font-size: 26px; }
+.mu-drum.cym { background: radial-gradient(circle, var(--d) 0 8%, var(--c) 9% 100%); box-shadow: 0 5px 0 var(--d); }
+/* xylophone */
+.mu-xylo { display: flex; align-items: center; justify-content: center; gap: 1.6%; width: 100%; height: 100%; }
+.mu-bar { flex: 1; max-width: 96px; border-radius: 22px; background: var(--c); box-shadow: inset 0 -10px 0 rgba(0, 0, 0, 0.10), 0 6px 0 rgba(59, 47, 47, 0.14); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 20px; }
+.mu-bar b { font-size: 28px; }
+/* piano */
+.mu-piano { position: relative; display: flex; gap: 6px; width: 100%; height: 100%; }
+.mu-key { flex: 1; border-radius: 10px 10px 22px 22px; background: #fff; border: 4px solid #D9C9B4; box-shadow: 0 8px 0 #D9C9B4; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 8px; padding-bottom: 16px; }
+.mu-key i { width: 34px; height: 34px; border-radius: 50%; background: var(--c); }
+.mu-key b { font-size: 26px; }
+.mu-black { position: absolute; top: 0; width: 8%; height: 56%; margin-left: -4%; border-radius: 0 0 14px 14px; background: #4A3F3B; box-shadow: 0 6px 0 #2B2422; z-index: 2; }
+/* ukulele */
+.mu-uke { position: relative; width: 100%; height: 100%; }
+.mu-uke-body { position: absolute; left: 3%; top: 6%; bottom: 6%; aspect-ratio: 1; border-radius: 50%; background: #E9C9A0; border: 8px solid #B58A5E; }
+.mu-uke-body i { position: absolute; left: 50%; top: 50%; width: 34%; height: 34%; transform: translate(-50%, -50%); border-radius: 50%; background: #7A5A3C; }
+.mu-string { position: absolute; left: 0; right: 0; height: 18%; background: none; display: flex; align-items: center; justify-content: flex-end; padding-right: 3%; }
+.mu-string i { position: absolute; left: 0; right: 0; top: 50%; height: 9px; margin-top: -4px; border-radius: 5px; background: var(--c); box-shadow: 0 3px 0 rgba(59, 47, 47, 0.2); }
+.mu-string b { position: relative; width: 52px; height: 52px; border-radius: 50%; background: #fff; border: 4px solid var(--c); display: flex; align-items: center; justify-content: center; font-size: 24px; }
+.mu-string.hit i { animation: muTwang 0.35s ease; }
+/* kompang */
+.mu-kompang { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+.mu-rim { height: 96%; aspect-ratio: 1; border-radius: 50%; background: #C9A27E; border: 8px solid #8A6A4A; box-shadow: 0 8px 0 #8A6A4A; display: flex; align-items: flex-start; justify-content: center; padding-top: 2.2%; }
+.mu-skin { position: absolute; height: 64%; aspect-ratio: 1; border-radius: 50%; background: #FDF6EA; border: 6px solid #D9C9B4; display: flex; align-items: center; justify-content: center; }
+.mu-rim b, .mu-skin b { font-size: 30px; }
+/* shakers */
+.mu-shakers { display: flex; align-items: center; justify-content: center; gap: 12%; width: 100%; height: 100%; }
+.mu-maraca { position: relative; height: 60%; aspect-ratio: 0.82; margin-bottom: 14%; border-radius: 50%; background: var(--c); border: 7px solid var(--d); box-shadow: inset -14px -14px 0 rgba(0, 0, 0, 0.07); display: flex; align-items: center; justify-content: center; }
+.mu-maraca i { position: absolute; left: 50%; top: 96%; width: 26px; height: 44%; margin-left: -13px; border-radius: 0 0 13px 13px; background: #B58A5E; pointer-events: none; }
+.mu-maraca b { font-size: 26px; }
+.mu-maraca.hit { animation: muShake 0.3s ease; }
+@keyframes muHit { 0% { transform: scale(1); } 40% { transform: scale(0.93); } 100% { transform: scale(1); } }
+@keyframes muBop { 0% { transform: translateY(0); } 40% { transform: translateY(-10px); } 100% { transform: translateY(0); } }
+@keyframes muTwang { 0%, 100% { transform: translateY(0); } 25% { transform: translateY(-5px); } 75% { transform: translateY(5px); } }
+@keyframes muShake { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-12deg); } 75% { transform: rotate(12deg); } }
+
+.mu-lvl { flex: none; display: flex; gap: 6px; height: 46px; }
+.mu-lvl button { flex: 1; min-width: 0; border-radius: 14px; background: #fff; display: flex; align-items: center; justify-content: center; }
+.mu-lvl button.on { background: #FFF1C2; box-shadow: inset 0 0 0 3px #E0B94A; }
+.mu-lvl svg { margin: 0 -2px; }
+.mu-drum.cym { background: var(--c); }
+.mu-inst { gap: 6px; padding: 0 8px; } .mu-inst svg { width: 40px; height: 40px; } .mu-inst b { font-size: 17px; }

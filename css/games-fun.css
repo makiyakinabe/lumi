@@ -1,0 +1,95 @@
+/* games-fun.css: the "Make it go" games (js/games-fun.js) */
+
+/* 1. Ball run */
+.br-board { position: relative; padding: 0; overflow: hidden; background: #FFF8EC; }
+.br-pipes { position: absolute; inset: 0; width: 100%; height: 100%; }
+.br-top { position: absolute; top: 1.5%; width: 92px; height: 78px; margin-left: -46px; border-radius: 22px 22px 34px 34px; background: var(--c); border: 5px solid var(--d); box-shadow: 0 5px 0 var(--d); display: flex; align-items: center; justify-content: center; z-index: 2; }
+.br-top i { width: 34px; height: 34px; border-radius: 50%; background: var(--d); box-shadow: inset 0 4px 0 rgba(255, 255, 255, 0.35); }
+.br-top:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--d); }
+.br-top.tried { opacity: 0.45; }
+.br-cup { position: absolute; bottom: 2%; width: 104px; height: 74px; margin-left: -52px; border-radius: 10px 10px 30px 30px; background: #E9DCC8; border: 5px solid #C9B79C; border-top: 0; display: flex; align-items: center; justify-content: center; z-index: 1; }
+.br-cup.star { background: #FFF1C2; border-color: #E0B94A; }
+.br-cup.got.star { animation: brGlow 0.9s ease both; }
+.br-ball { position: absolute; z-index: 3; width: 38px; height: 38px; margin: -19px 0 0 -19px; border-radius: 50%; box-shadow: inset -5px -6px 0 rgba(0, 0, 0, 0.14), inset 5px 5px 0 rgba(255, 255, 255, 0.35); pointer-events: none; }
+@keyframes brGlow { 0%, 100% { transform: scale(1); } 40% { transform: scale(1.18); } }
+
+/* 2. Go fishing */
+.fs-pond { position: relative; padding: 0; overflow: hidden; background: linear-gradient(#DDF1FB 0 14%, #9FD3EE 14% 100%); touch-action: none; }
+.fs-ask, .tr-ask { position: absolute; z-index: 4; left: 50%; top: 14px; transform: translateX(-50%); padding: 8px 24px; border-radius: 22px; background: #fff; font-size: 24px; font-weight: 900; color: var(--ink); white-space: nowrap; box-shadow: 0 4px 0 rgba(59, 47, 47, 0.10); }
+.fs-water { position: absolute; left: 0; right: 0; top: 14%; bottom: 0; }
+.fs-water::before { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 12%; background: #E8D7A8; border-radius: 60% 60% 0 0 / 30% 30% 0 0; }
+.fs-fish { position: absolute; width: 120px; height: 70px; animation: fsSwim linear infinite alternate; }
+.fs-flip { display: block; width: 100%; height: 100%; animation: fsFlip steps(1) infinite; }
+.fs-fish svg, .fs-got svg { width: 100%; height: 100%; display: block; }
+.fs-line { position: absolute; top: 0; width: 4px; margin-left: -2px; background: #5A4B45; z-index: 2; pointer-events: none; }
+.fs-hook { position: absolute; z-index: 3; width: 64px; height: 64px; margin: -8px 0 0 -32px; display: flex; align-items: flex-start; justify-content: center; color: #5A4B45; pointer-events: none; }
+.fs-hook.back, .fs-line.back { transition: all 0.4s ease; }
+.fs-bucket { width: 190px; min-height: 150px; padding: 10px; border-radius: 16px 16px 40px 40px; background: #FFF8EC; border: 5px solid #D9C9B4; display: flex; flex-wrap: wrap; gap: 4px; align-content: flex-end; justify-content: center; }
+.fs-got { width: 76px; height: 44px; animation: inPop 0.4s ease both; }
+.fs-count { font-size: 28px; color: var(--ink); }
+@keyframes fsSwim { from { left: 2%; } to { left: calc(98% - 120px); } }
+@keyframes fsFlip { 0% { transform: scaleX(-1); } 50% { transform: scaleX(1); } }
+
+/* 3. Blow the balloon */
+.bl-sky { position: relative; padding: 0; overflow: hidden; background: linear-gradient(#CFE8FA, #F4FAFE); display: flex; align-items: center; justify-content: center; }
+.bl-ring { position: absolute; border-radius: 50%; border: 6px dashed #9CCB7A; }
+.bl-ring.in { border-color: rgba(156, 203, 122, 0.55); border-width: 4px; }
+.bl-balloon { position: absolute; border-radius: 50% 50% 48% 48%; background: var(--c); border: 5px solid var(--d); box-shadow: inset -14px -16px 0 rgba(0, 0, 0, 0.07), inset 12px 12px 0 rgba(255, 255, 255, 0.4); transition: width 0.3s cubic-bezier(0.3, 1.5, 0.5, 1), height 0.3s cubic-bezier(0.3, 1.5, 0.5, 1); }
+.bl-balloon i { position: absolute; left: 50%; bottom: -16px; width: 20px; height: 16px; margin-left: -10px; background: var(--d); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.bl-balloon.soft { transition-duration: 0.9s; transition-timing-function: ease-out; }
+.bl-balloon.ok { box-shadow: inset -14px -16px 0 rgba(0, 0, 0, 0.07), inset 12px 12px 0 rgba(255, 255, 255, 0.4), 0 0 0 10px rgba(156, 203, 122, 0.45); }
+.bl-balloon.fly { animation: blFly 2.2s ease-in both; }
+.bl-round { position: absolute; left: 0; right: 0; bottom: 14px; display: flex; justify-content: center; }
+.bl-pump, .bl-go { width: 100%; height: 110px; }
+.bl-go.ready { animation: spPulse 1.4s ease-in-out infinite; }
+@keyframes blFly { 0% { transform: translate(0, 0) rotate(0) scale(1); } 20% { transform: translate(-190px, -120px) rotate(-60deg) scale(0.85); } 40% { transform: translate(210px, -60px) rotate(110deg) scale(0.7); } 60% { transform: translate(-120px, 110px) rotate(-200deg) scale(0.55); } 80% { transform: translate(160px, 60px) rotate(300deg) scale(0.35); } 100% { transform: translate(0, 220px) rotate(380deg) scale(0.15); opacity: 0.2; } }
+
+/* 4. Spin the windmill */
+.wm-field { position: relative; padding: 0; overflow: hidden; background: linear-gradient(#CFE8FA, #EFF8FE 70%); }
+.wm-hill { position: absolute; left: -5%; right: -5%; bottom: -30%; height: 55%; border-radius: 50%; background: #BFE0A8; }
+.wm-cloud { position: absolute; width: 150px; height: 46px; border-radius: 30px; background: #fff; opacity: 0.9; }
+.wm-cloud.a { left: 6%; top: 10%; } .wm-cloud.b { right: 30%; top: 22%; width: 110px; }
+.wm-mill { position: absolute; z-index: 2; left: 32%; top: 50%; width: 0; height: 0; }
+.wm-tower { position: absolute; left: -46px; top: -10px; width: 92px; height: 300px; background: #E9C9A0; border: 5px solid #C9A27E; clip-path: polygon(22% 0, 78% 0, 100% 100%, 0 100%); }
+.wm-sails { position: absolute; left: -210px; top: -210px; width: 420px; height: 420px; border-radius: 50%; background: none; touch-action: none; }
+.wm-sails svg { width: 100%; height: 100%; display: block; }
+.wm-side { position: absolute; z-index: 2; right: 4%; top: 8%; bottom: 20%; display: flex; align-items: flex-end; gap: 22px; }
+.wm-meter { position: relative; width: 44px; height: 78%; border-radius: 22px; background: #fff; border: 5px solid #D9C9B4; overflow: hidden; }
+.wm-meter i { position: absolute; left: 0; right: 0; bottom: 0; background: #F4D35E; transition: height 0.15s linear; }
+.wm-houses { display: grid; grid-template-columns: repeat(2, 96px); gap: 14px; align-content: end; }
+.wm-house { position: relative; width: 96px; height: 84px; border-radius: 10px; background: #C9A27E; border: 4px solid #8A6A4A; }
+.wm-house::before { content: ''; position: absolute; left: -12px; right: -12px; top: -40px; height: 40px; background: #C0674A; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.wm-house i { position: absolute; left: 50%; top: 22px; width: 36px; height: 36px; margin-left: -18px; border-radius: 6px; background: #5A6A8A; transition: background-color 0.4s ease, box-shadow 0.4s ease; }
+.wm-house.lit i { background: #FFE27A; box-shadow: 0 0 22px 8px rgba(255, 226, 122, 0.8); }
+
+/* 5. Build the train */
+.tr-yard { position: relative; padding: 0; overflow: hidden; background: linear-gradient(#DDF1FB 0 46%, #CDE5B8 46% 100%); }
+.tr-line { position: absolute; left: 3%; right: 3%; top: 17%; height: 26%; display: flex; align-items: flex-end; gap: 8px; border-radius: 20px; }
+.tr-line.hot { background: rgba(255, 255, 255, 0.5); }
+.tr-line.go { animation: trGo 2.6s ease-in 0.4s both; }
+.tr-engine { position: relative; flex: none; height: 100%; aspect-ratio: 130 / 90; }
+.tr-engine svg, .tr-car svg { width: 100%; height: 100%; display: block; }
+.tr-puff { position: absolute; left: 12%; top: -18%; width: 34px; height: 34px; border-radius: 50%; background: #fff; opacity: 0; }
+.tr-line.go .tr-puff { animation: trPuff 0.7s ease-out infinite; }
+.tr-line > .tr-car, .tr-slot { flex: none; height: 92%; aspect-ratio: 120 / 90; }
+.tr-slot { border-radius: 16px; border: 5px dashed rgba(59, 47, 47, 0.25); display: flex; align-items: center; justify-content: center; }
+.tr-slot.next { border-color: var(--teal); background: rgba(255, 255, 255, 0.6); animation: spPulse 1.6s ease-in-out infinite; }
+.tr-slot b { font-size: 40px; color: var(--teal-dark); opacity: 0.55; }
+.tr-car.on { animation: inPop 0.35s ease both; }
+.tr-rail { position: absolute; left: 0; right: 0; top: 43%; height: 14px; background: repeating-linear-gradient(90deg, #8A6A4A 0 14px, transparent 14px 44px), linear-gradient(#5A4B45 0 5px, transparent 5px); }
+.tr-tray { position: absolute; left: 3%; right: 190px; top: 54%; bottom: 5%; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 18px; }
+.tr-car.loose { width: 170px; aspect-ratio: 120 / 90; touch-action: none; cursor: grab; }
+.tr-car.loose.dragging { z-index: 9; }
+.tr-foot { position: absolute; right: 22px; bottom: 12px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+@keyframes trGo { 0% { transform: translateX(0); } 15% { transform: translateX(-14px); } 100% { transform: translateX(130%); } }
+@keyframes trPuff { from { transform: translate(0, 0) scale(0.5); opacity: 0.9; } to { transform: translate(-30px, -50px) scale(1.5); opacity: 0; } }
+
+/* fixes after looking at them: the train always fits its track; the hook is easy to see */
+.tr-line > .tr-car, .tr-line > .tr-slot { flex: 1 1 0; min-width: 0; max-width: 190px; height: auto; align-self: flex-end; }
+.tr-line > .tr-engine { flex: 1.15 1 0; min-width: 0; max-width: 215px; height: auto; align-self: flex-end; }
+.tr-line { height: auto; bottom: 57%; top: auto; }
+.fs-hook { width: 76px; height: 76px; margin: -6px 0 0 -38px; }
+.fs-hook::before { content: ''; position: absolute; left: 50%; top: -8px; width: 26px; height: 26px; margin-left: -13px; border-radius: 50%; background: linear-gradient(#EF8A7A 0 50%, #fff 50%); border: 3px solid #5A4B45; }
+.fs-hook svg { margin-top: 18px; }
+.fs-ask { left: 24px; transform: none; }
+.shelf-tabs:has(.shelf-tab:nth-child(5)) .shelf-tab { padding: 0 14px; gap: 7px; font-size: 19px; }
