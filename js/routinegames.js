@@ -246,6 +246,7 @@
       const spots = SPOTS.map(([x, y], k) => g.clean[k] ? '' : `<button class="tb-spot" data-a="sgTap" data-k="spot${k}" style="left:${FX + x - 15}px;top:${FY + y - 15}px" aria-label="Food bit ${k + 1}">${BUG}</button>`).join('');
       return `<div class="panel scene grow sg tb" style="background:#DCEFED">
         <div class="tb-tiles"></div>
+        <div class="tb-counter"></div>
         <div class="tb-facewrap" style="left:${FX}px;top:${FY}px">${faceSvg(g)}</div>
         ${spots}
         <div class="tb-foam"></div>
@@ -966,11 +967,36 @@
     if (turn) return `<span class="sg-label sg-do turn">${ic('kHeart', 26)}<span>Now you! Do it for real.</span></span>`;
     return line ? `<span class="sg-label sg-do">${ic('hand', 28)}<span>${esc(line)}</span></span>` : '<span class="sg-label">Play with Lumi</span>';
   }
+  // The scenes are drawn on a fixed 978 x 434 stage (the size they have on a standard tablet). On other
+  // screen shapes the stage is scaled as a whole and stands on the bottom edge, so a bathtub stays on the
+  // floor and a bed against the wall; the wall and floor colours carry on into any space left over.
+  const SCENE_W = 978, SCENE_H = 434;
+  const FIXED = /class="panel scene grow sg (sc|wk|tb|dr|bf|bs)[ "]/;
+  function framed(html) { return FIXED.test(html) ? `<div class="panel scene grow sg-frame">${html}</div>` : html; }
+  function colourOf(el) { if (!el) return ''; const c = getComputedStyle(el).backgroundColor; return c && c !== 'rgba(0, 0, 0, 0)' && c !== 'transparent' ? c : ''; }
+  function fitScene() {
+    const frame = A.stage.querySelector('.sg-frame');
+    const box = frame && frame.firstElementChild;
+    if (!box) return;
+    const fw = frame.clientWidth, fh = frame.clientHeight;
+    if (!fw || !fh) return;
+    const k = Math.min(fw / SCENE_W, fh / SCENE_H);
+    box.style.transform = `scale(${k.toFixed(4)})`;
+    box.style.left = `${Math.round((fw - SCENE_W * k) / 2)}px`;
+    // the space above and beside: the scene's own wall above its own floor line
+    const wall = colourOf(box.querySelector('.sc-wall')) || colourOf(box) || '#F6E7D3';
+    const floorEl = box.querySelector('.sc-floor, .bf-table, .bs-road, .wk-floor, .dr-floor');
+    const floor = colourOf(floorEl);
+    const fl = floorEl ? Math.round(floorEl.offsetHeight * k) : 0;
+    frame.style.background = floor && fl ? `linear-gradient(to top, ${floor} ${fl}px, ${wall} ${fl}px)` : wall;
+  }
+  A.fitDayScene = fitScene;
+  window.addEventListener('resize', () => requestAnimationFrame(fitScene));
   A.stepGame = {
     has: (step) => !!gid(step),
     voice: (step) => voiceFor(gameFor(step)),
     guide: (step) => { const g = gameFor(step); return G[g.id].guide(g); },
-    scene: (step, info) => { const g = gameFor(step); return G[g.id].scene(g, info); },
+    scene: (step, info) => { const g = gameFor(step); return framed(G[g.id].scene(g, info)); },
     bar(step, info) {
       const g = gameFor(step);
       const def = G[g.id];
@@ -989,6 +1015,7 @@
     }
   };
   A.AFTER.routine = () => {
+    fitScene();
     const d = S.day;
     if (!d || d.celebrate || A.activeChange() || A.checklistPending()) return;
     const step = d.plan[d.i];

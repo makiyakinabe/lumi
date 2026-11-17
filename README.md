@@ -384,6 +384,9 @@ The app opens on Lumi's title page every time: **Play** goes to the home page an
 - The first time, Lumi asks **What is your name?** and greets the child by name ("Hello, Mia!"). Watching again skips the name.
 - The child sets the pace: nothing moves on until they tap. Every line has a speaker button, and **Skip** is in the corner.
 
+## My day scenes look real (js/daygames.js)
+Each day task is drawn on one fixed stage that scales to fit any screen, so nothing slides or floats on tall or wide tablets. Things sit where they would in real life: Lumi sits in the bath water, the tap and shower pipe are fixed to the wall, the sink has a stand, lamps and books are on a bedside table, the stove and food are on a kitchen counter, the noodle stall reaches the floor with the uncle behind the counter, the train stops at the platform edge, and teachers, therapists and dentists stand on the floor. A soft shadow, gentle light and floorboards add depth without extra clutter.
+
 ## Music corner (js/music.js)
 
 Fun › **Music**. Six instruments to play, and two ways to practise rhythm.

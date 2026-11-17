@@ -1184,7 +1184,7 @@ button.stars { gap: 8px; }
 .tb-foam { position: absolute; inset: 0; pointer-events: none; z-index: 6; }
 .foam-b { position: absolute; width: 18px; height: 18px; border-radius: 50%; background: rgba(255, 255, 255, 0.95); border: 2px solid #BFE3F7; animation: foam 2.4s ease-out forwards; }
 @keyframes foam { 0% { transform: scale(0.3); } 20% { transform: scale(1); } 100% { transform: scale(1.2) translateY(-10px); opacity: 0; } }
-.tb-brush { position: absolute; left: 600px; top: 150px; z-index: 20; line-height: 0; transform-origin: 40px 35px; }
+.tb-brush { position: absolute; left: 560px; top: 290px; z-index: 20; line-height: 0; transform-origin: 40px 35px; }
 .tb-brush:not(.ready) { opacity: 0.55; pointer-events: none; }
 .tb-paste { position: absolute; left: 640px; top: 290px; padding: 6px; border: 0; background: none; z-index: 8; }
 .tb-cup { position: absolute; left: 660px; top: 230px; padding: 0; border: 0; background: none; z-index: 8; }
@@ -2613,3 +2613,33 @@ svg.pic.person { overflow: hidden; }
 @keyframes spIn { from { transform: translateY(16px); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes spPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 @keyframes spSpark { 0% { transform: scale(0); opacity: 0; } 40% { transform: scale(1.5); opacity: 1; } 100% { transform: scale(1) translateY(-26px); opacity: 0; } }
+
+/* day scenes: a fixed stage, scaled to fit and standing on the bottom edge (routinegames.js fitScene) */
+.sg-frame { position: relative; overflow: hidden; }
+.sg-frame > .sg { position: absolute; left: 0; bottom: 0; width: 978px; height: 434px; flex: none; border-radius: 0; transform-origin: 0 100%; }
+
+/* day scenes: depth. A deeper floor with boards running away from you, a skirting line, light from the
+   window side, soft shadows under things that stand on the floor, and gently rounded props. */
+.sc .sc-floor { height: 28%; background-image: linear-gradient(rgba(255,255,255,.2), rgba(59,47,47,.08)); }
+.sc .sc-floor::before { content: ''; position: absolute; left: 0; right: 0; top: -9px; height: 9px; background: rgba(59,47,47,.12); box-shadow: 0 -4px 10px rgba(59,47,47,.06); }
+.sc .sc-floor::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, rgba(59,47,47,.07) 0 2px, transparent 2px 96px); transform: perspective(260px) rotateX(40deg); transform-origin: 50% 0; pointer-events: none; }
+.sc .sc-floor.sc-check::after { display: none; }
+.sc .sc-tiles { bottom: 28%; }
+.sc-wall::after { content: ''; position: absolute; inset: 0; background: radial-gradient(130% 100% at 15% 0%, rgba(255,255,255,.38), transparent 62%), linear-gradient(to bottom, transparent 50%, rgba(59,47,47,.07)); pointer-events: none; }
+.sc .sc-window { box-shadow: inset 0 6px 10px rgba(59,47,47,.18), 0 4px 0 rgba(59,47,47,.12); }
+.sc .sc-window::before { content: ''; position: absolute; left: -16px; right: -16px; bottom: -18px; height: 12px; border-radius: 4px; background: #fff; box-shadow: 0 4px 6px rgba(59,47,47,.14); }
+.sc-prop.grounded::after, .sc-lumi.grounded::after { content: ''; position: absolute; left: 10%; right: 10%; bottom: -7px; height: 16px; border-radius: 50%; background: radial-gradient(closest-side, rgba(59,47,47,.26), rgba(59,47,47,0)); z-index: -1; pointer-events: none; }
+.sc-lumi.grounded::after { left: 22%; right: 22%; bottom: 0; }
+.sc-prop { isolation: isolate; }
+.sg-frame .sg svg:not(.lumi) { filter: url(#lumi3d); }
+.sg-frame .sg .sg-turn svg, .sg-frame .sg .sc-say svg { filter: none; }
+
+/* ---- day scenes: small fixtures so nothing floats */
+.sc-prop.sc-deco { pointer-events: none; }
+.sc-hook { display: block; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff, #B7C3CE 60%, #8F9CA8); box-shadow: 0 2px 3px rgba(59,47,47,.3); }
+.sc-pipe { display: block; width: 100%; height: 100%; background: linear-gradient(90deg, #AEB9C4, #F2F5F8 45%, #B7C3CE); border-left: 2px solid #3B2F2F; border-right: 2px solid #3B2F2F; }
+.sc-rug { display: block; width: 100%; height: 100%; border-radius: 50%; background: repeating-radial-gradient(ellipse at center, #CFE8D6 0 14px, #BADBC4 14px 28px); box-shadow: inset 0 -4px 8px rgba(59,47,47,.12); }
+.tb-counter { position: absolute; left: 540px; right: 0; top: 345px; bottom: 0; z-index: 2; border-radius: 14px 0 0 0; background: linear-gradient(180deg, #FAF7F2 0, #EDE5DA 16px, #CBB79F 16px, #D9C7B2 22px, #E6D7C4 100%); box-shadow: 0 -2px 0 #3B2F2F, -2px 0 0 #3B2F2F, inset 0 6px 10px rgba(255,255,255,.6); }
+.tb-counter::after { content: ''; position: absolute; left: 50%; top: 34px; width: 3px; bottom: 0; background: rgba(59,47,47,.35); }
+.tb-paste { top: 282px; left: 760px; }
+.tb-cup { top: 228px; left: 870px; }

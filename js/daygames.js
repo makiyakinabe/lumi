@@ -18,13 +18,45 @@
   const SG = A.SG;
   const { G, drag, near, turnCard, updateDots, panel, cur, ack } = SG;
 
+  // ---------------------------------------------------------------- a soft, rounded 3D look for every prop
+  // One shared SVG filter: a soft light along the top-left inside edge and a gentle shade along the bottom-right,
+  // so flat shapes read as solid, rounded things (like clay toys) without adding detail or noise.
+  if (!document.getElementById('lumi3dDefs')) {
+    const defs = document.createElement('div');
+    defs.id = 'lumi3dDefs';
+    defs.setAttribute('aria-hidden', 'true');
+    defs.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
+    defs.innerHTML = `<svg width="0" height="0"><defs>
+      <filter id="lumi3d" x="-4%" y="-4%" width="108%" height="108%" primitiveUnits="objectBoundingBox" color-interpolation-filters="sRGB">
+        <feOffset in="SourceAlpha" dx="-0.05" dy="-0.07" result="o1"/><feGaussianBlur in="o1" stdDeviation="0.035" result="b1"/>
+        <feComposite in="SourceAlpha" in2="b1" operator="out" result="e1"/><feFlood flood-color="#3B2F2F" flood-opacity="0.17"/><feComposite in2="e1" operator="in" result="shade"/>
+        <feOffset in="SourceAlpha" dx="0.035" dy="0.05" result="o2"/><feGaussianBlur in="o2" stdDeviation="0.03" result="b2"/>
+        <feComposite in="SourceAlpha" in2="b2" operator="out" result="e2"/><feFlood flood-color="#FFFFFF" flood-opacity="0.5"/><feComposite in2="e2" operator="in" result="light"/>
+        <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="shade"/><feMergeNode in="light"/></feMerge>
+      </filter></defs></svg>`;
+    document.body.appendChild(defs);
+  }
+  // the floor line of every scene (the floor is the bottom 28% of the 978 x 434 stage): things whose feet reach it
+  // stand on it and get a soft shadow underneath
+  const FLOOR_Y = 312;
+
   // ---------------------------------------------------------------- prop art (same chunky, rounded style as the rest of Lumi)
   const K = 'stroke="#3B2F2F" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"';
   const sv = (vb, body) => `<svg viewBox="${vb}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" aria-hidden="true">${body}</svg>`;
-  const person = (shirt, hair, extra) => sv('0 0 100 140', `<path d="M18 140c0-30 14-48 32-48s32 18 32 48z" fill="${shirt}" ${K}/>
+  const bust = (shirt, hair, extra) => sv('0 0 100 140', `<path d="M18 140c0-30 14-48 32-48s32 18 32 48z" fill="${shirt}" ${K}/>
     <circle cx="50" cy="56" r="28" fill="#F6CBA4" ${K}/><path d="M22 52c2-20 14-30 28-30s26 10 28 30c-8-8-18-12-28-12s-20 4-28 12z" fill="${hair}" ${K}/>
     <circle cx="40" cy="60" r="3" fill="#3B2F2F"/><circle cx="60" cy="60" r="3" fill="#3B2F2F"/><path d="M42 70q8 6 16 0" fill="none" stroke="#3B2F2F" stroke-width="3" stroke-linecap="round"/>
     <circle cx="33" cy="68" r="4" fill="#F2A7BE" opacity=".8"/><circle cx="67" cy="68" r="4" fill="#F2A7BE" opacity=".8"/>${extra || ''}`);
+  // a whole person standing: head, body, arms, trousers and shoes, so their feet touch the floor
+  const person = (shirt, hair, extra, legs) => sv('0 0 100 230', `<rect x="31" y="150" width="17" height="66" rx="7" fill="${legs || '#4A5A78'}" ${K}/><rect x="52" y="150" width="17" height="66" rx="7" fill="${legs || '#4A5A78'}" ${K}/>
+    <path d="M26 224c0-9 6-12 13-12s11 3 11 12z" fill="#3B2F2F"/><path d="M50 224c0-9 4-12 11-12s13 3 13 12z" fill="#3B2F2F"/>
+    <path d="M24 92c0-14 12-24 26-24s26 10 26 24v62H24z" fill="${shirt}" ${K}/>
+    <path d="M26 96c-8 12-12 30-10 48" fill="none" stroke="#3B2F2F" stroke-width="14" stroke-linecap="round"/><path d="M26 96c-8 12-12 30-10 48" fill="none" stroke="${shirt}" stroke-width="8" stroke-linecap="round"/>
+    <path d="M74 96c8 12 12 30 10 48" fill="none" stroke="#3B2F2F" stroke-width="14" stroke-linecap="round"/><path d="M74 96c8 12 12 30 10 48" fill="none" stroke="${shirt}" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="16" cy="148" r="7" fill="#F6CBA4" ${K}/><circle cx="84" cy="148" r="7" fill="#F6CBA4" ${K}/>
+    <circle cx="50" cy="38" r="26" fill="#F6CBA4" ${K}/><path d="M24 36c2-18 13-28 26-28s24 10 26 28c-8-8-17-11-26-11s-18 3-26 11z" fill="${hair}" ${K}/>
+    <circle cx="41" cy="42" r="3" fill="#3B2F2F"/><circle cx="59" cy="42" r="3" fill="#3B2F2F"/><path d="M43 51q7 5 14 0" fill="none" stroke="#3B2F2F" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="34" cy="49" r="4" fill="#F2A7BE" opacity=".8"/><circle cx="66" cy="49" r="4" fill="#F2A7BE" opacity=".8"/>${extra || ''}`);
   // soft picture-book food (drawn in routinegames.js, shared with breakfast)
   const food = {};
   ['rice', 'chicken', 'veg', 'fish', 'soup', 'glass', 'noodles', 'tray'].forEach((k) => { food[k] = A.foodSvg(k); });
@@ -37,9 +69,18 @@
     lampOff: sv('0 0 80 140', `<path d="M14 54L26 10h28l12 44z" fill="#C9C1D9" ${K}/><rect x="36" y="54" width="8" height="66" fill="#A87B50"/><rect x="16" y="118" width="48" height="16" rx="6" fill="#A87B50" ${K}/>`),
     book: sv('0 0 100 80', `<rect x="12" y="8" width="76" height="64" rx="8" fill="#F59FBF" ${K}/><rect x="20" y="8" width="10" height="64" fill="#E07A9F"/><path d="M44 30h30M44 42h22" stroke="#fff" stroke-width="5" stroke-linecap="round"/>`),
     bookOpen: sv('0 0 160 100', `<path d="M8 16c24-8 48-8 72 4 24-12 48-12 72-4v76c-24-8-48-8-72 4-24-12-48-12-72-4z" fill="#fff" ${K}/><path d="M80 20v76" ${K}/><circle cx="40" cy="48" r="14" fill="#F4D35E"/><path d="M98 66l14-20 14 20z" fill="#7FB069"/><path d="M112 66l10-14 12 14z" fill="#5E9A4A"/>`),
+    // furniture: things rest on these instead of hanging in the air
+    counter: sv('0 0 680 112', `<rect x="10" y="18" width="660" height="84" fill="#F3E6D3" ${K}/><rect x="4" y="4" width="672" height="18" rx="6" fill="#C99A6B" ${K}/>${[180, 340, 500].map((x) => `<path d="M${x} 26v70" stroke="#3B2F2F" stroke-width="3"/><path d="M${x - 16} 48v22M${x + 16} 48v22" stroke="#A87B50" stroke-width="5" stroke-linecap="round"/>`).join('')}<rect x="16" y="100" width="648" height="8" fill="#A87B50"/>`),
+    nightstand: sv('0 0 140 110', `<rect x="10" y="20" width="120" height="78" rx="6" fill="#E3B98E" ${K}/><rect x="4" y="8" width="132" height="16" rx="6" fill="#C99A6B" ${K}/><path d="M18 58h104" stroke="#3B2F2F" stroke-width="3"/><circle cx="70" cy="40" r="5" fill="#A87B50" ${K}/><circle cx="70" cy="76" r="5" fill="#A87B50" ${K}/><rect x="18" y="98" width="12" height="10" fill="#A87B50"/><rect x="110" y="98" width="12" height="10" fill="#A87B50"/>`),
+    sideTable: sv('0 0 200 100', `<rect x="4" y="6" width="192" height="18" rx="8" fill="#C99A6B" ${K}/><rect x="20" y="24" width="14" height="72" rx="4" fill="#A87B50" ${K}/><rect x="166" y="24" width="14" height="72" rx="4" fill="#A87B50" ${K}/><path d="M34 70h132" stroke="#A87B50" stroke-width="8"/>`),
+    trolley: sv('0 0 120 160', `<rect x="8" y="10" width="104" height="14" rx="6" fill="#fff" ${K}/><rect x="8" y="84" width="104" height="14" rx="6" fill="#fff" ${K}/><path d="M16 24v122M104 24v122" stroke="#9FB0BE" stroke-width="7"/><circle cx="18" cy="150" r="8" fill="#3B2F2F"/><circle cx="102" cy="150" r="8" fill="#3B2F2F"/><rect x="24" y="66" width="30" height="18" rx="4" fill="#F59FBF" ${K}/><rect x="62" y="70" width="36" height="14" rx="4" fill="#BFE3F7" ${K}/>`),
+    pedestal: sv('0 0 60 120', `<path d="M14 0h32l-6 112H20z" fill="#fff" ${K}/><path d="M8 112h44v6H8z" fill="#E6EEF4" ${K}/>`),
+    basket: sv('0 0 280 100', `<path d="M6 10h268l-14 84H20z" fill="#E8C48F" ${K}/><path d="M14 36h252M18 62h244" stroke="#C99A6B" stroke-width="5"/><path d="M60 12v80M120 12v80M180 12v80M232 12v80" stroke="#C99A6B" stroke-width="4"/>`),
+    socket: sv('0 0 50 50', `<rect x="4" y="4" width="42" height="42" rx="8" fill="#fff" ${K}/><rect x="16" y="16" width="5" height="12" rx="2" fill="#3B2F2F"/><rect x="29" y="16" width="5" height="12" rx="2" fill="#3B2F2F"/>`),
+    stallTop: sv('0 0 260 320', `<rect x="8" y="54" width="16" height="264" fill="#C2577A" ${K}/><rect x="236" y="54" width="16" height="264" fill="#C2577A" ${K}/><rect x="24" y="60" width="212" height="150" fill="#FDF1E3"/><path d="M40 90h60M40 110h44" stroke="#E8CDB0" stroke-width="8" stroke-linecap="round"/><rect x="4" y="4" width="252" height="56" rx="10" fill="#E07A5F" ${K}/><text x="130" y="44" text-anchor="middle" font-size="28" font-weight="900" fill="#fff" font-family="Nunito, ui-rounded, sans-serif">NOODLES</text>`),
     pyjamas: SG.pjArt.replace('width="100" height="92"', 'width="100%" height="100%"'),
     toilet: ic('toilet', 150).replace(/width="150" height="150"/, 'width="100%" height="100%"'),
-    paper: sv('0 0 80 80', `<rect x="6" y="20" width="48" height="44" rx="20" fill="#fff" ${K}/><circle cx="30" cy="42" r="8" fill="#E6DCCB" ${K}/><path d="M54 42h18v34H40" fill="#fff" ${K}/>`),
+    paper: sv('0 0 80 80', `<path d="M8 16h40" stroke="#9FB0BE" stroke-width="6" stroke-linecap="round"/><path d="M8 10v12" stroke="#9FB0BE" stroke-width="6" stroke-linecap="round"/><rect x="6" y="20" width="48" height="44" rx="20" fill="#fff" ${K}/><circle cx="30" cy="42" r="8" fill="#E6DCCB" ${K}/><path d="M54 42h18v34H40" fill="#fff" ${K}/>`),
     flush: sv('0 0 60 60', `<circle cx="30" cy="30" r="24" fill="#DCEEF7" ${K}/><circle cx="30" cy="30" r="12" fill="#8EB8E5" ${K}/>`),
     sink: sv('0 0 180 120', `<rect x="80" y="4" width="20" height="40" rx="6" fill="#D5DDE5" ${K}/><path d="M90 12h40v16" fill="none" stroke="#3B2F2F" stroke-width="8" stroke-linecap="round"/><path d="M8 50h164c0 40-30 64-82 64S8 90 8 50z" fill="#fff" ${K}/><ellipse cx="90" cy="54" rx="74" ry="10" fill="#DCEEF7"/>`),
     soap: sv('0 0 70 70', `<rect x="10" y="26" width="50" height="38" rx="12" fill="#F59FBF" ${K}/><rect x="28" y="10" width="14" height="18" rx="4" fill="#fff" ${K}/><circle cx="54" cy="16" r="6" fill="#fff" ${K}/>`),
@@ -53,11 +94,12 @@
     gate: sv('0 0 220 200', `<rect x="4" y="30" width="22" height="166" rx="6" fill="#A87B50" ${K}/><rect x="194" y="30" width="22" height="166" rx="6" fill="#A87B50" ${K}/><path d="M26 60 Q110 20 194 60" fill="none" stroke="#2F7E79" stroke-width="12"/><rect x="58" y="4" width="104" height="34" rx="8" fill="#fff" ${K}/><text x="110" y="28" text-anchor="middle" font-size="18" font-weight="900" fill="#2F7E79" font-family="Nunito, ui-rounded, sans-serif">SCHOOL</text>`),
     cubby: sv('0 0 160 160', `<rect x="4" y="4" width="152" height="152" rx="10" fill="#C99A6B" ${K}/><rect x="16" y="16" width="56" height="58" rx="6" fill="#8C6A4C"/><rect x="88" y="16" width="56" height="58" rx="6" fill="#8C6A4C"/><rect x="16" y="86" width="56" height="58" rx="6" fill="#8C6A4C"/><rect x="88" y="86" width="56" height="58" rx="6" fill="#8C6A4C"/>`),
     bag: ic('bag', 120).replace(/width="120" height="120"/, 'width="100%" height="100%"'),
-    teacher: person('#7E64C8', '#3B2F2F'),
-    therapist: person('#2F7E79', '#A87B50'),
-    dentistP: person('#FFFFFF', '#3B2F2F', '<path d="M30 112h40" stroke="#8EB8E5" stroke-width="6" stroke-linecap="round"/>'),
+    teacher: person('#7E64C8', '#3B2F2F', '', '#4A5A78'),
+    therapist: person('#2F7E79', '#A87B50', '', '#6B5A4E'),
+    dentistP: person('#FFFFFF', '#3B2F2F', '<path d="M38 100h24" stroke="#8EB8E5" stroke-width="5" stroke-linecap="round"/><path d="M40 72q10 -4 20 0" fill="none" stroke="#8EB8E5" stroke-width="3"/>', '#8EB8E5'),
     hairdresser: person('#F59FBF', '#E07A5F'),
-    uncle: person('#FFFFFF', '#6B5A4E', '<rect x="30" y="96" width="40" height="44" fill="#E07A5F" opacity=".7"/>'),
+    boss: person('#FFFFFF', '#3B2F2F', '<path d="M30 100h40v54H30z" fill="#2F7E79" opacity=".85"/><path d="M38 100l12-26 12 26" fill="none" stroke="#2F7E79" stroke-width="4"/>', '#3B2F2F'),
+    uncle: bust('#FFFFFF', '#6B5A4E', '<rect x="30" y="96" width="40" height="44" fill="#E07A5F" opacity=".7"/>'),
     desk: sv('0 0 260 130', `<rect x="4" y="10" width="252" height="24" rx="8" fill="#C99A6B" ${K}/><rect x="20" y="34" width="16" height="92" fill="#A87B50" ${K}/><rect x="224" y="34" width="16" height="92" fill="#A87B50" ${K}/>`),
     chair: sv('0 0 100 120', `<rect x="14" y="6" width="72" height="60" rx="12" fill="#2F7E79" ${K}/><rect x="10" y="62" width="80" height="18" rx="6" fill="#2F7E79" ${K}/><path d="M20 80v34M80 80v34" ${K}/>`),
     table: sv('0 0 360 120', `<rect x="4" y="6" width="352" height="26" rx="10" fill="#C99A6B" ${K}/><rect x="30" y="32" width="18" height="84" fill="#A87B50" ${K}/><rect x="312" y="32" width="18" height="84" fill="#A87B50" ${K}/>`),
@@ -89,9 +131,9 @@
     gantry: sv('0 0 160 180', `<rect x="4" y="40" width="40" height="136" rx="10" fill="#D5DDE5" ${K}/><rect x="116" y="40" width="40" height="136" rx="10" fill="#D5DDE5" ${K}/><rect x="10" y="56" width="28" height="22" rx="4" fill="#FFD23F" ${K}/><path d="M44 110h30M116 110H86" stroke="#EF6F5E" stroke-width="10" stroke-linecap="round"/>`),
     gantryOpen: sv('0 0 160 180', `<rect x="4" y="40" width="40" height="136" rx="10" fill="#D5DDE5" ${K}/><rect x="116" y="40" width="40" height="136" rx="10" fill="#D5DDE5" ${K}/><rect x="10" y="56" width="28" height="22" rx="4" fill="#8FD07A" ${K}/><path d="M44 110l-4 30M116 110l4 30" stroke="#8FD07A" stroke-width="8" stroke-linecap="round"/>`),
     card: ic('buscard', 100).replace(/width="100" height="100"/, 'width="100%" height="100%"'),
-    train: sv('0 0 420 180', `<rect x="6" y="20" width="408" height="150" rx="30" fill="#fff" ${K}/><rect x="6" y="50" width="408" height="16" fill="#C2577A"/>${[40, 140, 240, 340].map((x) => `<rect x="${x}" y="78" width="60" height="56" rx="10" fill="#BFE3F7" ${K}/>`).join('')}`),
+    train: sv('0 0 420 180', `<rect x="6" y="20" width="408" height="152" rx="30" fill="#fff" ${K}/><rect x="6" y="50" width="408" height="16" fill="#C2577A"/>${[26, 100, 266, 340].map((x) => `<rect x="${x}" y="78" width="54" height="52" rx="10" fill="#BFE3F7" ${K}/>`).join('')}<rect x="172" y="70" width="38" height="100" rx="4" fill="#DCEEF7" ${K}/><rect x="210" y="70" width="38" height="100" rx="4" fill="#DCEEF7" ${K}/><path d="M180 84v50M240 84v50" stroke="#fff" stroke-width="5" stroke-linecap="round"/>`),
     linespot: sv('0 0 200 40', `<rect x="4" y="12" width="192" height="16" rx="8" fill="#FFD23F" ${K}/><path d="M60 6v28M100 6v28M140 6v28" stroke="#E0B83A" stroke-width="4"/>`),
-    dentChair: sv('0 0 260 200', `<path d="M40 150l30-80c6-14 16-22 34-22h120c18 0 24 12 24 28v40c0 18-8 34-30 34z" fill="#2F7E79" ${K}/><rect x="110" y="150" width="40" height="46" fill="#9FB7C8" ${K}/><path d="M200 20q30 0 30 40" fill="none" stroke="#9C8B7A" stroke-width="8"/><ellipse cx="230" cy="68" rx="22" ry="12" fill="#FFF1A8" ${K}/>`),
+    dentChair: sv('0 0 260 200', `<path d="M40 150l30-80c6-14 16-22 34-22h120c18 0 24 12 24 28v40c0 18-8 34-30 34z" fill="#2F7E79" ${K}/><rect x="110" y="150" width="40" height="40" fill="#9FB7C8" ${K}/><rect x="70" y="186" width="120" height="12" rx="6" fill="#9FB7C8" ${K}/><path d="M200 20q30 0 30 40" fill="none" stroke="#9C8B7A" stroke-width="8"/><ellipse cx="230" cy="68" rx="22" ry="12" fill="#FFF1A8" ${K}/>`),
     sticker: sv('0 0 90 90', `<circle cx="45" cy="45" r="38" fill="#FFD23F" ${K}/><circle cx="34" cy="38" r="5" fill="#3B2F2F"/><circle cx="56" cy="38" r="5" fill="#3B2F2F"/><path d="M30 54q15 14 30 0" fill="none" stroke="#3B2F2F" stroke-width="5" stroke-linecap="round"/>`),
     barberChair: sv('0 0 200 220', `<rect x="30" y="20" width="140" height="110" rx="24" fill="#E07A5F" ${K}/><rect x="20" y="120" width="160" height="34" rx="12" fill="#E07A5F" ${K}/><rect x="86" y="154" width="28" height="44" fill="#9FB7C8" ${K}/><rect x="50" y="196" width="100" height="16" rx="6" fill="#9FB7C8" ${K}/>`),
     cape: sv('0 0 160 120', `<path d="M20 10h120l16 104H4z" fill="#7E64C8" ${K}/><path d="M60 10q20 18 40 0" fill="none" stroke="#fff" stroke-width="4"/>`),
@@ -111,11 +153,11 @@
     carrot: A.foodSvg('carrot'),
     tomato: A.foodSvg('tomato'),
     bowlFood: food.rice,
-    stall: sv('0 0 260 220', `<rect x="10" y="40" width="240" height="176" rx="10" fill="#fff" ${K}/><rect x="10" y="40" width="240" height="50" rx="10" fill="#E07A5F" ${K}/><text x="130" y="74" text-anchor="middle" font-size="24" font-weight="900" fill="#fff" font-family="Nunito, ui-rounded, sans-serif">NOODLES</text><rect x="26" y="170" width="208" height="20" rx="6" fill="#E8CDB0"/>`),
+    stall: sv('0 0 260 150', `<rect x="10" y="22" width="240" height="124" fill="#fff" ${K}/><rect x="2" y="6" width="256" height="20" rx="6" fill="#E8CDB0" ${K}/><path d="M10 58h240" stroke="#E07A5F" stroke-width="10"/><rect x="40" y="78" width="54" height="44" rx="8" fill="#FFE7C2" ${K}/><rect x="104" y="78" width="54" height="44" rx="8" fill="#FFE7C2" ${K}/><rect x="168" y="78" width="54" height="44" rx="8" fill="#FFE7C2" ${K}/>`),
     tissue: sv('0 0 80 50', `<rect x="4" y="10" width="72" height="34" rx="8" fill="#BFE3F7" ${K}/><path d="M28 10q12-12 24 0" fill="#fff" ${K}/>`),
-    hawkerTable: sv('0 0 260 140', `<ellipse cx="130" cy="34" rx="120" ry="24" fill="#B9A6E0" ${K}/><rect x="120" y="56" width="20" height="78" fill="#8A7AB0"/><circle cx="20" cy="120" r="16" fill="#C9B9EA" ${K}/><circle cx="240" cy="120" r="16" fill="#C9B9EA" ${K}/>`),
+    hawkerTable: sv('0 0 260 140', `<ellipse cx="130" cy="34" rx="120" ry="24" fill="#B9A6E0" ${K}/><rect x="120" y="56" width="20" height="78" fill="#8A7AB0"/><rect x="16" y="106" width="8" height="30" fill="#8A7AB0"/><ellipse cx="20" cy="104" rx="18" ry="7" fill="#C9B9EA" ${K}/><rect x="236" y="106" width="8" height="30" fill="#8A7AB0"/><ellipse cx="240" cy="104" rx="18" ry="7" fill="#C9B9EA" ${K}/>`),
     phone: sv('0 0 60 100', `<rect x="6" y="4" width="48" height="92" rx="10" fill="#3B2F2F"/><rect x="12" y="14" width="36" height="66" rx="4" fill="#9ED3F2"/>`),
-    charger: sv('0 0 100 60', `<rect x="60" y="14" width="34" height="34" rx="8" fill="#fff" ${K}/><path d="M60 31H10" stroke="#3B2F2F" stroke-width="5" stroke-linecap="round"/><path d="M74 24l-4 8h8l-4 8" stroke="#8FD07A" stroke-width="4" fill="none"/>`),
+    charger: sv('0 0 100 60', `<path d="M56 46h30q8 0 8-8V4" fill="none" stroke="#3B2F2F" stroke-width="5" stroke-linecap="round"/><rect x="4" y="36" width="56" height="20" rx="8" fill="#fff" ${K}/><path d="M34 40l-5 6h7l-5 6" stroke="#8FD07A" stroke-width="3" fill="none" stroke-linecap="round"/>`),
     bottle: ic('bottle', 100).replace(/width="100" height="100"/, 'width="100%" height="100%"'),
     folder: ic('folder', 100).replace(/width="100" height="100"/, 'width="100%" height="100%"'),
     pencilcase: ic('pencilcase', 100).replace(/width="100" height="100"/, 'width="100%" height="100%"'),
@@ -216,7 +258,8 @@
           const tapAction = isTap && s.act !== 'rub';
           const isDrop = active.has('__t:' + p.id);
           const role = tapAction ? `data-a="sgTap" data-k="tgt" role="button" aria-label="${esc(p.label || p.id)}"` : isTap ? `role="button" aria-label="${esc(p.label || p.id)}"` : isItem ? `role="button" aria-label="${esc(p.label || p.id)}"` : '';
-          return `<div class="sc-prop ${isTap ? 'is-target' : ''} ${isItem ? 'is-item' : ''} ${isDrop ? 'is-drop' : ''} ${p.cls || ''}" data-id="${p.id}" ${role} style="left:${x}px;top:${y}px;width:${p.w}px;height:${p.h || p.w}px;z-index:${p.z || 3}">${artHtml(p)}</div>`;
+          const grounded = !p.air && !p.html && y + (p.h || p.w) >= FLOOR_Y - 4;
+          return `<div class="sc-prop ${grounded ? 'grounded' : ''} ${isTap ? 'is-target' : ''} ${isItem ? 'is-item' : ''} ${isDrop ? 'is-drop' : ''} ${p.cls || ''}" data-id="${p.id}" ${role} style="left:${x}px;top:${y}px;width:${p.w}px;height:${p.h || p.w}px;z-index:${p.z || 3}">${artHtml(p)}</div>`;
         }).join('');
         const lumiTarget = s && (s.target === 'lumi' || s.target === 'mouth');
         const lumiTap = s && s.target === 'lumi' && (s.act === 'tap' || s.act === 'hold');
@@ -224,7 +267,7 @@
         return `<div class="panel scene grow sg sc ${scene.dark ? 'dark' : ''}">
           ${(BG[cfg.bg] || BG.plain)(scene, info)}
           ${propHtml}
-          <div class="sc-lumi ${lumiTarget && s.act === 'drag' ? 'is-drop' : ''} ${lumiTap || lumiRub ? 'is-target' : ''} ${g.phase === 'turn' ? 'hop' : ''} ${lumi.anim && g.phase !== 'turn' ? lumi.anim : ''}" ${lumiTap ? 'data-a="sgTap" data-k="tgt" role="button" aria-label="Lumi"' : ''}
+          <div class="sc-lumi ${!lumi.air && lumi.y + lumi.size >= FLOOR_Y + 20 ? 'grounded' : ''} ${lumiTarget && s.act === 'drag' ? 'is-drop' : ''} ${lumiTap || lumiRub ? 'is-target' : ''} ${g.phase === 'turn' ? 'hop' : ''} ${lumi.anim && g.phase !== 'turn' ? lumi.anim : ''}" ${lumiTap ? 'data-a="sgTap" data-k="tgt" role="button" aria-label="Lumi"' : ''}
             data-x="${lumi.x}" data-y="${lumi.y}" style="left:${from.x}px;top:${from.y}px;width:${lumi.size}px;height:${lumi.size}px;z-index:${lumi.z || 6}">${lumiHtml(lumi, g, cfg)}</div>
           ${scene.dark ? '<div class="sc-darkness"></div>' : ''}
           <div class="sc-fx"></div>
@@ -384,18 +427,18 @@
   const STEPS = {
     potty: {
       bg: 'bathroom', lumi: { x: 90, y: 190, size: 170 },
-      props: { toilet: { art: 'toilet', x: 330, y: 150, w: 190, label: 'Toilet' }, paper: { art: 'paper', x: 560, y: 230, w: 80, label: 'Toilet paper' }, flush: { art: 'flush', x: 570, y: 120, w: 60, label: 'Flush button' }, sink: { art: 'sink', x: 700, y: 170, w: 200, h: 130, label: 'Sink' }, soap: { art: 'soap', x: 860, y: 120, w: 60, label: 'Soap' } },
+      props: { toilet: { art: 'toilet', x: 330, y: 150, w: 190, label: 'Toilet' }, paper: { art: 'paper', x: 520, y: 196, w: 70, label: 'Toilet paper' }, flush: { art: 'flush', x: 397, y: 104, w: 56, label: 'Flush button' }, ped: { art: 'pedestal', x: 772, y: 250, w: 56, h: 96, z: 2, cls: 'sc-deco' }, sink: { art: 'sink', x: 700, y: 150, w: 200, h: 130, label: 'Sink', z: 4 }, soap: { art: 'soap', x: 850, y: 160, w: 50, label: 'Soap', z: 5 } },
       stages: [
-        { say: 'Lumi needs the toilet. Tap the toilet.', act: 'tap', target: 'toilet', done: { lumi: { x: 340, y: 100, mood: 'calm' } } },
+        { say: 'Lumi needs the toilet. Tap the toilet.', act: 'tap', target: 'toilet', done: { lumi: { x: 340, y: 120, mood: 'calm' } } },
         { say: 'All done? Tap the toilet paper.', act: 'tap', target: 'paper' },
-        { say: 'Now flush the toilet. Tap the button.', act: 'tap', target: 'flush', done: { lumi: { x: 560, y: 180, mood: 'happy' } } },
+        { say: 'Now flush the toilet. Tap the button.', act: 'tap', target: 'flush', done: { lumi: { x: 560, y: 175, mood: 'happy' } } },
         { say: 'Wash your hands at the sink. Rub, rub, rub!', act: 'rub', target: 'sink', need: 480, fx: 'foam', rubSay: 'Bubbles everywhere!' }
       ],
       turn: "Clean hands! Now it's your turn. Go to the toilet, then wash your hands.", real: 'I went!', turnPos: 'right'
     },
     nap: {
       bg: 'bedroom', night: false, lumi: { x: 420, y: 120, size: 180, mood: 'calm' },
-      props: { bed: { art: 'bed', x: 330, y: 180, w: 420, h: 210, z: 2 }, pillow: { art: 'pillow', x: 360, y: 230, w: 120, h: 60, z: 3 }, blanket: { art: 'blanket', x: 760, y: 260, w: 200, h: 90, label: 'Blanket', z: 7 }, curtain: { art: 'lampOn', x: 230, y: 200, w: 70, h: 120, label: 'Lamp' } },
+      props: { bed: { art: 'bed', x: 330, y: 180, w: 420, h: 210, z: 2 }, pillow: { art: 'pillow', x: 360, y: 230, w: 120, h: 60, z: 3 }, blanket: { art: 'blanket', x: 610, y: 226, w: 150, h: 64, label: 'Blanket', z: 7 }, stand: { art: 'nightstand', x: 196, y: 238, w: 130, h: 102, cls: 'sc-deco' }, curtain: { art: 'lampOn', x: 234, y: 150, w: 56, h: 98, label: 'Lamp', z: 4 } },
       stages: [
         { say: 'Quiet time. Tap the lamp to make the room dim.', act: 'tap', target: 'curtain', done: { set: { curtain: { art: 'lampOff' } }, dark: true } },
         { say: 'Cover Lumi with the blanket. Slide it onto Lumi.', act: 'drag', item: 'blanket', target: 'lumi', done: { set: { blanket: { x: 380, y: 250, w: 360, h: 120 } } } },
@@ -405,7 +448,7 @@
     },
     bedtime: {
       bg: 'bedroom', night: true, lumi: { x: 120, y: 170, size: 180, wear: 'pj' },
-      props: { bed: { art: 'bed', x: 400, y: 180, w: 420, h: 210, z: 2 }, pillow: { art: 'pillow', x: 430, y: 230, w: 120, h: 60, z: 3 }, book: { art: 'book', x: 860, y: 190, w: 80, h: 64, label: 'Story book', hidden: false }, lamp: { art: 'lampOn', x: 860, y: 260, w: 70, h: 120, label: 'Lamp' }, blanket: { art: 'blanket', x: 600, y: 300, w: 200, h: 86, label: 'Blanket', z: 7, hidden: true }, open: { art: 'bookOpen', x: 270, y: 60, w: 180, h: 112, hidden: true, z: 8 } },
+      props: { bed: { art: 'bed', x: 400, y: 180, w: 420, h: 210, z: 2 }, pillow: { art: 'pillow', x: 430, y: 230, w: 120, h: 60, z: 3 }, stand: { art: 'nightstand', x: 826, y: 238, w: 140, h: 102, cls: 'sc-deco' }, book: { art: 'book', x: 832, y: 196, w: 62, h: 50, label: 'Story book', z: 4 }, lamp: { art: 'lampOn', x: 898, y: 150, w: 56, h: 98, label: 'Lamp', z: 4 }, blanket: { art: 'blanket', x: 600, y: 300, w: 200, h: 86, label: 'Blanket', z: 7, hidden: true }, open: { art: 'bookOpen', x: 488, y: 214, w: 144, h: 90, hidden: true, z: 8 } },
       stages: [
         { say: 'Bedtime! Lumi is cosy in pyjamas. Story time. Tap the book.', act: 'tap', target: 'book', done: { hide: ['book'], show: ['open'], lumi: { x: 470, y: 120, mood: 'calm' } } },
         { say: 'The end. Now tap the lamp to turn off the light.', act: 'tap', target: 'lamp', done: { hide: ['open'], set: { lamp: { art: 'lampOff' } }, dark: true, show: ['blanket'] } },
@@ -415,11 +458,11 @@
     },
     bath: {
       bg: 'bathroom', lumi: { x: 90, y: 180, size: 170 },
-      props: { tub: { art: 'bathtub', x: 330, y: 230, w: 380, h: 190, z: 8 }, water: { art: 'tubWater', x: 352, y: 268, w: 336, h: 44, z: 9, hidden: true }, tap: { art: 'tap', x: 690, y: 180, w: 90, h: 80, label: 'Tap' }, sponge: { art: 'sponge', x: 790, y: 300, w: 90, h: 60, label: 'Sponge', hidden: true }, towel: { art: 'towel', x: 110, y: 40, w: 110, label: 'Towel' }, pj: { art: 'pyjamas', x: 250, y: 70, w: 100, h: 92, label: 'Pyjamas', hidden: true } },
+      props: { tub: { art: 'bathtub', x: 330, y: 210, w: 380, h: 190, z: 8, cls: 'sc-deco' }, water: { art: 'tubWater', x: 352, y: 250, w: 336, h: 40, z: 9, hidden: true, cls: 'sc-deco' }, tap: { art: 'tap', x: 636, y: 176, w: 76, h: 68, label: 'Tap', z: 7 }, sponge: { art: 'sponge', x: 360, y: 236, w: 70, h: 46, label: 'Sponge', hidden: true, z: 10 }, towel: { art: 'towel', x: 110, y: 40, w: 110, label: 'Towel' }, hook: { html: '<span class="sc-hook"></span>', x: 289, y: 64, w: 22, h: 22, z: 4 }, pj: { art: 'pyjamas', x: 250, y: 72, w: 100, h: 92, label: 'Pyjamas', hidden: true } },
       stages: [
-        { say: 'Bath time! Turn on the tap.', act: 'tap', target: 'tap', done: { show: ['water', 'sponge'], lumi: { x: 420, y: 110, mood: 'excited' } } },
+        { say: 'Bath time! Turn on the tap.', act: 'tap', target: 'tap', done: { show: ['water', 'sponge'], lumi: { x: 440, y: 150, z: 7, mood: 'excited' } } },
         { say: 'Scrub Lumi with soap. Rub Lumi with your finger.', act: 'rub', target: 'lumi', need: 560, fx: 'foam', foamGrow: true, rubSay: 'Scrub, scrub, scrub!', done: { foam: 1 } },
-        { say: 'Now rinse the bubbles away. Rub again to wash them off.', act: 'rub', target: 'lumi', need: 420, fx: 'drop', foamWash: true, done: { foam: 0, hide: ['water', 'sponge'], lumi: { x: 750, y: 210, mood: 'happy' } } },
+        { say: 'Now rinse the bubbles away. Rub again to wash them off.', act: 'rub', target: 'lumi', need: 420, fx: 'drop', foamWash: true, done: { foam: 0, hide: ['water', 'sponge'], lumi: { x: 760, y: 180, z: 6, mood: 'happy' } } },
         { say: 'Dry Lumi with the towel. Slide the towel to Lumi.', act: 'drag', item: 'towel', target: 'lumi', done: { lumi: { wear: 'towel', mood: 'excited' }, show: ['pj'] } },
         { say: 'Now pyjamas on! Slide the pyjamas to Lumi.', act: 'drag', item: 'pj', target: 'lumi', done: { lumi: { wear: 'pj', mood: 'happy' } } }
       ],
@@ -427,11 +470,11 @@
     },
     shower: {
       bg: 'bathroom', lumi: { x: 90, y: 180, size: 170 },
-      props: { head: { art: 'showerHead', x: 420, y: 20, w: 110, label: 'Shower' }, water: { art: 'water', x: 440, y: 100, w: 110, h: 170, hidden: true, z: 9 }, mat: { html: '<span class="sc-mat"></span>', x: 400, y: 360, w: 200, h: 30 }, towel: { art: 'towel', x: 820, y: 150, w: 110, label: 'Towel' }, pj: { art: 'pyjamas', x: 820, y: 160, w: 100, h: 92, label: 'Pyjamas', hidden: true } },
+      props: { pipe: { html: '<span class="sc-pipe"></span>', x: 422, y: 0, w: 12, h: 26, z: 2 }, head: { art: 'showerHead', x: 420, y: 20, w: 110, label: 'Shower' }, water: { art: 'water', x: 440, y: 100, w: 110, h: 170, hidden: true, z: 9 }, mat: { html: '<span class="sc-mat"></span>', x: 400, y: 360, w: 200, h: 30 }, towel: { art: 'towel', x: 820, y: 150, w: 110, label: 'Towel' }, pj: { art: 'pyjamas', x: 820, y: 160, w: 100, h: 92, label: 'Pyjamas', hidden: true } },
       stages: [
-        { say: 'Shower time! Tap the shower to turn on the water. Warm, not too hot.', act: 'tap', target: 'head', done: { show: ['water'], lumi: { x: 410, y: 180, mood: 'excited' } } },
+        { say: 'Shower time! Tap the shower to turn on the water. Warm, not too hot.', act: 'tap', target: 'head', done: { show: ['water'], lumi: { x: 410, y: 200, mood: 'excited' } } },
         { say: 'Shampoo and soap. Rub Lumi to make bubbles.', act: 'rub', target: 'lumi', need: 560, fx: 'foam', foamGrow: true, done: { foam: 1 } },
-        { say: 'Rinse the bubbles off. Rub again.', act: 'rub', target: 'lumi', need: 420, fx: 'drop', foamWash: true, done: { foam: 0, hide: ['water'], lumi: { x: 600, y: 180 } } },
+        { say: 'Rinse the bubbles off. Rub again.', act: 'rub', target: 'lumi', need: 420, fx: 'drop', foamWash: true, done: { foam: 0, hide: ['water'], lumi: { x: 620, y: 180 } } },
         { say: 'Dry off with the towel. Slide it to Lumi.', act: 'drag', item: 'towel', target: 'lumi', done: { lumi: { wear: 'towel', mood: 'excited' }, show: ['pj'] } },
         { say: 'Now pyjamas on! Slide the pyjamas to Lumi.', act: 'drag', item: 'pj', target: 'lumi', done: { lumi: { wear: 'pj', mood: 'happy' } } }
       ],
@@ -439,7 +482,7 @@
     },
     school: {
       bg: 'school', lumi: { x: 40, y: 190, size: 170 },
-      props: { gate: { art: 'gate', x: 200, y: 130, w: 220, h: 200, label: 'School gate' }, bag: { art: 'bag', x: 120, y: 260, w: 80, label: 'School bag', hidden: true }, cubby: { art: 'cubby', x: 560, y: 160, w: 150, label: 'Cubby' }, teacher: { art: 'teacher', x: 790, y: 130, w: 130, h: 182, label: 'Teacher' } },
+      props: { gate: { art: 'gate', x: 200, y: 130, w: 220, h: 200, label: 'School gate' }, bag: { art: 'bag', x: 120, y: 260, w: 80, label: 'School bag', hidden: true }, cubby: { art: 'cubby', x: 560, y: 160, w: 150, label: 'Cubby' }, teacher: { art: 'teacher', x: 800, y: 92, w: 108, h: 248, label: 'Teacher' } },
       stages: [
         { say: 'Here is school. Walk through the gate. Tap the gate.', act: 'tap', target: 'gate', done: { lumi: { x: 380, y: 190 }, show: ['bag'], set: { bag: { x: 470, y: 280 } } } },
         { say: 'Put the bag in the cubby. Slide the bag.', act: 'drag', item: 'bag', target: 'cubby', done: { hide: ['bag'] } },
@@ -465,17 +508,17 @@
     },
     homework: {
       bg: 'living', lumi: { x: 100, y: 150, size: 190, z: 2 },
-      props: { desk: { art: 'desk', x: 280, y: 250, w: 420, h: 180, z: 4 }, sheet: { art: 'worksheet', x: 820, y: 120, w: 100, h: 125, label: 'Homework sheet' }, pencil: { art: 'pencil', x: 800, y: 300, w: 120, h: 36, label: 'Pencil' }, slot: { html: '<span></span>', x: 430, y: 150, w: 120, h: 110 } },
+      props: { desk: { art: 'desk', x: 280, y: 250, w: 420, h: 180, z: 4 }, side: { art: 'sideTable', x: 770, y: 250, w: 190, h: 95, cls: 'sc-deco' }, sheet: { art: 'worksheet', x: 790, y: 132, w: 96, h: 120, label: 'Homework sheet', z: 4 }, pencil: { art: 'pencil', x: 830, y: 232, w: 110, h: 33, label: 'Pencil', z: 5 }, slot: { html: '<span></span>', x: 430, y: 150, w: 120, h: 110 } },
       stages: [
-        { say: 'Homework time. Put the sheet and pencil on the desk.', act: 'drag', items: ['sheet', 'pencil'], target: 'desk', slots: [[440, 130], [560, 220]] },
-        { say: 'Do the work. Rub on the sheet to write.', act: 'rub', target: 'sheet', need: 520, fx: 'scribble', rubSay: 'Good thinking!', done: { set: { sheet: { art: 'worksheetDone', x: 440, y: 130 } } } },
+        { say: 'Homework time. Put the sheet and pencil on the desk.', act: 'drag', items: ['sheet', 'pencil'], target: 'desk', slots: [[440, 146], [560, 236]] },
+        { say: 'Do the work. Rub on the sheet to write.', act: 'rub', target: 'sheet', need: 520, fx: 'scribble', rubSay: 'Good thinking!', done: { set: { sheet: { art: 'worksheetDone', x: 440, y: 146 } } } },
         { say: 'All done! Tap the sheet to show your grown-up.', act: 'tap', target: 'sheet', done: { lumi: { mood: 'excited', x: 120, y: 140 } } }
       ],
       turn: "Homework finished! Now it's your turn. Do your homework, then take a break.", real: 'I did it!', turnPos: 'right'
     },
     reading: {
       bg: 'living', lumi: { x: 380, y: 170, size: 190, z: 4 },
-      props: { shelf: { art: 'shelf', x: 760, y: 150, w: 170, h: 190 }, book: { art: 'book', x: 790, y: 90, w: 100, h: 80, label: 'Story book' }, bag: { art: 'beanbag', x: 330, y: 300, w: 300, h: 130, z: 3 }, open: { art: 'bookOpen', x: 360, y: 40, w: 230, h: 140, hidden: true, z: 8 } },
+      props: { shelf: { art: 'shelf', x: 760, y: 150, w: 170, h: 190 }, book: { art: 'book', x: 790, y: 90, w: 100, h: 80, label: 'Story book' }, bag: { art: 'beanbag', x: 330, y: 300, w: 300, h: 130, z: 3 }, open: { art: 'bookOpen', x: 395, y: 262, w: 160, h: 100, hidden: true, z: 8 } },
       stages: [
         { say: 'Story time. Slide the book to Lumi.', act: 'drag', item: 'book', target: 'lumi', done: { show: ['open'], lumi: { mood: 'calm' } } },
         { say: 'Turn the pages. Tap the book three times.', act: 'tap', target: 'open', count: 3, each: 'flip', counting: true },
@@ -506,17 +549,17 @@
     },
     screen: {
       bg: 'living', lumi: { x: 330, y: 150, size: 190, z: 4 },
-      props: { sofa: { art: 'sofa', x: 260, y: 250, w: 340, h: 160, z: 3 }, timer: { art: 'timer', x: 700, y: 150, w: 100, h: 110, label: 'Timer' }, tablet: { art: 'tablet', x: 820, y: 290, w: 120, h: 86, label: 'Tablet' } },
+      props: { sofa: { art: 'sofa', x: 260, y: 250, w: 340, h: 160, z: 3 }, low: { art: 'sideTable', x: 690, y: 262, w: 260, h: 90, cls: 'sc-deco' }, timer: { art: 'timer', x: 712, y: 178, w: 80, h: 88, label: 'Timer', z: 4 }, tablet: { art: 'tablet', x: 812, y: 200, w: 100, h: 72, label: 'Tablet', z: 4 } },
       stages: [
         { say: 'Tablet time. First set the timer. Tap the timer.', act: 'tap', target: 'timer', done: { set: { timer: { art: 'timerOn' } } } },
         { say: 'Now tap the tablet to play.', act: 'tap', target: 'tablet', done: { set: { tablet: { art: 'tabletOn', x: 520, y: 200, z: 7 } }, lumi: { mood: 'excited' } } },
-        { say: 'Ding! The timer rang. Time to stop. Tap the tablet to turn it off.', act: 'tap', target: 'tablet', done: { set: { tablet: { art: 'tablet', x: 820, y: 290 } }, lumi: { mood: 'happy' } } }
+        { say: 'Ding! The timer rang. Time to stop. Tap the tablet to turn it off.', act: 'tap', target: 'tablet', done: { set: { tablet: { art: 'tablet', x: 812, y: 200 } }, lumi: { mood: 'happy' } } }
       ],
       turn: "Lumi stopped when the timer rang. Now it's your turn. When the timer rings, it's time to stop.", real: 'Done', turnPos: 'right'
     },
     therapy: {
       bg: 'living', lumi: { x: 80, y: 180, size: 170 },
-      props: { therapist: { art: 'therapist', x: 760, y: 130, w: 130, h: 182, label: 'Therapist' }, board: { art: 'puzzleBoard', x: 380, y: 250, w: 220, h: 132 }, p1: { art: 'puzzle1', x: 620, y: 330, w: 70, label: 'Green piece' }, p2: { art: 'puzzle2', x: 260, y: 330, w: 70, label: 'Pink piece' } },
+      props: { rug: { html: '<span class="sc-rug"></span>', x: 230, y: 318, w: 520, h: 80, z: 1 }, therapist: { art: 'therapist', x: 790, y: 92, w: 108, h: 248, label: 'Therapist' }, board: { art: 'puzzleBoard', x: 380, y: 250, w: 220, h: 132 }, p1: { art: 'puzzle1', x: 620, y: 330, w: 70, label: 'Green piece' }, p2: { art: 'puzzle2', x: 260, y: 330, w: 70, label: 'Pink piece' } },
       stages: [
         { say: 'Time to see the therapist. Tap to say hello.', act: 'tap', target: 'therapist', done: { bubble: { text: 'Hello, Lumi! Let’s play.', x: 600, y: 50 }, lumi: { x: 200, y: 160 } } },
         { say: 'Let’s do a puzzle together. Slide the pieces onto the board.', act: 'drag', items: ['p1', 'p2'], target: 'board', slots: [[402, 266], [492, 266]] },
@@ -526,17 +569,17 @@
     },
     train: {
       bg: 'station', lumi: { x: 40, y: 150, size: 170 },
-      props: { gantry: { art: 'gantry', x: 230, y: 160, w: 160, h: 180, label: 'Gantry' }, card: { art: 'card', x: 120, y: 340, w: 76, label: 'Card' }, line: { art: 'linespot', x: 520, y: 330, w: 200, h: 40, label: 'Yellow line', hidden: true }, train: { art: 'train', x: 1000, y: 120, w: 420, h: 180, z: 2, label: 'Train', cls: 'sc-train' } },
+      props: { gantry: { art: 'gantry', x: 230, y: 160, w: 160, h: 180, label: 'Gantry' }, card: { art: 'card', x: 168, y: 262, w: 64, label: 'Card', z: 7 }, line: { art: 'linespot', x: 520, y: 330, w: 200, h: 40, label: 'Yellow line', hidden: true }, train: { art: 'train', x: 1000, y: 142, w: 420, h: 180, z: 2, label: 'Train', cls: 'sc-train' } },
       stages: [
-        { say: 'Tap your card at the gantry. Slide the card to the gantry.', act: 'drag', item: 'card', target: 'gantry', sound: 'chime', done: { set: { gantry: { art: 'gantryOpen' } }, lumi: { x: 240, y: 150 }, show: ['line'] } },
-        { say: 'Wait behind the yellow line. Tap the yellow line.', act: 'tap', target: 'line', done: { lumi: { x: 540, y: 160 }, set: { train: { x: 520, y: 40, cls: 'sc-train arrive' } } } },
-        { say: 'Here comes the train! Let people off first. Then tap the train to get on.', act: 'tap', target: 'train', done: { lumi: { x: 640, y: 80, size: 130, z: 3 } } }
+        { say: 'Tap your card at the gantry. Slide the card to the gantry.', act: 'drag', item: 'card', target: 'gantry', sound: 'chime', done: { set: { gantry: { art: 'gantryOpen' } }, lumi: { x: 240, y: 150 }, show: ['line'], hide: ['card'] } },
+        { say: 'Wait behind the yellow line. Tap the yellow line.', act: 'tap', target: 'line', done: { lumi: { x: 540, y: 160 }, set: { train: { x: 520, y: 142, cls: 'sc-train arrive' } } } },
+        { say: 'Here comes the train! Let people off first. Then tap the train to get on.', act: 'tap', target: 'train', done: { lumi: { x: 668, y: 192, size: 120, z: 3 } } }
       ],
       turn: "Lumi is on the train. Now it's your turn. Tap your card, wait behind the line, and let people off first.", real: "I'm on the train", turnPos: 'left'
     },
     dentist: {
       bg: 'clinic', lumi: { x: 60, y: 190, size: 160 },
-      props: { chair: { art: 'dentChair', x: 300, y: 170, w: 260, h: 200, label: 'Dentist chair' }, doc: { art: 'dentistP', x: 640, y: 120, w: 130, h: 182, label: 'Dentist' }, sticker: { art: 'sticker', x: 820, y: 280, w: 80, label: 'Sticker', hidden: true } },
+      props: { chair: { art: 'dentChair', x: 300, y: 170, w: 260, h: 200, label: 'Dentist chair' }, doc: { art: 'dentistP', x: 650, y: 92, w: 108, h: 248, label: 'Dentist' }, sticker: { art: 'sticker', x: 820, y: 280, w: 80, label: 'Sticker', hidden: true } },
       stages: [
         { say: 'Hello, dentist! Sit in the big chair. Tap the chair.', act: 'tap', target: 'chair', done: { lumi: { x: 380, y: 110, mood: 'calm' } } },
         { say: 'Open wide! Press and hold Lumi while the dentist counts to five.', act: 'hold', target: 'lumi', ms: 4000, holdSay: 'One, two, three, four, five.', done: { show: ['sticker'], lumi: { mood: 'excited' } } },
@@ -546,7 +589,7 @@
     },
     haircut: {
       bg: 'salon', lumi: { x: 60, y: 190, size: 160 },
-      props: { chair: { art: 'barberChair', x: 330, y: 160, w: 200, h: 220, label: 'Chair' }, mirror: { art: 'mirror', x: 600, y: 60, w: 130, h: 168, label: 'Mirror' }, cape: { art: 'cape', x: 800, y: 300, w: 110, h: 84, label: 'Cape' }, scissors: { art: 'scissors', x: 790, y: 160, w: 100, h: 80, label: 'Scissors' }, cut: { html: '<span></span>', x: 0, y: 0, w: 1, hidden: true } },
+      props: { chair: { art: 'barberChair', x: 330, y: 160, w: 200, h: 220, label: 'Chair' }, mirror: { art: 'mirror', x: 600, y: 60, w: 130, h: 168, label: 'Mirror' }, hook: { html: '<span class="sc-hook"></span>', x: 889, y: 92, w: 22, h: 22, z: 4 }, cape: { art: 'cape', x: 850, y: 100, w: 100, h: 76, label: 'Cape' }, cart: { art: 'trolley', x: 770, y: 196, w: 110, h: 147, cls: 'sc-deco' }, scissors: { art: 'scissors', x: 782, y: 150, w: 80, h: 64, label: 'Scissors', z: 4 }, cut: { html: '<span></span>', x: 0, y: 0, w: 1, hidden: true } },
       stages: [
         { say: 'Haircut time. Sit in the chair. Tap the chair.', act: 'tap', target: 'chair', done: { lumi: { x: 350, y: 100, mood: 'calm' } } },
         { say: 'Put on the cape, like a superhero! Slide it to Lumi.', act: 'drag', item: 'cape', target: 'lumi', done: { lumi: { wear: 'cape' } } },
@@ -557,7 +600,7 @@
     },
     laundry: {
       bg: 'laundry', lumi: { x: 60, y: 190, size: 160 },
-      props: { washer: { art: 'washer', x: 420, y: 150, w: 200, h: 222, label: 'Washing machine' }, s1: { art: 'shirtR', x: 700, y: 300, w: 90, h: 84, label: 'Red shirt' }, s2: { art: 'shirtY', x: 790, y: 300, w: 90, h: 84, label: 'Yellow shirt' }, sock: { art: 'sock', x: 880, y: 300, w: 60, h: 78, label: 'Sock' }, soap: { art: 'detergent', x: 260, y: 290, w: 76, h: 104, label: 'Detergent', hidden: true }, start: { art: 'startBtn', x: 640, y: 150, w: 70, label: 'Start button', hidden: true } },
+      props: { washer: { art: 'washer', x: 420, y: 150, w: 200, h: 222, label: 'Washing machine' }, s1: { art: 'shirtR', x: 706, y: 252, w: 90, h: 84, label: 'Red shirt' }, s2: { art: 'shirtY', x: 790, y: 246, w: 90, h: 84, label: 'Yellow shirt' }, sock: { art: 'sock', x: 874, y: 250, w: 60, h: 78, label: 'Sock' }, basket: { art: 'basket', x: 690, y: 296, w: 270, h: 96, z: 6, cls: 'sc-deco' }, soap: { art: 'detergent', x: 260, y: 290, w: 76, h: 104, label: 'Detergent', hidden: true }, start: { art: 'startBtn', x: 568, y: 152, w: 40, label: 'Start button', hidden: true, z: 5 } },
       stages: [
         { say: 'Laundry time. Put the clothes in the washing machine.', act: 'drag', items: ['s1', 's2', 'sock'], target: 'washer', done: { show: ['soap'] } },
         { say: 'Add the detergent. Slide it to the machine.', act: 'drag', item: 'soap', target: 'washer', done: { show: ['start'] } },
@@ -567,16 +610,16 @@
     },
     chores: {
       bg: 'bedroom', lumi: { x: 60, y: 180, size: 170 },
-      props: { box: { art: 'toybox', x: 380, y: 270, w: 200, h: 130, label: 'Toy box' }, teddy: { art: 'teddy', x: 660, y: 290, w: 80, h: 90, label: 'Teddy' }, ball: { art: 'ball', x: 760, y: 310, w: 70, label: 'Ball' }, car: { art: 'car', x: 840, y: 330, w: 100, h: 55, label: 'Toy car' }, bed: { art: 'bed', x: 620, y: 80, w: 330, h: 165, z: 1 }, mess: { art: 'blanketFold', x: 700, y: 120, w: 160, h: 40, z: 2, label: 'Messy blanket' } },
+      props: { box: { art: 'toybox', x: 380, y: 270, w: 200, h: 130, label: 'Toy box' }, teddy: { art: 'teddy', x: 660, y: 290, w: 80, h: 90, label: 'Teddy' }, ball: { art: 'ball', x: 760, y: 310, w: 70, label: 'Ball' }, car: { art: 'car', x: 840, y: 330, w: 100, h: 55, label: 'Toy car' }, bed: { art: 'bed', x: 620, y: 168, w: 330, h: 165, z: 1 }, mess: { art: 'blanketFold', x: 700, y: 216, w: 160, h: 40, z: 2, label: 'Messy blanket' } },
       stages: [
         { say: 'Tidy up time. Put the toys in the toy box.', act: 'drag', items: ['teddy', 'ball', 'car'], target: 'box', onEach: ['In it goes!', 'Nice!', 'All the toys are away!'] },
-        { say: 'Now make the bed. Rub the blanket to make it smooth.', act: 'rub', target: 'mess', need: 380, fx: 'sparkle', done: { set: { mess: { art: 'blanket', x: 650, y: 120, w: 280, h: 90 } }, lumi: { mood: 'excited' } } }
+        { say: 'Now make the bed. Rub the blanket to make it smooth.', act: 'rub', target: 'mess', need: 380, fx: 'sparkle', done: { set: { mess: { art: 'blanket', x: 660, y: 206, w: 270, h: 86 } }, lumi: { mood: 'excited' } } }
       ],
       turn: "The room is tidy! Now it's your turn to tidy up.", real: 'I tidied', turnPos: 'left'
     },
     cook: {
-      bg: 'kitchen', lumi: { x: 60, y: 170, size: 170 },
-      props: { stove: { art: 'stove', x: 360, y: 340, w: 280, h: 60, z: 3 }, pot: { art: 'pot', x: 400, y: 236, w: 200, h: 120, z: 4, label: 'Pot' }, egg: { art: 'egg', x: 690, y: 320, w: 56, h: 66, label: 'Egg' }, carrot: { art: 'carrot', x: 770, y: 300, w: 56, h: 84, label: 'Carrot' }, tomato: { art: 'tomato', x: 850, y: 316, w: 66, label: 'Tomato' }, bowl: { art: 'bowlFood', x: 700, y: 200, w: 110, h: 88, hidden: true, label: 'Bowl' } },
+      bg: 'kitchen', lumi: { x: 80, y: 170, size: 170 },
+      props: { counter: { art: 'counter', x: 290, y: 236, w: 680, h: 112, z: 2, cls: 'sc-deco' }, stove: { art: 'stove', x: 350, y: 222, w: 260, h: 44, z: 3 }, pot: { art: 'pot', x: 380, y: 130, w: 200, h: 112, z: 4, label: 'Pot' }, egg: { art: 'egg', x: 680, y: 196, w: 50, h: 58, label: 'Egg', z: 4 }, carrot: { art: 'carrot', x: 754, y: 176, w: 52, h: 78, label: 'Carrot', z: 4 }, tomato: { art: 'tomato', x: 830, y: 196, w: 58, label: 'Tomato', z: 4 }, bowl: { art: 'bowlFood', x: 690, y: 172, w: 100, h: 80, hidden: true, label: 'Bowl', z: 5 } },
       stages: [
         { say: 'Let’s cook! Ask a grown-up to help with hot things. Put the food in the pot.', act: 'drag', items: ['egg', 'carrot', 'tomato'], target: 'pot', done: { set: { pot: { art: 'potFull' } } } },
         { say: 'Stir the pot. Rub round and round.', act: 'rub', target: 'pot', need: 500, fx: 'steam', rubSay: 'Stir, stir, stir!' },
@@ -586,27 +629,27 @@
     },
     hawker: {
       bg: 'hawker', lumi: { x: 40, y: 190, size: 160 },
-      props: { stall: { art: 'stall', x: 620, y: 40, w: 260, h: 220, label: 'Noodle stall' }, uncle: { art: 'uncle', x: 706, y: 100, w: 86, h: 120, z: 4 }, table: { art: 'hawkerTable', x: 250, y: 260, w: 260, h: 140 }, tissue: { art: 'tissue', x: 140, y: 360, w: 80, h: 50, label: 'Tissue packet' }, card: { art: 'card', x: 210, y: 360, w: 70, label: 'Card', hidden: true }, noodles: { art: 'noodles', x: 690, y: 200, w: 100, h: 80, hidden: true, label: 'Noodles', z: 5 } },
+      props: { stallTop: { art: 'stallTop', x: 620, y: 20, w: 260, h: 320, z: 2, cls: 'sc-deco' }, uncle: { art: 'uncle', x: 706, y: 96, w: 86, h: 120, z: 3 }, stall: { art: 'stall', x: 620, y: 190, w: 260, h: 150, z: 4, label: 'Noodle stall' }, table: { art: 'hawkerTable', x: 250, y: 260, w: 260, h: 140 }, tissue: { art: 'tissue', x: 160, y: 284, w: 64, h: 40, label: 'Tissue packet', z: 7 }, card: { art: 'card', x: 166, y: 270, w: 60, label: 'Card', hidden: true, z: 7 }, noodles: { art: 'noodles', x: 700, y: 128, w: 100, h: 80, hidden: true, label: 'Noodles', z: 5 } },
       stages: [
         { say: 'Lunch at the hawker centre. Chope a seat. Slide the tissue packet onto the table.', act: 'drag', item: 'tissue', target: 'table', slots: [[340, 262]], done: { show: ['card'] } },
         { say: 'Order at the noodle stall. Tap the stall.', act: 'tap', target: 'stall', done: { bubble: { text: 'What would you like?', x: 600, y: 270 }, lumi: { x: 500, y: 200 } } },
-        { say: 'Pay with your card. Slide the card to the stall.', act: 'drag', item: 'card', target: 'stall', sound: 'chime', done: { show: ['noodles'], bubble: { text: 'Thank you!', x: 620, y: 270 } } },
+        { say: 'Pay with your card. Slide the card to the stall.', act: 'drag', item: 'card', target: 'stall', sound: 'chime', done: { show: ['noodles'], hide: ['card'], bubble: { text: 'Thank you!', x: 620, y: 270 } } },
         { say: 'Carry the noodles to Lumi. Slide them to Lumi’s mouth.', act: 'drag', item: 'noodles', target: 'mouth', lumiEat: true, onEach: ['Slurp! Yummy noodles!'], done: { lumi: { mood: 'excited' } } }
       ],
       turn: "Lumi ordered lunch! Now it's your turn at the hawker centre.", real: 'I ate!', turnPos: 'left'
     },
     prepare: {
       bg: 'bedroom', night: true, lumi: { x: 60, y: 180, size: 170 },
-      props: { bag: { art: 'bag', x: 420, y: 220, w: 150, label: 'Bag' }, folder: { art: 'folder', x: 640, y: 300, w: 80, label: 'Folder' }, pencils: { art: 'pencilcase', x: 730, y: 300, w: 80, label: 'Pencil case' }, bottle: { art: 'bottle', x: 820, y: 290, w: 80, label: 'Water bottle' }, phone: { art: 'phone', x: 660, y: 120, w: 50, h: 84, label: 'Phone' }, charger: { art: 'charger', x: 820, y: 150, w: 100, h: 60, label: 'Charger' } },
+      props: { bag: { art: 'bag', x: 420, y: 220, w: 150, label: 'Bag' }, folder: { art: 'folder', x: 590, y: 300, w: 76, label: 'Folder' }, pencils: { art: 'pencilcase', x: 668, y: 300, w: 76, label: 'Pencil case' }, bottle: { art: 'bottle', x: 734, y: 292, w: 64, label: 'Water bottle' }, stand: { art: 'nightstand', x: 800, y: 238, w: 140, h: 102, cls: 'sc-deco' }, socket: { art: 'socket', x: 896, y: 156, w: 36, h: 36, z: 2 }, phone: { art: 'phone', x: 176, y: 266, w: 34, h: 56, label: 'Phone', z: 7 }, charger: { art: 'charger', x: 820, y: 190, w: 100, h: 60, label: 'Charger', z: 4 } },
       stages: [
         { say: 'Get ready for tomorrow. Pack your bag.', act: 'drag', items: ['folder', 'pencils', 'bottle'], target: 'bag', onEach: ['Packed!', 'In it goes!', 'Bag ready!'] },
-        { say: 'Charge the phone. Slide it to the charger.', act: 'drag', item: 'phone', target: 'charger', slots: [[836, 90]], done: { lumi: { mood: 'excited' } } }
+        { say: 'Charge the phone. Slide it to the charger.', act: 'drag', item: 'phone', target: 'charger', slots: [[836, 184]], done: { lumi: { mood: 'excited' } } }
       ],
       turn: "All ready for tomorrow! Now it's your turn to pack your bag and charge your phone.", real: "I'm ready", turnPos: 'right'
     },
     work: {
       bg: 'cafe', lumi: { x: 40, y: 190, size: 160 },
-      props: { board: { art: 'board', x: 230, y: 90, w: 130, h: 112, label: 'Sign-in board' }, table: { art: 'cafeTable', x: 480, y: 260, w: 280, h: 130 }, dirt: { art: 'dirt', x: 560, y: 248, w: 110, h: 40, z: 5, label: 'Table to wipe' }, n1: { art: 'napkin', x: 820, y: 330, w: 70, h: 60, label: 'Napkin' }, n2: { art: 'napkin', x: 900, y: 330, w: 70, h: 60, label: 'Napkin' }, boss: { art: 'teacher', x: 820, y: 110, w: 110, h: 154, z: 2 } },
+      props: { board: { art: 'board', x: 230, y: 90, w: 130, h: 112, label: 'Sign-in board' }, table: { art: 'cafeTable', x: 480, y: 260, w: 280, h: 130 }, dirt: { art: 'dirt', x: 560, y: 248, w: 110, h: 40, z: 5, label: 'Table to wipe' }, side: { art: 'sideTable', x: 768, y: 268, w: 110, h: 72, cls: 'sc-deco' }, n1: { art: 'napkin', x: 772, y: 222, w: 52, h: 46, label: 'Napkin', z: 4 }, n2: { art: 'napkin', x: 822, y: 222, w: 52, h: 46, label: 'Napkin', z: 4 }, boss: { art: 'boss', x: 880, y: 124, w: 92, h: 214, z: 2 } },
       stages: [
         { say: 'Work training. First, sign in. Tap the board.', act: 'tap', target: 'board', done: { lumi: { x: 380, y: 190 } } },
         { say: 'Wipe the table. Rub it clean.', act: 'rub', target: 'dirt', need: 420, fx: 'sparkle', done: { hide: ['dirt'] } },
