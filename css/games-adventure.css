@@ -1,0 +1,97 @@
+/* games-adventure.css: Lumi's run, Lumi's kart, Star path (js/games-adventure.js) */
+.shelf-tabs:has(.shelf-tab:nth-child(6)) .shelf-tab { padding: 0 10px; gap: 6px; font-size: 17px; }
+.shelf-tabs:has(.shelf-tab:nth-child(6)) { gap: 6px; }
+.shelf-tabs:has(.shelf-tab:nth-child(6)) .shelf-tab .ic { width: 26px; height: 26px; }
+
+/* shared: star counter, progress bar, a tip */
+.lr-count { position: absolute; z-index: 5; left: 16px; top: 14px; display: flex; align-items: center; gap: 6px; height: 48px; padding: 0 18px; border-radius: 24px; background: rgba(255, 255, 255, 0.92); font-size: 26px; color: var(--ink); }
+.lr-bar { position: absolute; z-index: 5; left: 130px; right: 20px; top: 30px; height: 16px; border-radius: 8px; background: rgba(255, 255, 255, 0.7); overflow: hidden; }
+.lr-bar i { display: block; height: 100%; width: 0; border-radius: 8px; background: var(--teal); }
+.lr-tip { position: absolute; z-index: 5; left: 50%; top: 76px; transform: translateX(-50%); padding: 8px 24px; border-radius: 22px; background: #fff; font-size: 24px; font-weight: 900; color: var(--ink); white-space: nowrap; box-shadow: 0 4px 0 rgba(59, 47, 47, 0.10); }
+.lr-tip:empty { display: none; }
+
+/* 1. Lumi's run */
+.lr-view { position: relative; padding: 0; overflow: hidden; background: linear-gradient(#BFE3F7, #EAF6FD 78%); touch-action: none; -webkit-user-select: none; user-select: none; }
+.lr-far { position: absolute; inset: 0; background:
+  radial-gradient(ellipse 70px 22px at 120px 90px, #fff 0 99%, transparent 100%), radial-gradient(ellipse 90px 26px at 420px 60px, #fff 0 99%, transparent 100%),
+  radial-gradient(ellipse 170px 110px at 200px 104%, #CDE5B8 0 99%, transparent 100%), radial-gradient(ellipse 220px 140px at 520px 108%, #BBDCA2 0 99%, transparent 100%);
+  background-size: 640px 100%; background-repeat: repeat-x; }
+.lr-world { position: absolute; left: 0; top: 0; width: 1px; height: 520px; transform-origin: 0 0; will-change: transform; }
+.lr-ground { position: absolute; height: 200px; background: linear-gradient(#8FC56C 0 22px, #C9A27E 22px 100%); border-radius: 16px 16px 0 0; box-shadow: inset 0 -200px 0 rgba(0, 0, 0, 0.02); }
+.lr-plat { position: absolute; height: 26px; border-radius: 13px; background: linear-gradient(#8FC56C 0 10px, #C9A27E 10px 100%); box-shadow: 0 5px 0 rgba(90, 60, 40, 0.18); }
+.lr-bush { position: absolute; width: 56px; height: 52px; border-radius: 26px 26px 10px 10px; background: #5E9E45; box-shadow: inset 8px 8px 0 rgba(255, 255, 255, 0.18), inset -6px -6px 0 rgba(0, 0, 0, 0.08); }
+.lr-star { position: absolute; width: 38px; height: 38px; animation: sndSway 1.6s ease-in-out infinite; }
+.lr-star.got { animation: lrGot 0.35s ease both; }
+.lr-snail { position: absolute; width: 60px; height: 44px; }
+.lr-snail i { position: absolute; right: 0; bottom: 0; width: 42px; height: 40px; border-radius: 50%; background: radial-gradient(circle at 50% 55%, #E9C9A0 0 22%, #C9A27E 23% 46%, #B58A5E 47% 100%); }
+.lr-snail::before { content: ''; position: absolute; left: 0; bottom: 0; width: 46px; height: 16px; border-radius: 10px; background: #F6DFA6; transition: width 0.2s ease; }
+.lr-snail.left { transform: scaleX(-1); transform-origin: 30px 50%; }
+.lr-snail.hid::before { width: 0; }
+.lr-home { position: absolute; width: 170px; height: 190px; }
+.lr-home::before { content: ''; position: absolute; left: -16px; right: -16px; top: 0; height: 80px; background: #C0674A; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.lr-home::after { content: ''; position: absolute; left: 0; right: 0; top: 76px; bottom: 0; border-radius: 6px; background: #FDF0DC; border: 5px solid #C9A27E; }
+.lr-home i { position: absolute; z-index: 1; left: 58px; bottom: 0; width: 54px; height: 78px; border-radius: 27px 27px 0 0; background: var(--teal); }
+.lr-lumi { position: absolute; left: 0; top: 0; width: 84px; height: 84px; will-change: transform; }
+.lr-lumi svg { display: block; }
+.lr-lumi.run svg { animation: lrRun 0.36s ease-in-out infinite; }
+.lr-lumi.back svg { animation: lrBack 0.7s ease 2; }
+@keyframes lrRun { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-6px) rotate(3deg); } }
+@keyframes lrBack { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+@keyframes lrGot { to { transform: translateY(-40px) scale(1.5); opacity: 0; } }
+
+/* 2. Lumi's kart */
+.lk-steer { flex: none; width: 124px; align-self: stretch; border-radius: 34px; background: var(--teal); color: #fff; box-shadow: 0 8px 0 var(--teal-dark); display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+.lk-steer:active { transform: translateY(5px); box-shadow: 0 3px 0 var(--teal-dark); }
+.lk-road { position: relative; padding: 0; overflow: hidden; background: #8A8F99; border-left: 16px solid #9CCB7A; border-right: 16px solid #9CCB7A; }
+.lk-lines { position: absolute; inset: 0; background:
+  linear-gradient(#fff 0 60%, transparent 60%) 35% 0 / 10px 90px repeat-y,
+  linear-gradient(#fff 0 60%, transparent 60%) 65% 0 / 10px 90px repeat-y; opacity: 0.8; }
+.lk-items { position: absolute; inset: 0; }
+.lk-item { position: absolute; left: 0; top: 0; width: 0; height: 0; will-change: transform; }
+.lk-item > * { position: absolute; left: -32px; top: -32px; width: 64px; height: 64px; }
+.lk-item.star > svg { left: -27px; top: -27px; width: 54px; height: 54px; }
+.lk-item.cone i { background: #F3A968; clip-path: polygon(50% 4%, 78% 82%, 96% 82%, 96% 98%, 4% 98%, 4% 82%, 22% 82%); box-shadow: inset 0 -22px 0 #fff; }
+.lk-item.cone i::after { content: ''; position: absolute; left: 0; right: 0; top: 46%; height: 16%; background: #fff; }
+.lk-item.zoom i { left: -44px; width: 88px; border-radius: 16px; background: #F4D35E; border: 5px solid #C99A1E; }
+.lk-item.zoom i::after { content: ''; position: absolute; left: 26%; top: 18%; width: 48%; height: 60%; background: #C99A1E; clip-path: polygon(50% 0, 100% 50%, 70% 50%, 70% 100%, 30% 100%, 30% 50%, 0 50%); }
+.lk-item.got { opacity: 0; transition: opacity 0.2s ease; }
+.lk-item.bumped i { transform: rotate(70deg); transition: transform 0.3s ease; }
+.lk-finish { position: absolute; left: 0; right: 0; top: 0; height: 44px; margin-top: -22px; background: repeating-conic-gradient(#3B2F2F 0 25%, #fff 0 50%) 0 0 / 44px 44px; }
+.lk-kart { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 3; transition: transform 0.16s ease; }
+.lk-kart > * { position: absolute; }
+.lk-rider { left: -46px; top: -70px; width: 92px; height: 92px; z-index: 2; }
+.lk-body { left: -58px; top: -6px; width: 116px; height: 52px; border-radius: 22px 22px 16px 16px; background: #EF8A7A; border: 5px solid #C9584A; z-index: 3; }
+.lk-wheel { top: 30px; width: 30px; height: 30px; border-radius: 50%; background: #3B2F2F; z-index: 1; }
+.lk-wheel.a { left: -70px; } .lk-wheel.b { left: 40px; }
+.lk-kart.spin .lk-rider, .lk-kart.spin .lk-body { animation: muShake 0.3s ease 3; }
+.lk-kart.zoom .lk-body { box-shadow: 0 26px 18px -6px #F4D35E; }
+
+/* 3. Star path */
+.sp-board { position: relative; padding: 0; overflow: hidden; background: #E7F3E1; }
+.sp-board::before { content: ''; position: absolute; left: 9%; right: 9%; top: 18%; bottom: 20%; border: 26px solid #F6E7C8; border-radius: 60px; border-left-color: transparent; opacity: 0.0; }
+.sp-space { position: absolute; width: 13.2%; aspect-ratio: 1; margin: -6.6% 0 0 -6.6%; border-radius: 30%; background: #fff; border: 5px solid #CFE3C4; box-shadow: 0 6px 0 #BBD7AC; display: flex; align-items: center; justify-content: center; padding: 0; }
+.sp-space.star { background: #FFF6DA; border-color: #F0D889; box-shadow: 0 6px 0 #E0C56A; }
+.sp-space.spring { background: #E3F0FA; border-color: #B4CDE9; box-shadow: 0 6px 0 #9DBBDD; }
+.sp-space.home { background: #FCE4EC; border-color: #F2B6CC; box-shadow: 0 6px 0 #E49AB6; color: #B4507A; }
+.sp-space.start { background: #F3EEFA; border-color: #D8CEEE; box-shadow: 0 6px 0 #C4B7E2; }
+.sp-space.past { opacity: 0.6; }
+.sp-spring { width: 40%; height: 50%; background: repeating-linear-gradient(#4A78A8 0 5px, transparent 5px 11px); border-radius: 4px; }
+.sp-num { position: absolute; right: -8px; top: -12px; width: 38px; height: 38px; border-radius: 50%; background: var(--teal); color: #fff; font-size: 22px; display: flex; align-items: center; justify-content: center; }
+.sp-token { position: absolute; z-index: 3; width: 78px; height: 78px; margin: -64px 0 0 -39px; transition: left 0.3s ease, top 0.3s ease; pointer-events: none; }
+.sp-token.hop svg { animation: muBop 0.3s ease; }
+.sp-ask { min-height: 84px; font-size: 22px; font-weight: 900; color: var(--ink); text-align: center; line-height: 1.2; }
+.sp-dice { display: flex; gap: 10px; padding: 12px; border-radius: 30px; background: var(--teal); box-shadow: 0 8px 0 var(--teal-dark); }
+.sp-dice:disabled { background: #D9D2C4; box-shadow: 0 8px 0 #BDB4A4; }
+.sp-dice.ready { animation: spPulse 1.5s ease-in-out infinite; }
+.sp-dice:active { transform: translateY(4px); }
+.sp-dice-face { position: relative; width: 86px; height: 86px; border-radius: 20px; background: #fff; display: grid; grid-template-columns: repeat(2, 1fr); place-items: center; padding: 12px; }
+.sp-dice-face i { width: 18px; height: 18px; border-radius: 50%; background: #3B2F2F; }
+.sp-dice-face.n1 { grid-template-columns: 1fr; } .sp-dice-face.n3 i:last-child { grid-column: span 2; }
+.sp-sum { font-size: 26px; color: var(--teal-dark); }
+.sp-stars { display: flex; align-items: center; gap: 6px; font-size: 26px; color: var(--ink); }
+
+/* after looking at them */
+.sp-line { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sp-line polyline { stroke-width: 34px; }
+.sp-space { z-index: 1; }
+.lk-steer { align-self: flex-end; height: 46%; min-height: 200px; }

@@ -410,6 +410,16 @@ A fifth shelf in Games. Each game is built on a kind of play that research and p
 
 All six have Easy, Medium and Hard, no losing and no clock, and can be switched off one by one in Grown-ups › Activities.
 
+## Adventure games (js/games-adventure.js)
+
+A sixth shelf in Games, in the spirit of the classic run-and-jump, kart and party-board games. The worlds and pictures are Lumi's own.
+
+- **Lumi's run** (run and jump): Lumi runs by itself and one tap anywhere jumps. Hop the bushes, collect the stars, reach home. Medium adds gaps and floating ledges. Hard adds sleepy snails to bounce on and a second jump in the air.
+- **Lumi's kart** (steer): two big arrows move the kart between three lanes. Collect stars, drive round the cones, roll over a yellow pad to zoom. The arrow keys work too.
+- **Star path** (a board game): roll the dice and hop along the path to home. Stars are collected on star spaces and a spring bounces Lumi two more. On Easy, Lumi hops and counts aloud. On Medium the child counts the steps and taps where Lumi lands (after two misses the steps are numbered). Hard rolls two dice and adds them.
+
+Kept gentle on purpose: no lives, no timer, no losing. A bush only stops Lumi until the child jumps. A fall into a gap puts Lumi straight back on the path, standing still until the child taps. A cone only slows the kart for a moment, and the finish line is reached even with no steering.
+
 ## Full screen
 
 The app fills the whole window with no bars at any tablet or laptop shape (app.js `fit()` reshapes the stage from about square to very wide). On a tablet browser, the first tap on Play also asks the browser to hide its bars. Installed to the home screen, it opens full screen already.
@@ -864,6 +874,7 @@ web/
   js/music.js       the Music corner: six instruments, Keep the beat, Copy me (css/music.css)
   js/games-fun.js   five "Go!" games (css/games-fun.css)
   js/rhythm-kitchen.js  Rhythm kitchen, the sixth (css/rhythm-kitchen.css)
+  js/games-adventure.js Lumi's run, Lumi's kart, Star path (css/games-adventure.css)
   js/lang.js        home language: Chinese, Malay and Tamil words and voice
   js/comingup.js    Coming up stories (social stories) with a countdown, in My day on the day
   js/offline.js     backup and restore, and installing Lumi to work without internet

@@ -61,6 +61,7 @@
     ['think', 'Think', 'kPuzzle', 'Puzzles and memory games.'],
     ['life', 'Everyday', 'kLife', 'Practise things you do every day.'],
     ['go', 'Go!', 'kBall', 'Roll, spin, catch and whoosh.'],
+    ['adv', 'Adventure', 'kRun', 'Run, race and roll with Lumi.'],
     ['lumi', 'With Lumi', 'kDuo', 'Take turns with Lumi.']
   ];
   const SHELF_OF = { bubbles: 'calm', wait: 'calm', tune: 'calm', catch: 'calm', match: 'think', jigsaw: 'think', pattern: 'think', maze: 'think', find: 'think', feed: 'think', sort: 'life', weather: 'life' };
