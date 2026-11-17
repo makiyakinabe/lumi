@@ -220,3 +220,44 @@
 .hk-cook .ck-bit { width: 22px; height: 22px; margin: -11px; }
 .hk-cook .ev-meter { width: 260px; }
 .hk-cook-title { font-size: 22px; font-weight: 900; color: #B4572E; }
+
+/* Hawker uncle: each dish is made its own way (tg-primary.js COOK) */
+.ck-seg.chicken { background: linear-gradient(#E3A85C 0 20%, var(--c) 20% 100%); }
+.ck-seg.chicken.last::after { content: ''; position: absolute; right: -40px; top: 50%; width: 46px; height: 18px; margin-top: -9px; border-radius: 9px; background: #FFF8EC; border: 3px solid #D9C9B4; }
+.ck-seg.toast { height: 92px; background: linear-gradient(#F7DCA4 0 70%, #8FB56A 70% 84%, #F7DCA4 84%); border-color: var(--d); }
+.ck-seg.toast.first { border-radius: 14px 0 0 14px; } .ck-seg.toast.last { border-radius: 0 14px 14px 0; }
+.hk-cook .ck-seg.toast { height: 72px; }
+.hk-steps { display: flex; gap: 8px; }
+.hk-steps span { display: flex; align-items: center; gap: 4px; height: 34px; padding: 0 12px; border-radius: 17px; background: #fff; border: 2px solid #F0D9C7; font-size: 15px; font-weight: 800; color: var(--muted); }
+.hk-steps span.on { border-color: #B4572E; color: #B4572E; } .hk-steps span.done { background: #E7F3E1; border-color: #9CCB7A; color: #4F8A3F; }
+/* the hot flat pan for prata */
+.hk-rub.pan { background: radial-gradient(circle, #555D69 0 72%, #2F3640 73% 100%); }
+.hk-prata { position: absolute; inset: 12%; border-radius: 50%; background: #F6E7C8; border: 5px solid #E3CFA0; }
+.hk-prata i { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 40% 40%, #F3C772, #DFA14B 60%, #C9853A); opacity: var(--p, 0); }
+.hk-flipper { width: 90px; height: 54px; margin: -27px -45px; border-radius: 10px; background: #D9DEE3; border-color: #8A94A0; }
+/* the bowl for ice kachang: the ice grows as you shave */
+.hk-rub.ice { background: radial-gradient(circle, #F4F8FB 0 66%, #B9A6E0 67% 100%); border-color: #8E78C9; cursor: grab; }
+.hk-rub.ice::after, .hk-rub.cup::after { display: none; }
+.hk-ice { position: absolute; inset: 14%; border-radius: 50%; background: radial-gradient(circle at 42% 36%, #fff 0 30%, #E3ECF3 70%, #CFDCE7); transition: transform 0.15s linear; }
+.hk-ice i { position: absolute; border-radius: 50%; opacity: calc((var(--p, 0) - 0.55) * 2.4); }
+.hk-ice i.r { left: 18%; top: 22%; width: 44%; height: 34%; background: #F26B8A; }
+.hk-ice i.g { right: 16%; bottom: 20%; width: 40%; height: 30%; background: #7CC26A; }
+.hk-shaver { border-radius: 14px; background: #EEF4F8; border-color: #9FB2C2; }
+/* a cup of Milo from above: the powder disappears as you stir */
+.hk-rub.cup { background: radial-gradient(circle, #8A5A3C 0 60%, #FFFFFF 61% 74%, #DCE3E8 75% 100%); border-color: #B9C4CE; }
+.hk-milo { position: absolute; inset: 0; }
+.hk-milo i { position: absolute; width: 26px; height: 18px; border-radius: 50%; background: #C79A6B; opacity: calc(1 - var(--p, 0)); }
+.hk-milo i:nth-child(1) { left: 30%; top: 32%; } .hk-milo i:nth-child(2) { left: 56%; top: 40%; } .hk-milo i:nth-child(3) { left: 38%; top: 58%; } .hk-milo i:nth-child(4) { left: 60%; top: 62%; width: 18px; }
+.hk-spoon { width: 40px; height: 40px; margin: -20px; background: #D9DEE3; border-color: #8A94A0; }
+
+/* Lumi's kitchen: real food at each stage */
+.ck-pack { display: inline-block; }
+.ck-need { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.ck-need i { font-style: normal; font-size: 14px; font-weight: 800; color: var(--muted); text-transform: capitalize; }
+.ck-food-art { display: block; width: 200px; height: 150px; }
+.ck-bowl .ck-food-art { width: 190px; height: 142px; }
+.ck-need { height: 92px; }
+
+/* the shop: things stand on both shelves, never all on one */
+.sp-shelf { grid-template-rows: 1fr 1fr; }
+.sp-shelf.n4 { grid-template-columns: repeat(2, 1fr); }

@@ -67,7 +67,7 @@
     { k: '\u{1F34C}', one: 'banana', many: 'bananas' },
     { k: '\u{1F36A}', one: 'biscuit', many: 'biscuits' },
     { k: '\u{1F955}', one: 'carrot', many: 'carrots' },
-    { k: '\u{1F95A}', one: 'egg', many: 'eggs' }
+    { k: '\u{1F35E}', one: 'slice of bread', many: 'slices of bread' }
   ];
   const WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six'];
   function feedRound() {
@@ -459,25 +459,35 @@
   restartOn('catch');
 
   // ================================================================ 5. Find it (looking carefully, naming things)
-  const FIND_POOL = () => D.ROOM.map((r) => ({ id: r.id, name: r.name })).concat(D.WARDROBE.map((w) => ({ id: w.id, name: w.name })));
+  // where things really go: pictures, the clock and the lights hang on the wall; furniture, toys, pets and
+  // clothes sit on the floor (clothes may lie at an angle, furniture stays upright)
+  const ON_WALL = ['picture', 'clock', 'fairylights', 'rainbow', 'balloons', 'birdcage', 'bookshelf'];
+  const FIND_POOL = () => D.ROOM.map((r) => ({ id: r.id, name: r.name, wall: ON_WALL.includes(r.id) })).concat(D.WARDROBE.map((w) => ({ id: w.id, name: w.name, wall: false, loose: true })));
   function findRound(prev) {
     const l = lv();
     const n = { 1: 4, 2: 8, 3: 12 }[l];
-    const items = shuffle(FIND_POOL()).slice(0, n);
+    const size = { 1: 150, 2: 112, 3: 84 }[l];
+    const pool = FIND_POOL();
+    const nWall = { 1: 1, 2: 3, 3: 4 }[l];
+    const items = shuffle(pool.filter((x) => x.wall)).slice(0, nWall).concat(shuffle(pool.filter((x) => !x.wall)).slice(0, n - nWall));
     let target = pick(items);
     if (prev && items.length > 1) while (target.id === prev) target = pick(items);
-    // place the things on a loose grid, nudged a little so it looks like a messy room
-    const cols = { 1: 4, 2: 4, 3: 6 }[l];
-    const rows = Math.ceil(n / cols);
-    const spots = shuffle([...Array(cols * rows).keys()]).slice(0, n);
-    const placed = items.map((it, k) => {
-      const s = spots[k];
-      return Object.assign({}, it, {
-        x: ((s % cols) + 0.5 + (Math.random() - 0.5) * 0.4) / cols,
-        y: (Math.floor(s / cols) + 0.5 + (Math.random() - 0.5) * 0.3) / rows,
-        rot: l === 3 ? Math.round((Math.random() - 0.5) * 50) : 0
+    // the room is about 840 x 700; the wall is the top 65%, the floor the bottom 35%
+    const H = 700, W = 840, floorTop = 0.65;
+    const wall = items.filter((x) => x.wall), floor = items.filter((x) => !x.wall);
+    const place = (list, rows, yOf) => {
+      const per = Math.ceil(list.length / rows);
+      return list.map((it, k) => {
+        const row = Math.floor(k / per), col = k % per, inRow = Math.min(per, list.length - row * per);
+        const x = (col + 0.5) / inRow + (Math.random() - 0.5) * (0.5 / inRow);
+        return Object.assign({}, it, { x: Math.max(size / 2 / W + 0.01, Math.min(1 - size / 2 / W - 0.01, x)), y: yOf(row), rot: l === 3 && it.loose ? Math.round((Math.random() - 0.5) * 50) : 0 });
       });
-    });
+    };
+    const floorRows = floor.length > 6 ? 2 : 1;
+    // things on the floor stand on it: their bottom edge is on the floor (front row a little lower)
+    const onFloor = (row) => (floorRows === 1 ? 0.9 : row === 0 ? 0.8 : 0.96) - size / 2 / H;
+    const onWall = () => 0.12 + size / 2 / H + Math.random() * (floorTop - 0.2 - size / H);
+    const placed = shuffle(place(shuffle(wall), 1, onWall).concat(place(shuffle(floor), floorRows, onFloor)));
     return { items: placed, target, solved: false, missed: false };
   }
   A.GAME_MAKERS.find = () => ({ round: 0, total: 5, r: findRound(), won: false });

@@ -95,3 +95,5 @@
 .sp-line polyline { stroke-width: 34px; }
 .sp-space { z-index: 1; }
 .lk-steer { align-self: flex-end; height: 46%; min-height: 200px; }
+.lk-flip { display: flex; transform: scaleX(-1); }
+.sp-spring { width: 52%; height: 62%; background: none; }

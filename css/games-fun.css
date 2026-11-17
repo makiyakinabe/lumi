@@ -93,3 +93,27 @@
 .fs-hook svg { margin-top: 18px; }
 .fs-ask { left: 24px; transform: none; }
 .shelf-tabs:has(.shelf-tab:nth-child(5)) .shelf-tab { padding: 0 14px; gap: 7px; font-size: 19px; }
+
+/* after a child's-eye check */
+.fs-fish { position: absolute; }
+.fs-num { position: absolute; left: 45%; top: 50%; transform: translate(-50%, -50%); font-size: 30px; font-weight: 900; color: #3B2F2F; line-height: 1; pointer-events: none; }
+/* windmill: the houses stand in a row on the hill; a wire takes the power to them; the battery fills up */
+.wm-side { display: none; }
+.wm-wire { position: absolute; z-index: 1; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.wm-wire path { stroke: #5A4B45; stroke-width: 0.7; vector-effect: non-scaling-stroke; stroke-width: 5px; transition: stroke 0.3s ease; }
+.wm-wire path.on { stroke: #F4C542; filter: drop-shadow(0 0 4px rgba(244, 197, 66, 0.9)); }
+.wm-meter { position: absolute; z-index: 3; right: 4%; top: 8%; display: flex; align-items: center; gap: 8px; height: 60px; width: auto; padding: 0 14px; border-radius: 30px; background: #fff; border: 0; overflow: visible; color: #C99A1E; }
+.wm-meter > span { position: relative; display: block; width: 190px; height: 28px; border-radius: 8px; border: 4px solid #8A6A4A; overflow: hidden; background: #F1ECE4; }
+.wm-meter > span::after { content: ''; position: absolute; right: -10px; top: 6px; width: 6px; height: 10px; border-radius: 2px; background: #8A6A4A; }
+.wm-meter i { position: absolute; left: 0; top: 0; bottom: 0; background: #9CCB7A; transition: width 0.15s linear; }
+.wm-houses { position: absolute; z-index: 2; right: 3%; bottom: 13%; display: flex; align-items: flex-end; gap: 12px; }
+.wm-house { width: 78px; height: 66px; }
+.wm-house::before { left: -9px; right: -9px; top: -34px; height: 34px; }
+.wm-house i { top: 16px; width: 30px; height: 30px; margin-left: -15px; }
+.wm-tower { z-index: 1; }
+.wm-sails { z-index: 3; }
+/* the train leaves the way the engine faces */
+@keyframes trGo { 0% { transform: translateX(0); } 15% { transform: translateX(14px); } 100% { transform: translateX(-130%); } }
+.tr-line.go .tr-puff { animation-name: trPuffBack; }
+@keyframes trPuffBack { from { transform: translate(0, 0) scale(0.5); opacity: 0.9; } to { transform: translate(30px, -50px) scale(1.5); opacity: 0; } }
+.wm-meter i { right: auto; }

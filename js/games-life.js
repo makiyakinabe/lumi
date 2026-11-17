@@ -38,7 +38,9 @@
   // ================================================================ the kitchen pieces (also used by Hawker uncle)
   const VEG = {
     carrot: { name: 'carrot', c: '#F4A261', d: '#D97B3A', k: '\u{1F955}' },
-    broccoli: { name: 'broccoli', c: '#7FB069', d: '#4F8A3F', k: '\u{1F966}' }
+    broccoli: { name: 'broccoli', c: '#7FB069', d: '#4F8A3F', k: '\u{1F966}' },
+    chicken: { name: 'chicken', c: '#FBEFD9', d: '#D9A86A', k: '\u{1F357}' },
+    toast: { name: 'toast', c: '#F2C98A', d: '#B5803F', k: '\u{1F35E}' }
   };
   // a vegetable lying on a board, with dotted lines to slice along. cut = which lines are done
   function chopHtml(veg, n, cut) {
@@ -103,7 +105,13 @@
       onStir(d / need);
     });
   }
-  A.KITCHEN = { VEG, chopHtml, chopWire, wokHtml, wokWire, bar };
+  // the food as it really is at each stage: dry noodles to pick, the hot wok, and the bowl of fried noodles Lumi gets
+  const bitsSvg = (vegs, cx, cy, rx) => [[-0.6, -0.1], [-0.2, -0.35], [0.25, -0.15], [0.55, -0.3], [-0.35, 0.2], [0.1, 0.1], [0.45, 0.15]].map(([x, y], i) => { const v = VEG[vegs[i % vegs.length]]; return `<rect x="${cx + x * rx - 6}" y="${cy + y * rx * 0.5 - 6}" width="12" height="12" rx="3" fill="${v.c}" stroke="${v.d}" stroke-width="2"/>`; }).join('');
+  const noodleLines = (cx, cy, w) => [0, 1, 2, 3].map((i) => `<path d="M${cx - w} ${cy - 8 + i * 6}q${w / 4} -8 ${w / 2} 0t${w / 2} 0t${w / 2} 0t${w / 2} 0" fill="none" stroke="${i % 2 ? '#E9C766' : '#F3D98A'}" stroke-width="5" stroke-linecap="round"/>`).join('');
+  const NOODLE_PACK = `<svg viewBox="0 0 100 80" width="100%" height="100%" aria-hidden="true"><rect x="12" y="18" width="76" height="48" rx="10" fill="#F6E7C8" stroke="#D9B46A" stroke-width="4"/>${[0, 1, 2, 3, 4].map((i) => `<path d="M20 ${28 + i * 8}q8-6 15 0t15 0t15 0t15 0" fill="none" stroke="#E2BF66" stroke-width="4" stroke-linecap="round"/>`).join('')}</svg>`;
+  const wokSide = (vegs) => `<svg viewBox="0 0 200 150" width="100%" height="100%" aria-hidden="true"><ellipse cx="96" cy="66" rx="70" ry="18" fill="#F3D98A"/>${noodleLines(96, 64, 56)}${bitsSvg(vegs, 96, 60, 52)}<path d="M18 66h156c-6 44-40 64-78 64S24 110 18 66z" fill="#4A525E" stroke="#2F3640" stroke-width="5" stroke-linejoin="round"/><path d="M168 74l28-10" stroke="#2F3640" stroke-width="10" stroke-linecap="round"/></svg>`;
+  const friedBowl = (vegs) => `<svg viewBox="0 0 200 150" width="100%" height="100%" aria-hidden="true"><path d="M150 8 104 70M168 16 112 74" stroke="#B5814C" stroke-width="6" stroke-linecap="round"/><ellipse cx="100" cy="70" rx="78" ry="20" fill="#F3D98A"/>${noodleLines(100, 66, 62)}${bitsSvg(vegs, 100, 62, 58)}<path d="M18 70h164c-4 42-38 66-82 66S22 112 18 70z" fill="#E8775E" stroke="#B84A35" stroke-width="5" stroke-linejoin="round"/><path d="M34 92h132" stroke="#F49A82" stroke-width="6" stroke-linecap="round" opacity=".7"/></svg>`;
+  A.KITCHEN = { VEG, chopHtml, chopWire, wokHtml, wokWire, bar, friedBowl, wokSide };
 
   // ================================================================ 1. Lumi's kitchen
   const FRIDGE = [['\u{1F955}', 'carrot'], ['\u{1F966}', 'broccoli'], ['\u{1F35C}', 'noodles'], ['\u{1F34E}', 'apple'], ['\u{1F36A}', 'biscuit'], ['\u{1F34C}', 'banana'], ['\u{1F9C0}', 'cheese'], ['\u{1F95B}', 'milk']];
@@ -112,7 +120,7 @@
     wash: ['sShower', 'Wash', 'Rub the %v under the water to wash it.'],
     chop: ['sScissors', 'Chop', 'Slice along the dotted lines. In real life we chop with a grown-up.'],
     stir: ['kCook', 'Stir', 'Stir round and round in the wok.'],
-    serve: ['sDinner', 'Serve', 'Drag the noodles to Lumi\'s bowl.']
+    serve: ['sDinner', 'Serve', 'Drag the wok to Lumi\'s bowl to serve the noodles.']
   };
   function cookNew() {
     const l = lv();
@@ -125,6 +133,7 @@
     return { vegs, steps, i: 0, p: 0, cut: [], got: [], cuts: { 1: 3, 2: 4, 3: 5 }[l], need: ['carrot', 'broccoli', 'noodles'], fridge: shuffle(FRIDGE), served: false, won: false };
   }
   const cookStep = (g) => g.steps[Math.min(g.i, g.steps.length - 1)];
+  const fridgePic = (f, size) => (f[1] === 'noodles' ? `<span class="ck-pack" style="width:${size}px;height:${Math.round(size * 0.8)}px">${NOODLE_PACK}</span>` : pic(f[0], size));
   const cookSay = (g) => { const st = cookStep(g); return STEP_INFO[st.k][2].replace('%v', st.veg || 'carrot'); };
   function cookNext(g) {
     g.busy = true;
@@ -147,9 +156,9 @@
     const strip = g.steps.map((s, i) => `<span class="ev-step ${i < g.i || g.served ? 'done' : i === g.i ? 'now' : ''}">${ic(i < g.i || g.served ? 'check' : STEP_INFO[s.k][0], 30)}<span>${STEP_INFO[s.k][1]}</span></span>`).join(`<span class="ev-arrow">${ic('chev', 18)}</span>`);
     let work = '';
     if (st.k === 'pick') {
-      work = `<div class="ck-pick"><div class="ck-card"><b>Recipe</b><div class="row gap8">${g.need.map((n) => { const f = FRIDGE.find((x) => x[1] === n); return `<span class="ck-need ${g.got.includes(n) ? 'got' : ''}">${pic(f[0], 58)}</span>`; }).join('')}</div></div>
-        <div class="ck-fridge">${g.fridge.filter((f) => !g.got.includes(f[1])).map((f) => `<span class="ck-food" data-k="${f[1]}" role="button" aria-label="${f[1]}">${pic(f[0], 76)}</span>`).join('')}</div>
-        <div class="ck-basket" id="ckBasket">${g.got.map((n) => `<span>${pic(FRIDGE.find((x) => x[1] === n)[0], 52)}</span>`).join('') || '<em>Basket</em>'}</div></div>`;
+      work = `<div class="ck-pick"><div class="ck-card"><b>Recipe</b><div class="row gap8">${g.need.map((n) => { const f = FRIDGE.find((x) => x[1] === n); return `<span class="ck-need ${g.got.includes(n) ? 'got' : ''}">${fridgePic(f, 58)}<i>${f[1]}</i></span>`; }).join('')}</div></div>
+        <div class="ck-fridge">${g.fridge.filter((f) => !g.got.includes(f[1])).map((f) => `<span class="ck-food" data-k="${f[1]}" role="button" aria-label="${f[1]}">${fridgePic(f, 76)}</span>`).join('')}</div>
+        <div class="ck-basket" id="ckBasket">${g.got.map((n) => `<span>${fridgePic(FRIDGE.find((x) => x[1] === n), 52)}</span>`).join('') || '<em>Basket</em>'}</div></div>`;
     } else if (st.k === 'wash') {
       const spots = [[18, 30], [38, 62], [56, 28], [72, 58], [86, 36]].map(([x, y], i) => `<i class="ck-dirt ${g.p * 5 > i ? 'gone' : ''}" style="left:${x}%;top:${y}%"></i>`).join('');
       work = `<div class="ck-sink"><span class="ck-tap"></span><span class="ck-water"></span>
@@ -159,9 +168,9 @@
     } else if (st.k === 'stir') {
       work = `<div class="ck-stir">${wokHtml(g.vegs, g.p)}${bar(g.p)}</div>`;
     } else {
-      work = `<div class="ck-serve">${g.served ? '' : `<span class="ck-scoop" role="button" aria-label="The noodles">${A.foodSvg ? A.foodSvg('noodles', 190, 152) : pic('\u{1F35C}', 150)}</span>`}
+      work = `<div class="ck-serve">${g.served ? '' : `<span class="ck-scoop" role="button" aria-label="The wok of noodles"><span class="ck-food-art">${wokSide(g.vegs)}</span></span>`}
         <span class="ev-arrow big">${ic('chev', 44)}</span>
-        <div class="ck-bowl ${g.served ? 'full' : ''}" id="ckBowl">${g.served ? (A.foodSvg ? A.foodSvg('noodles', 200, 160) : pic('\u{1F35C}', 150)) : '<em>Lumi\'s bowl</em>'}</div></div>`;
+        <div class="ck-bowl ${g.served ? 'full' : ''}" id="ckBowl">${g.served ? `<span class="ck-food-art">${friedBowl(g.vegs)}</span>` : '<em>Lumi\'s bowl</em>'}</div></div>`;
     }
     return `
 <section class="screen" aria-label="Lumi's kitchen">
@@ -275,7 +284,7 @@
     const tag = (x) => `<span class="sp-tag">${dollars(x.price)}</span>`;
     let body = '';
     if (r.phase === 'pick') {
-      body = `<div class="panel ev-scene sp-shelf grow">${r.shelf.map((x) => (r.basket.includes(x.name) ? '<span class="sp-gap"></span>' : `<span class="sp-item" data-k="${x.name}" role="button" aria-label="${x.name}, ${dollars(x.price)}">${pic(x.k, 92)}${tag(x)}</span>`)).join('')}</div>
+      body = `<div class="panel ev-scene sp-shelf grow n${r.shelf.length}">${r.shelf.map((x) => (r.basket.includes(x.name) ? '<span class="sp-gap"></span>' : `<span class="sp-item" data-k="${x.name}" role="button" aria-label="${x.name}, ${dollars(x.price)}">${pic(x.k, 92)}${tag(x)}</span>`)).join('')}</div>
         <div class="col gap16" style="width:330px">
           <div class="sp-list"><b>${ic('journal', 26)} Shopping list</b>${r.list.map((x) => `<span class="sp-li ${r.basket.includes(x.name) ? 'got' : ''}">${pic(x.k, 44)}<span>${cap(x.name)}</span>${r.basket.includes(x.name) ? ic('check', 24) : ''}</span>`).join('')}</div>
           <div class="sp-basket grow" id="spBasket">${r.basket.map((n) => pic(r.shelf.find((x) => x.name === n).k, 56)).join('') || '<em>Basket</em>'}</div>

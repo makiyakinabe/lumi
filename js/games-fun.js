@@ -34,18 +34,25 @@
     const c = runCfg();
     const rungs = [];
     const rows = shuffle([0, 1, 2, 3, 4, 5, 6, 7]).slice(0, c.rungs).sort((a, b) => a - b);
-    rows.forEach((row) => rungs.push({ row, lane: Math.floor(Math.random() * (c.n - 1)) }));
-    return { n: c.n, rungs, star: Math.floor(Math.random() * c.n), tried: [], busy: false, landed: null };
+    rows.forEach((row) => rungs.push({ row, lane: Math.floor(Math.random() * (c.n - 1)), down: Math.random() < 0.5 ? 1 : -1 }));
+    const r = { n: c.n, rungs, star: 0, tried: [], busy: false, landed: null };
+    // the star cup is always one that some pipe really leads to
+    r.star = runPath(r, Math.floor(Math.random() * c.n)).end;
+    return r;
   }
   const RUN = { top: 70, bottom: 440, w: 1000, h: 520 };
   const laneX = (r, i) => (RUN.w / (r.n + 1)) * (i + 1);
   const rungY = (row) => RUN.top + 40 + row * ((RUN.bottom - RUN.top - 80) / 7);
+  // a bridge joins pipes k and k+1; 'down' says which way it slopes (1: down to the right, -1: down to the left)
+  const highLane = (g) => (g.down === 1 ? g.lane : g.lane + 1);
+  const lowLane = (g) => (g.down === 1 ? g.lane + 1 : g.lane);
   function runPath(r, from) {
     let lane = from;
     const pts = [[laneX(r, lane), 20], [laneX(r, lane), RUN.top]];
     r.rungs.forEach((g) => {
-      if (g.lane === lane || g.lane === lane - 1) {
-        const to = g.lane === lane ? lane + 1 : lane - 1;
+      // the ball rolls down a bridge only when it reaches the bridge's high end; at the low end it just falls past
+      if (highLane(g) === lane) {
+        const to = lowLane(g);
         pts.push([laneX(r, lane), rungY(g.row)], [laneX(r, to), rungY(g.row) + 26]);
         lane = to;
       }
@@ -61,7 +68,7 @@
     const r = g.r;
     let svg = '';
     for (let i = 0; i < r.n; i++) svg += `<line x1="${laneX(r, i)}" y1="${RUN.top}" x2="${laneX(r, i)}" y2="${RUN.bottom}" stroke="${COLORS[i].c}" stroke-width="30" stroke-linecap="round"/>`;
-    r.rungs.forEach((k) => { svg += `<line x1="${laneX(r, k.lane)}" y1="${rungY(k.row)}" x2="${laneX(r, k.lane + 1)}" y2="${rungY(k.row) + 26}" stroke="#D9C9B4" stroke-width="24" stroke-linecap="round"/>`; });
+    r.rungs.forEach((k) => { svg += `<line x1="${laneX(r, highLane(k))}" y1="${rungY(k.row)}" x2="${laneX(r, lowLane(k))}" y2="${rungY(k.row) + 26}" stroke="#D9C9B4" stroke-width="24" stroke-linecap="round"/>`; });
     const tops = Array.from({ length: r.n }, (_, i) => `<button class="br-top ${r.tried.includes(i) ? 'tried' : ''}" data-a="brDrop" data-v="${i}" style="left:${(laneX(r, i) / RUN.w) * 100}%;--c:${COLORS[i].c};--d:${COLORS[i].d}" aria-label="Pipe ${i + 1}, ${COLORS[i].k}${r.tried.includes(i) ? ', tried' : ''}"><i></i></button>`).join('');
     const cups = Array.from({ length: r.n }, (_, i) => `<span class="br-cup ${i === r.star ? 'star' : ''} ${r.landed === i ? 'got' : ''}" style="left:${(laneX(r, i) / RUN.w) * 100}%">${i === r.star ? ic('star', 40) : ''}</span>`).join('');
     return `
@@ -152,7 +159,7 @@
     const g = S.g;
     // each fish carries on from where it was when the pond is drawn again
     const since = (Date.now() - g.t0) / 1000;
-    const fish = g.fish.filter((f) => !f.caught).map((f) => `<span class="fs-fish" data-k="${f.id}" style="top:${f.y}%;animation-duration:${f.secs}s;animation-delay:${(f.delay - since).toFixed(2)}s"><span class="fs-flip" style="animation-duration:${f.secs * 2}s;animation-delay:${(f.delay - since).toFixed(2)}s">${fishSvg(f, g.mode === 'order')}</span></span>`).join('');
+    const fish = g.fish.filter((f) => !f.caught).map((f) => `<span class="fs-fish" data-k="${f.id}" style="top:${f.y}%;animation-duration:${f.secs}s;animation-delay:${(f.delay - since).toFixed(2)}s"><span class="fs-flip" style="animation-duration:${f.secs * 2}s;animation-delay:${(f.delay - since).toFixed(2)}s">${fishSvg(f, false)}</span>${g.mode === 'order' ? `<b class="fs-num">${f.n}</b>` : ''}</span>`).join('');
     return `
 <section class="screen" aria-label="Go fishing">
   ${A.srTitle('Go fishing')}
@@ -308,10 +315,9 @@
       <span class="wm-tower"></span>
       <button class="wm-sails" id="wmSails" aria-label="Windmill sails. Spin them round."><svg viewBox="0 0 300 300" id="wmSvg" aria-hidden="true">${sail(0)}${sail(90)}${sail(180)}${sail(270)}<circle cx="150" cy="150" r="22" fill="#C0674A" stroke="#8A4630" stroke-width="5"/></svg></button>
     </div>
-    <div class="wm-side">
-      <span class="wm-meter" aria-hidden="true"><i id="wmPower" style="height:${Math.round((g.power / c.need) * 100)}%"></i></span>
-      <div class="wm-houses" id="wmHouses" aria-label="${g.lit} of ${c.houses} houses lit">${Array.from({ length: c.houses }, (_, i) => `<span class="wm-house ${i < g.lit ? 'lit' : ''}"><i></i></span>`).join('')}</div>
-    </div>
+    <svg class="wm-wire" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path id="wmWire" d="M33 88 Q42 80 50 84 T66 84 T97 84" fill="none"/></svg>
+    <span class="wm-meter" aria-hidden="true">${ic('bolt', 26)}<span><i id="wmPower" style="width:${Math.round((g.power / c.need) * 100)}%"></i></span></span>
+    <div class="wm-houses" id="wmHouses" aria-label="${g.lit} of ${c.houses} houses lit">${Array.from({ length: c.houses }, (_, i) => `<span class="wm-house ${i < g.lit ? 'lit' : ''}"><i></i></span>`).join('')}</div>
     <div class="wm-hill"></div>
   </div>
   ${winCard('windmill')}
@@ -361,7 +367,9 @@
         if (g.lit >= c.houses) { later(() => win('windmill', lv() === 3 ? 2 : 1), 700); }
         else say(g.lit === 1 ? 'A light is on! Keep spinning.' : 'Another one!');
       }
-      if (power) power.style.height = `${Math.round((g.power / c.need) * 100)}%`;
+      if (power) power.style.width = `${Math.round((g.power / c.need) * 100)}%`;
+      const wire = document.getElementById('wmWire');
+      if (wire) wire.classList.toggle('on', v > 40);
     }, 40);
   };
   A.GUIDE['g-windmill'] = () => (S.g && !S.g.won && Math.abs(S.g.speed) < 30 ? { sel: '#wmSails', say: 'Spin it round and round.', delay: state.settings.guideDelay * 1000 + 5000 } : null);

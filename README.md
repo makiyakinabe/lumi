@@ -400,11 +400,11 @@ Why rhythm: school drumming programmes for autistic pupils have reported better 
 
 A fifth shelf in Games. Each game is built on a kind of play that research and practice guides say children, and autistic children especially, choose most: things that answer at once when touched, things that roll, spin and drop, a moment of waiting before something happens, catching and collecting, lining things up, and trains.
 
-- **Ball run** (cause and effect): tap a pipe, the ball rolls down and over the bridges. Which pipe leads to the star cup? Hard has five pipes and seven bridges.
+- **Ball run** (cause and effect): tap a pipe, the ball rolls down. Every bridge slopes downhill one way; a ball that reaches a bridge's high end rolls down it to the next pipe, and a ball passing its low end keeps falling. Which pipe leads to the star cup? Hard has five pipes and seven bridges.
 - **Go fishing** (catching): pull the hook down onto a swimming fish. Medium: one colour only. Hard: in number order.
 - **Blow the balloon** (waiting, then whoosh): pump the balloon up to the ring and let it go; it whizzes round. Too much air and it sighs back down. Nothing ever pops.
-- **Spin the windmill** (round and round): spin the sails with a finger (or tap them) to fill the meter and light the houses.
-- **Build the train** (lining up, counting): put the carriages in order behind the engine; the train then drives off. Hard counts in twos.
+- **Spin the windmill** (round and round): spin the sails with a finger (or tap them). The wire to the houses glows while the sails turn, the battery fills, and each full battery lights a house on the hill.
+- **Build the train** (lining up, counting): put the carriages in order behind the engine; the train then drives off the way the engine faces. Hard counts in twos.
 
 - **Rhythm kitchen** (js/rhythm-kitchen.js; cook to the beat): a tune plays and notes slide along a track to a ring. Tap anywhere in the kitchen as each note reaches the ring and Lumi cooks in time: chop the carrot, stir the soup, flip the prata. Lunch is then served with one to three chef hats. Easy has a note every two beats; Hard is faster with quick pairs. A missed note just floats past, and lunch is always served. Space or Enter also plays, for a keyboard or switch.
 
@@ -415,7 +415,7 @@ All six have Easy, Medium and Hard, no losing and no clock, and can be switched 
 A sixth shelf in Games, in the spirit of the classic run-and-jump, kart and party-board games. The worlds and pictures are Lumi's own.
 
 - **Lumi's run** (run and jump): Lumi runs by itself and one tap anywhere jumps. Hop the bushes, collect the stars, reach home. Medium adds gaps and floating ledges. Hard adds sleepy snails to bounce on and a second jump in the air.
-- **Lumi's kart** (steer): two big arrows move the kart between three lanes. Collect stars, drive round the cones, roll over a yellow pad to zoom. The arrow keys work too.
+- **Lumi's kart** (steer): two big arrows move the kart between three lanes; we see Lumi from behind, driving up the road. Collect stars, drive round the cones, roll over a yellow pad to zoom. The arrow keys work too.
 - **Star path** (a board game): roll the dice and hop along the path to home. Stars are collected on star spaces and a spring bounces Lumi two more. On Easy, Lumi hops and counts aloud. On Medium the child counts the steps and taps where Lumi lands (after two misses the steps are numbered). Hard rolls two dice and adds them.
 
 Kept gentle on purpose: no lives, no timer, no losing. A bush only stops Lumi until the child jumps. A fall into a gap puts Lumi straight back on the path, standing still until the child taps. A cone only slows the kart for a moment, and the finish line is reached even with no steering.
@@ -457,9 +457,9 @@ Fun › Games has 17 games on four shelves, so a child sees at most 7 cards at a
 | Shelf | Games |
 | --- | --- |
 | **Calm** | Bubbles, Copy the tune, Catch stars, Waiting game |
-| **Think** | Match, Jigsaw, What next?, Feed Lumi, Way home, Find it |
+| **Think** | Match, Jigsaw, What next?, Feed Lumi (apples, bananas, biscuits, carrots, bread), Way home, Find it |
 | **Everyday** | Sort it, Weather, Lumi's kitchen, Go shopping, Cross the road, Tell the time, Zip and button |
-| **With Lumi** | the turn-taking games (Hawker uncle, Find it, Music echo...) |
+| **With Lumi** | the turn-taking games (Hawker uncle, I spy, Music echo...) |
 
 Grown-ups › Activities lists the game switches under the same shelf names.
 
@@ -477,7 +477,7 @@ These are done with the hands, not by pressing "next":
 | Tell the time | Turn the clock's hands with a finger to the time of something in Lumi's day | o'clock, short hand only | half past, both hands | quarter past and quarter to, words only |
 | Zip and button | Pull the zip up, drag buttons into their holes, push the buckle together, pull the laces tight | zip and 2 buttons | 3 buttons and a buckle | 4 buttons from the top down, plus laces |
 
-Walking too early in Cross the road, the wrong coin, or a button in the wrong hole gets a short spoken reason and another go. The chopping and stirring are shared with **Hawker uncle** through `A.KITCHEN`: after the customer orders, the uncle (the child, their partner, or Lumi) chops and stirs before serving.
+Walking too early in Cross the road, the wrong coin, or a button in the wrong hole gets a short spoken reason and another go. The chopping and stirring are shared with **Hawker uncle** through `A.KITCHEN`: after the customer orders, the uncle (the child, their partner, or Lumi) makes the dish the way it is really made: chop the chicken for chicken rice, chop the carrot then fry the noodles in the wok, cook the prata on a hot pan, cut the kaya toast, shave the ice for ice kachang, stir the Milo. In Lumi's kitchen the dry noodles are picked from the fridge and the bowl Lumi gets holds the same noodles and vegetables that were chopped and fried.
 
 ### The other games (js/play.js, js/games-more.js)
 
@@ -487,7 +487,7 @@ Walking too early in Cross the road, the wrong coin, or a button in the wrong ho
 | Copy the tune | Lumi rings bells; ring them back in order | 3 bells | 4 bells | 5 bells, quicker |
 | Way home | Slide Lumi through a maze to the house | 4 × 3 maze | 6 × 4 with bonus stars | 8 × 5, collect all stars first |
 | Catch stars | Move Lumi to catch falling stars | slow, catch 8 | faster, catch 12 | fastest, dodge raindrops, catch 15 |
-| Find it | Find the thing Lumi names in a room | 4 big things, picture shown | 8 things | 12 small, tilted things, word only |
+| Find it | Find the thing Lumi names in a room. Pictures, the clock and lights hang on the wall; furniture, toys, pets and clothes are on the floor | 4 big things, picture shown | 8 things | 12 small things (dropped clothes lie at an angle), word only |
 | Weather | Drag the right clothes onto Lumi | 1 thing, 2 choices | 2 things, 4 choices | 2 things, 6 choices |
 
 Bubbles (Hard: pop only the colour Lumi names), Match (3, 6 or 8 pairs), Jigsaw (4, 6 or 9 pieces), Sort it, What next? and the Waiting game (10, 20 or 30 seconds) have levels too.
@@ -653,7 +653,7 @@ off in Grown-ups > Activities > Games. Easy, Medium and Challenge change the num
 | Age group | Games |
 |---|---|
 | Little ones | More, please! (ask for more on a tiny talk strip), Copy me, Peekaboo Lumi, Breathe together (both hold to grow the balloon), Feed the animals |
-| Primary | Hawker uncle (order, serve, pay, say thank you), Find it, Music echo, Lumi says, Hide Lumi (yes/no questions), Build it together |
+| Primary | Hawker uncle (order, cook, serve, pay, say thank you), I spy (things stand on the ground and match the place: no sun or bus in the kitchen), Music echo, Lumi says, Hide Lumi (yes/no questions), Build it together |
 | Teens | Plan our outing, Would you rather?, Our silly story, Shop and pay, How would you feel?, Phone practice |
 
 Code: `js/teamgames.js` (the shared frame and helpers), `js/tg-little.js`, `js/tg-primary.js`, `js/tg-teen.js`

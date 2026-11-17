@@ -52,6 +52,7 @@
     x: line('<path d="M6 6l12 12M18 6 6 18"/>', 2.6),
     plus: line('<path d="M12 5v14M5 12h14"/>', 2.6),
     minus: line('<path d="M5 12h14"/>', 2.6),
+    bolt: line('<path d="M13 2 5 14h6l-1 8 8-12h-6z"/>', 2.4),
     hook: line('<path d="M12 3v11a4 4 0 0 1-8 0v-2"/><circle cx="12" cy="3" r="1.4"/>', 2.6),
     pump: line('<path d="M9 9h6v11H9z"/><path d="M12 9V3M8 3h8M15 14h4v5"/>', 2.4),
     turn: line('<path d="M20 12a8 8 0 1 1-2.7-6"/><path d="M20 4v5h-5"/>', 2.6),

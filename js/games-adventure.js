@@ -210,11 +210,11 @@
   ${A.srTitle("Lumi's kart")}
   ${header('lumikart', A.VOICE['g-lumikart']())}
   <div class="row gap16 grow">
-    <button class="lk-steer" data-a="lkLeft" aria-label="Steer left">${ic('back', 64)}</button>
+    <button class="lk-steer" data-a="lkLeft" aria-label="Steer left"><span class="lk-flip">${ic('arrow', 64)}</span></button>
     <div class="panel lk-road grow" id="lkRoad">
       <div class="lk-lines" id="lkLines"></div>
       <div class="lk-items" id="lkItems"></div>
-      <span class="lk-kart" id="lkKart"><span class="lk-rider">${lumiSvg('happy', 92)}</span><i class="lk-body"></i><i class="lk-wheel a"></i><i class="lk-wheel b"></i></span>
+      <span class="lk-kart" id="lkKart"><span class="lk-rider">${L.turnSvg ? L.turnSvg({ look: A.lookWith(), mood: 'happy', size: 92 }, 180) : lumiSvg('happy', 92)}</span><i class="lk-body"></i><i class="lk-wheel a"></i><i class="lk-wheel b"></i></span>
       <span class="lr-count">${ic('star', 28)}<b id="lkStars">${g.stars}</b></span>
       <span class="lr-bar"><i id="lkBar"></i></span>
       <span class="lr-tip" id="lkTip">${g.started ? '' : 'Tap an arrow to go!'}</span>
@@ -300,10 +300,10 @@
     const spaces = g.kinds.map((k, i) => {
       const p = cell(i);
       const hint = g.phase === 'pick' && g.miss >= 2 && i > g.pos && i <= g.pos + g.roll ? `<b class="sp-num">${i - g.pos}</b>` : '';
-      const inner = k === 'home' ? ic('home', 40) : k === 'star' && !g.got[i] ? ic('star', 34) : k === 'spring' ? '<i class="sp-spring"></i>' : '';
+      const inner = k === 'home' ? ic('home', 40) : k === 'star' && !g.got[i] ? ic('star', 34) : k === 'spring' ? '<svg class="sp-spring" viewBox="0 0 40 48" aria-hidden="true"><path d="M6 42h28M8 36l24-6M8 30l24-6M8 24l24-6M8 18l24-6M6 8h28" fill="none" stroke="#4A78A8" stroke-width="4" stroke-linecap="round"/></svg>' : '';
       return `<button class="sp-space ${k} ${i < g.pos ? 'past' : ''}" data-a="spPick" data-v="${i}" style="left:${p.x}%;top:${p.y}%" aria-label="Space ${i + 1}${k === 'star' ? ', a star' : k === 'spring' ? ', a spring' : k === 'home' ? ', home' : ''}">${inner}${hint}</button>`;
     }).join('');
-    const d = g.dice || [g.roll || 1];
+    const d = g.dice || (lv() === 3 ? [1, 1] : [1]);
     return `
 <section class="screen" aria-label="Star path">
   ${A.srTitle('Star path')}
