@@ -56,6 +56,9 @@ html, body {
   padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
 }
 body { transition: background-color 0.3s ease; }
+/* no lonely word on the last line: short labels are balanced, longer text avoids a single word on its own line */
+#stage { text-wrap: pretty; }
+#stage button, #stage b, #stage h1, #stage h2, #stage h3, #stage .label, #stage .sx-bubble, #stage .sx-choice span { text-wrap: balance; }
 #stage {
   position: relative;
   flex: none;
@@ -220,7 +223,7 @@ button.stars { gap: 8px; }
 .thought-dot.sm { width: 16px; height: 16px; }
 
 /* ------------------------------------------------------------ feelings */
-.qmark { width: 56px; height: 56px; border-radius: 50%; background: #F1ECFB; border: 3px solid var(--feel); display: flex; align-items: center; justify-content: center; font-size: 34px; color: #5B45A8; }
+.qmark { width: 56px; height: 56px; border-radius: 50%; background: #F1ECFB; border: 3px solid var(--feel); display: flex; align-items: center; justify-content: center; font-size: 34px; color: #5B45A8;  line-height: 1; }
 .feel-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 20px; }
 .feel-card { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; border-radius: var(--r-lg); border: 4px solid; font-size: 32px; transition: transform 0.15s ease; }
 .feel-card.sel { border-width: 7px; outline: 7px solid #fff; outline-offset: -14px; }
@@ -608,8 +611,9 @@ button.stars { gap: 8px; }
 .sentence-empty { display: flex; align-items: center; gap: 10px; font-size: 18px; }
 .aac-ctrl { width: 76px; height: 92px; border-radius: 22px; background: #fff; border: 2px solid var(--border); color: var(--muted); display: flex; align-items: center; justify-content: center; flex: none; }
 .aac .say-btn { height: 92px; width: 116px; }
-.folder-col { width: 112px; display: flex; flex-direction: column; gap: 6px; flex: none; }
-.folder { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 16px; background: #fff; border: 3px solid transparent; color: var(--fc); font-size: calc(13px * var(--ts, 1)); min-height: 0; }
+.folder-col { width: 112px; display: flex; flex-direction: column; gap: 6px; flex: none; min-height: 0; overflow-y: auto; scrollbar-width: none; }
+.folder-col::-webkit-scrollbar { display: none; }
+.folder { flex: 1 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 16px; background: #fff; border: 3px solid transparent; color: var(--fc); font-size: calc(13px * var(--ts, 1)); min-height: 50px; padding: 3px 2px; line-height: 1.1; text-align: center; }
 .folder.on { background: var(--fc); color: #fff; }
 .folder-ic { line-height: 0; }
 .aac-grid { flex: 1; display: grid; gap: 8px; min-width: 0; }
@@ -1802,7 +1806,7 @@ input:-webkit-autofill { -webkit-box-shadow: 0 0 0 40px #fff inset; -webkit-text
 /* ---------------------------------------------------------------- v21: home language (lang.js) */
 .l2 { display: block; font-size: 0.72em; font-weight: 700; line-height: 1.15; color: var(--muted); margin-top: 2px; letter-spacing: 0; text-transform: none; }
 .word .word-label .l2 { font-size: 0.8em; }
-.folder .l2 { font-size: 0.78em; }
+.folder .l2 { font-size: 0.78em; display: block; line-height: 1.1; }
 .msg-chip .l2 { font-size: 0.7em; }
 .plan-card .label .l2 { font-size: 0.72em; }
 .feel-card .l2 { font-size: 0.68em; }
@@ -1912,7 +1916,7 @@ button.sx-el:active { transform: scale(0.97); }
 .sx-glow { filter: drop-shadow(0 0 10px rgba(255, 210, 63, 0.95)); animation: sxPulse 1.4s ease-in-out infinite; }
 @keyframes sxPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
 .reduce-motion .sx-glow, .reduce-motion .sx-lumi.walking > svg.lumi { animation: none; }
-.sx-bubble { position: absolute; z-index: 8; background: #fff; border-radius: 22px; padding: 12px 18px; overflow-wrap: anywhere; font-size: 20px; font-weight: 800; line-height: 1.25; color: var(--ink); box-shadow: 0 5px 0 rgba(90, 60, 40, 0.12); border: 3px solid #EFE6D8; }
+.sx-bubble { position: absolute; z-index: 8; background: #fff; border-radius: 22px; padding: 12px 18px; overflow-wrap: break-word; width: max-content; font-size: 20px; font-weight: 800; line-height: 1.25; color: var(--ink); box-shadow: 0 5px 0 rgba(90, 60, 40, 0.12); border: 3px solid #EFE6D8; }
 .sx-bubble::after { content: ''; position: absolute; width: 22px; height: 22px; background: #fff; border: 3px solid #EFE6D8; border-top: 0; border-left: 0; transform: rotate(45deg); }
 .sx-bubble.down::after { left: 40px; bottom: -13px; }
 .sx-bubble.left::after { left: -13px; top: 22px; transform: rotate(135deg); }
@@ -2643,3 +2647,8 @@ svg.pic.person { overflow: hidden; }
 .tb-counter::after { content: ''; position: absolute; left: 50%; top: 34px; width: 3px; bottom: 0; background: rgba(59,47,47,.35); }
 .tb-paste { top: 282px; left: 760px; }
 .tb-cup { top: 228px; left: 870px; }
+
+/* short labels stay on one line (fittext.js makes them a little smaller if they do not fit) */
+.bar .time-chip span, .bar .primary span, .sg-together span, .sg-skip span, .pat-cell .qmark { white-space: nowrap; }
+.bar .sg-label { min-width: 0; text-wrap: balance; }
+.pat-cell .qmark { font-size: 52px; }

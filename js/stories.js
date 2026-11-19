@@ -68,8 +68,9 @@
     // a speech bubble; x, y = top-left corner area; tail: 'down' | 'left' | 'right'
     bubble(x, y, text, o) {
       const op = o || {};
-      const w = op.w || Math.min(320, 48 + text.length * 10);
-      return `<div class="sx-bubble ${op.tail || 'down'} ${op.cls || ''}" style="left:${Math.round(x)}px;top:${Math.round(y)}px;width:${w}px;${op.z != null ? `z-index:${op.z};` : ''}">${esc(text)}</div>`;
+      const w = Math.max(op.w || 0, Math.min(320, 64 + text.length * 12));
+      // the bubble fits its words (never wider than w), so short words are not broken onto two lines
+      return `<div class="sx-bubble ${op.tail || 'down'} ${op.cls || ''}" style="left:${Math.round(x)}px;top:${Math.round(y)}px;${op.tail === 'right' ? `width:${op.w || w}px;` : `max-width:${w}px;min-width:${Math.min(w, 96)}px;`}${op.z != null ? `z-index:${op.z};` : ''}">${esc(text)}</div>`;
     },
     done(st, line) {
       if (st.done) return;
@@ -548,6 +549,7 @@
     A.stage.querySelectorAll('.sx-mini').forEach((m) => {
       const sc = m.querySelector('.sx-mini-scene');
       if (sc && m.clientWidth) sc.style.transform = `scale(${(m.clientWidth / W).toFixed(4)})`;
+      if (sc && !sc.dataset.tidy) { sc.dataset.tidy = '1'; try { declutter(sc); } catch (e) { /* layout help only */ } }
     });
   }
   A.fitPreviews = fitPreviews;
@@ -707,6 +709,74 @@
     bar.style.height = wide ? `${Math.round(H * s)}px` : '';
   }
   A.fitScene = fitScene;
+
+  // Keep words readable in the scene: a choice panel or speech bubble must not sit on a sign or on another
+  // bubble. After each draw, a choice panel that covers words in the picture moves to the other side if that
+  // side is clearer, and a bubble that covers words or another bubble slides up or down (or sideways) to the
+  // nearest clear spot inside the picture. Positions are worked out in scene pixels (W x H), so the scaling
+  // from fitScene does not matter.
+  const FLOAT = '.sx-choices, .sp-pick, .sx-bubble, .sx-mine, .sx-talk';
+  function declutter(box) {
+    if (!box || !box.offsetWidth) return;
+    const br = box.getBoundingClientRect();
+    const k = box.offsetWidth / (br.width || 1);
+    const SH = box.offsetHeight || H;
+    const toScene = (r) => ({ l: (r.left - br.left) * k, t: (r.top - br.top) * k, r: (r.right - br.left) * k, b: (r.bottom - br.top) * k });
+    const offRect = (el) => { let x = 0, y = 0; for (let e = el; e && e !== box; e = e.offsetParent) { x += e.offsetLeft; y += e.offsetTop; if (!e.offsetParent) break; } return { l: x, t: y, r: x + el.offsetWidth, b: y + el.offsetHeight }; };
+    const area = (a, b2) => Math.max(0, Math.min(a.r, b2.r) - Math.max(a.l, b2.l)) * Math.max(0, Math.min(a.b, b2.b) - Math.max(a.t, b2.t));
+    const floats = [...box.querySelectorAll(FLOAT)].filter((e) => e.offsetWidth && !e.parentElement.closest(FLOAT));
+    // words drawn in the picture (signs, labels): svg text and html text outside the floating panels
+    const words = [];
+    box.querySelectorAll('svg text').forEach((t) => { if (!t.closest(FLOAT)) { const r = t.getBoundingClientRect(); if (r.width > 2) words.push(toScene(r)); } });
+    const tw = document.createTreeWalker(box, NodeFilter.SHOW_TEXT);
+    while (tw.nextNode()) {
+      const n = tw.currentNode; const el = n.parentElement;
+      if (!n.nodeValue.trim() || !el || el.closest(FLOAT) || el.closest('svg') || el.closest('.sx-hand, .sr-only')) continue;
+      const rg = document.createRange(); rg.selectNodeContents(n);
+      [...rg.getClientRects()].forEach((r) => { if (r.width > 2) words.push(toScene(r)); });
+    }
+    const cost = (rc, self) => words.reduce((s2, w) => s2 + area(rc, w), 0) + floats.reduce((s2, f) => (f === self ? s2 : s2 + area(rc, f._rc || offRect(f)) * 0.6), 0);
+    floats.forEach((f) => { f._rc = offRect(f); });
+    // 1. choice panels (and the "And you?" row): try the other side, and lower or higher, nearest first
+    floats.filter((f) => f.matches('.sx-choices, .sp-pick, .sx-mine')).forEach((f) => {
+      const rc = f._rc, now = cost(rc, f);
+      if (now < 40) return;
+      const w = rc.r - rc.l, h = rc.b - rc.t;
+      let best = null;
+      for (const l of [rc.l, W - rc.r]) {
+        for (let dy = -240; dy <= 360; dy += 12) {
+          const c = { l, r: l + w, t: rc.t + dy, b: rc.b + dy };
+          if (c.t < 8 || c.b > SH - 8) continue;
+          const v = cost(c, f);
+          const score = v + (Math.abs(dy) + Math.abs(l - rc.l) * 0.3) * 2;
+          if (v < now * 0.5 && (!best || score < best.score)) best = { c, v, score };
+        }
+      }
+      if (!best) return;
+      const ox = rc.l - f.offsetLeft, oy = rc.t - f.offsetTop;
+      f.style.left = `${Math.round(best.c.l - ox)}px`; f.style.right = 'auto';
+      f.style.top = `${Math.round(best.c.t - oy)}px`; f.style.bottom = 'auto';
+      f._rc = best.c;
+    });
+    // 2. bubbles: nearest clear spot
+    floats.filter((f) => f.matches('.sx-bubble')).forEach((f) => {
+      const rc = f._rc, now = cost(rc, f);
+      if (now < 40) return;
+      const w = rc.r - rc.l, h = rc.b - rc.t;
+      let best = null;
+      for (let d = 12; d <= 240; d += 12) {
+        for (const [dx, dy] of [[0, -d], [0, d], [-d, 0], [d, 0], [-d, -d / 2], [d, -d / 2]]) {
+          const c = { l: rc.l + dx, r: rc.r + dx, t: rc.t + dy, b: rc.b + dy };
+          if (c.l < 8 || c.r > W - 8 || c.t < 8 || c.b > SH - 8) continue;
+          const v = cost(c, f);
+          if (v < 40 && (!best || v < best.v)) best = { c, v, dx, dy };
+        }
+        if (best) break;
+      }
+      if (best) { f.style.left = `${Math.round(best.c.l - (f._rc.l - f.offsetLeft))}px`; f.style.top = `${Math.round(best.c.t - (f._rc.t - f.offsetTop))}px`; f._rc = best.c; void h; void w; }
+    });
+  }
+  A.declutterScene = declutter;
   const resizeBefore = A.onStageResize;
   A.onStageResize = () => { if (resizeBefore) resizeBefore(); fitScene(); };
 
@@ -733,6 +803,7 @@
     }
     const step = stepNow();
     if (step.after) step.after(st, box);
+    try { declutter(box); } catch (e) { /* layout help only */ }
   };
   A.GUIDE.story = () => {
     const st = S.sx;

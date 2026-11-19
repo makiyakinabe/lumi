@@ -2905,8 +2905,8 @@
   // Lumi is designed on a 1194 x 834 landscape stage. The stage keeps that height (or width) and grows in the
   // other direction to match the screen's shape exactly, so every screen fills a phone, an iPad, a laptop or a
   // big monitor edge to edge with no bars: the flexible layouts stretch, and the fixed pictures (story scenes,
-  // games) stay centred. The notch and home bar are kept clear, and a phone or tablet held upright shows
-  // "Turn me sideways".
+  // games) stay centred. The notch and home bar are kept clear. A phone held upright shows "Turn me sideways";
+  // a tablet held upright shows the whole app, centred.
   const root = document.documentElement;
   const vp = document.getElementById('viewport');
   const turnEl = document.createElement('div');
@@ -2935,7 +2935,10 @@
     const phone = Math.min(W0, H0) < 600 && Math.max(W0, H0) < 1100;
     const touch = navigator.maxTouchPoints > 0 || (window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
     root.classList.toggle('is-phone', phone);
-    root.classList.toggle('turn-me', H0 > W0 && (phone || touch));
+    // a phone held upright would make every button too small, so it asks to be turned; a tablet held upright
+    // (or fixed upright on a wheelchair or a stand) shows the whole app, with the screen's colour above and below
+    root.classList.toggle('turn-me', H0 > W0 && phone);
+    root.classList.toggle('upright', H0 > W0 && !phone && touch);
     const cs = getComputedStyle(vp);
     const W = Math.max(1, vp.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight));
     const H = Math.max(1, vp.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom));

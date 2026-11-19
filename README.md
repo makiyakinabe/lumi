@@ -572,7 +572,26 @@ The room shop now has 20 things: a clock, teddy bear, fairy lights, balloons, to
 
 ## Fits any screen
 
-Lumi fills the whole screen on any device held sideways: phones, iPads (any size), Android tablets, laptops and big monitors, with no black bars. It is designed on a 1194 × 834 landscape "stage"; `fit()` in `js/app.js` keeps that height (or width) and stretches the other side to match the screen's shape, so the flexible screens simply grow. The story and lesson pictures are scaled to use the space too (`fitScene()` in `js/stories.js`): on a wide screen such as a phone or a 16:9 laptop the picture fills the height and the words move into a column beside it. The notch and home bar are kept clear, and the strip around them takes the colour of the current screen. Held upright, a phone or tablet shows "Turn me sideways". A desktop browser window narrower than it is tall shows the app with thin edges.
+Lumi fills the whole screen on any device held sideways: phones, iPads (any size), Android tablets, laptops and big monitors, with no black bars. It is designed on a 1194 × 834 landscape "stage"; `fit()` in `js/app.js` keeps that height (or width) and stretches the other side to match the screen's shape, so the flexible screens simply grow. The story and lesson pictures are scaled to use the space too (`fitScene()` in `js/stories.js`): on a wide screen such as a phone or a 16:9 laptop the picture fills the height and the words move into a column beside it. The notch and home bar are kept clear, and the strip around them takes the colour of the current screen. Held upright, a phone shows "Turn me sideways" (the buttons would be too small). A tablet held upright, or fixed upright on a wheelchair or stand, shows the whole app centred, with the screen's colour above and below; so does a desktop window narrower than it is tall.
+
+## Words never overlap
+
+These checks keep words readable on any screen, at any text size and in any home language.
+
+- **Every button and text box** (`js/fittext.js`): after each draw, any button or box whose words don't fit is made a little smaller, step by step, down to 70%. When the words fit, nothing changes. Short labels like "I did it!" and times stay on one line.
+- **Story pictures** (`declutter()` in `js/stories.js`):
+  - A choice panel or the "And you?" row that covers a sign moves to the other side, or higher or lower, whichever is clearest.
+  - A speech bubble that covers a sign or another bubble slides to the nearest clear spot.
+  - Speech bubbles fit their words, so "Waaah!" never breaks onto two lines.
+- **Line breaks**: short labels are balanced across their lines, and longer text avoids a single word on its own line.
+- **Talk board folders** keep their size, and the column scrolls if a home language and Extra large text make it too long.
+- **Tested** with a script that looks at every screen, game, My day step, story and lesson step, and pop-up. It checks for:
+  - words on top of other words;
+  - words partly hidden behind a button or picture;
+  - words cut off or spilling out of their button;
+  - a lonely bit on the last line.
+
+  It ran on 4:3 iPads, 1194 × 834, 16:10 and 16:9 laptops, phones held sideways (iPhone, Android) and an ultra-wide monitor. It covered all three age groups, text sizes up to Extra large, and Chinese, Malay and Tamil.
 
 ## Home language (Chinese, Malay, Tamil)
 
@@ -939,6 +958,7 @@ web/
   js/support.js     Not yet, Together check-in, My card, calm menu, Support page, What helped (css/support.css)
   js/toolkit.js     Out and about, Support Passport, ready routines (css/toolkit.css)
   js/access.js      switch access (one or two switches, scanning)
+  js/fittext.js     makes words a little smaller when they would not fit their button or box
   js/games-fun.js   five "Go!" games (css/games-fun.css)
   js/rhythm-kitchen.js  Rhythm kitchen, the sixth (css/rhythm-kitchen.css)
   js/games-adventure.js Lumi's run, Lumi's kart, Star path (css/games-adventure.css)

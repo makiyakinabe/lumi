@@ -421,7 +421,7 @@
       enter(st) { st.s.n = 0; },
       draw(st) {
         let h = nurseAt(880, 250, { flip: true });
-        h += `<div class="lf-count" style="left:360px;top:110px">${[1, 2, 3].map((n) => `<button class="lf-num ${st.s.n >= n ? 'on' : ''} ${st.s.n + 1 === n ? 'next' : ''}" data-a="sx" data-k="num" data-v="${n}" aria-label="${n}">${n}</button>`).join('')}</div>`;
+        h += `<div class="lf-count" style="left:480px;top:110px">${[1, 2, 3].map((n) => `<button class="lf-num ${st.s.n >= n ? 'on' : ''} ${st.s.n + 1 === n ? 'next' : ''}" data-a="sx" data-k="num" data-v="${n}" aria-label="${n}">${n}</button>`).join('')}</div>`;
         if (st.done) h += SX.bubble(380, 330, 'All done! That was quick.', { w: 240 });
         return h;
       },
