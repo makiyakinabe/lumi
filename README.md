@@ -409,6 +409,8 @@ Fun › **Art**. Drawing and colouring build hand control and give children who 
 - **Paint**: a sheet of paper for a finger. Brush (three sizes), rainbow brush, glitter, five stamps (star, heart, flower, paw, Lumi) in any colour, eraser, undo, start again. **Idea** suggests something to paint ("Paint how you feel today").
 - **My art**: saved pictures hang in wooden frames (up to 12). Tap one to see it big; Lumi says what she likes about it.
 - Up to 3 stars a day for finished pages and saved paintings.
+- **Pencil case** (top of the crayons): more art materials to buy with stars. Star glitter pen (4), neon marker (3), watercolour (4), shiny metal pen (5), chalk (3), and More stamps (5: rocket, sun, car, cat, rainbow). Tap once to see the price, tap again to buy. Each material works for colouring in (a glitter fill sparkles with little stars, metal shines, neon glows, chalk is dusty, watercolour is soft) and for painting (the glitter pen leaves a trail of stars).
+- **Frames for Lumi's room**: Room > Art sells six frames: wooden (3), white (3), rainbow (5), gold (6), round flower frame (5) and a standing easel (6). A new frame shows the newest picture straight away. Tap a frame in the room, then the palette button, to choose a different picture; or in My art tap **Hang in room** and pick the frame. Frames move, grow, shrink, turn and go away like everything else in the room, and show on the home screen too.
 
 ## Lumi's garden (js/garden.js)
 

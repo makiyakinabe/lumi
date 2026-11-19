@@ -1388,7 +1388,7 @@
   A.roomMusic = roomMusic;
   A.ROOM_SCREENS = ROOM_SCREENS;
   SCREENS.room = () => {
-    const tabs = [['furniture', 'Furniture', 'rSofa'], ['plants', 'Plants', 'rPlant'], ['rugs', 'Rugs', 'rRug'], ...(A.wallTiles ? [['walls', 'Walls and floor', 'rWall']] : []), ['clothes', 'Clothes', 'shirt'], ['pets', 'Pets', 'kPet']];
+    const tabs = [['furniture', 'Furniture', 'rSofa'], ['plants', 'Plants', 'rPlant'], ['rugs', 'Rugs', 'rRug'], ...(A.wallTiles ? [['walls', 'Walls and floor', 'rWall']] : []), ...(A.artFrames ? [['art', 'Art frames', 'kArt']] : []), ['clothes', 'Clothes', 'shirt'], ['pets', 'Pets', 'kPet']];
     const tabHtml = tabs.map(([id, name, inner]) => {
       const svg = ic(inner, 36);
       return id === 'clothes'
