@@ -28,7 +28,16 @@
     { id: 't-home', label: 'Go home', icon: 'house', tint: '#F6E7D3' },
     { id: 't-car', label: 'Car ride', icon: 'bus', tint: '#FDECC8' }
   ];
-  const STYLES = [['ring', 'Colour circle'], ['sand', 'Sand timer'], ['path', 'Lumi’s walk']];
+  const STYLES = [['ring', 'Colour circle'], ['sand', 'Sand timer'], ['path', 'Lumi’s walk'], ['none', 'No countdown']];
+  // how Lumi warns before the change (grown-ups choose): chime and words, chime, words, picture only, nothing
+  const CUES = [['both', 'Both'], ['chime', 'Chime'], ['voice', 'Words'], ['picture', 'Picture'], ['none', 'None']];
+  const WARNS = [['long', '5 and 1 min'], ['short', '1 min'], ['off', 'No warning']];
+  function warnCue(line) {
+    const nn = state.nownext, c = nn.cue || 'both';
+    if (c === 'both' || c === 'chime') tone(660, 0.4, 0.05);
+    if (c === 'both' || c === 'voice') say(line);
+    if (c !== 'none') { const card = A.stage.querySelector('.nn-card.next'); if (card) { card.classList.remove('nn-glow'); void card.offsetWidth; card.classList.add('nn-glow'); } }
+  }
   const fromStep = (st) => { const i = A.stepInfo(st); return { label: i.label, icon: i.icon, tint: i.tint, photo: i.photo || null, stepUid: st.uid || null, stepId: st.id }; };
   const fromTreat = (t) => ({ label: t.label, icon: t.icon, tint: t.tint, treat: t.id });
   const art = (it, size) => (it.photo ? `<img class="step-photo" src="${it.photo}" width="${size}" height="${size}" alt="">` : ic(it.icon, size));
@@ -69,12 +78,13 @@
       if (S.paused || !T.running) return;
       T.left = Math.max(0, T.left - 1);
       const nn = state.nownext;
-      if (T.total >= 360 && T.left === 300 && !T.warned[5]) { T.warned[5] = 1; tone(660, 0.4, 0.05); say('5 more minutes.'); }
-      if (T.total >= 120 && T.left === 60 && !T.warned[1]) { T.warned[1] = 1; tone(660, 0.4, 0.05); say('1 more minute.'); }
+      const wn = nn.warn || 'long', soft = nn.style === 'none';
+      if (wn === 'long' && T.total >= 360 && T.left === 300 && !T.warned[5]) { T.warned[5] = 1; warnCue(soft ? `Soon it will be time for ${nn.next ? nn.next.label.toLowerCase() : 'the next thing'}.` : '5 more minutes.'); }
+      if (wn !== 'off' && T.total >= 120 && T.left === 60 && !T.warned[1]) { T.warned[1] = 1; warnCue(soft ? 'Nearly time.' : '1 more minute.'); }
       if (T.left <= 0) {
         clearInterval(tick);
         T.running = false; T.done = true;
-        chime();
+        if ((nn.cue || 'both') !== 'none') chime();
         const line = `Time for ${nn.next ? nn.next.label : 'the next thing'}!`;
         if (S.screen === 'nownext') { render(); say(line); }
         else { A.showReminder(art(nn.next || { icon: 'clock' }, 44), line); say(line); }
@@ -83,6 +93,12 @@
       if (S.screen === 'nownext') paint();
     }, 1000);
   }
+  // "Not yet" › More time adds a little to the timer (see support.js)
+  A.nnMoreTime = (secs) => {
+    if (T.done) { T.done = false; T.left = 0; }
+    T.left += secs; T.total = Math.max(T.total, T.left); T.warned = {};
+    startTimer(); render();
+  };
   // update just the moving parts, so nothing flickers
   function paint() {
     const st = A.stage;
@@ -100,6 +116,7 @@
   function words() {
     const nn = state.nownext;
     if (T.done) return `Time for ${nn.next ? nn.next.label : 'the next thing'}!`;
+    if (nn.style === 'none') return T.running ? `Now ${nn.now.label.toLowerCase()}. Then ${nn.next ? nn.next.label.toLowerCase() : 'something fun'}.` : `First ${nn.now.label.toLowerCase()}, then ${nn.next ? nn.next.label.toLowerCase() : 'something fun'}`;
     if (!T.running && T.left === T.total) { const m = Math.round(T.total / 60); return `${m} minute${m === 1 ? '' : 's'} of ${nn.now.label.toLowerCase()}`; }
     if (T.left <= 30) return 'Almost time!';
     if (T.left <= 60) return '1 more minute';
@@ -125,6 +142,8 @@
         <span class="nn-goal" style="background:${nn.next ? nn.next.tint : '#fff'}">${art(nn.next || { icon: 'star' }, small ? 26 : 70)}</span>
         <span class="nn-walker ${T.running ? 'walking' : ''}" style="left:calc(${small ? 30 : ((1 - (T.total ? T.left / T.total : 1)) * 100).toFixed(2)}% - 50px)">${L.svg({ look: A.dayLook(), mood: T.done ? 'excited' : 'happy', size: small ? 44 : 100, label: 'Lumi walking' })}</span></div>`;
     }
+    // no countdown: Lumi rests calmly, nothing counts down
+    if (style === 'none') return `<div class="nn-calm ${small ? 'small' : ''}"><span class="nn-calm-lumi">${L.svg({ look: A.dayLook(), mood: T.done ? 'excited' : 'calm', size: small ? 50 : 150, label: 'Lumi' })}</span><span class="nr-dots"><i></i><i></i><i></i></span></div>`;
     // colour circle: a pie of colour that slowly disappears
     return `<div class="nn-pie ${small ? 'small' : ''}"><span class="nn-pie-fill"></span><span class="nn-pie-dot"></span></div>`;
   }
@@ -141,9 +160,9 @@
     const style = nn.style || 'ring';
     const p = T.total ? T.left / T.total : 1;
     const buttons = T.done
-      ? `<button class="primary" data-a="nnNext" style="height:92px">${art(nn.next, 46)}<span>Start ${esc(nn.next ? nn.next.label : 'next')}</span></button>`
+      ? `<button class="primary" data-a="nnNext" style="height:92px">${art(nn.next, 46)}<span>Start ${esc(nn.next ? nn.next.label : 'next')}</span></button>${A.notReadyRail && A.supportState && A.supportState().notReady !== false ? `<button class="soft-btn" data-a="nrOpen">${ic('hourglass', 30)}<span>Not yet</span></button>` : ''}`
       : T.running
-        ? `<button class="soft-btn" data-a="nnPause">${ic('pause', 30)}<span>Pause</span></button><button class="soft-btn" data-a="nnFinish">${ic('check', 30)}<span>Done early</span></button>`
+        ? `<button class="soft-btn" data-a="nnPause">${ic('pause', 30)}<span>Pause</span></button><button class="soft-btn" data-a="nnFinish">${ic('check', 30)}<span>Done early</span></button>${A.notReadyRail && A.supportState && A.supportState().notReady !== false ? `<button class="soft-btn" data-a="nrOpen">${ic('hourglass', 30)}<span>Not yet</span></button>` : ''}`
         : `<button class="primary" data-a="nnStart" style="height:92px">${ic('play', 44)}<span>${T.left < T.total ? 'Keep going' : 'Start timer'}</span></button>`;
     return `
 <section class="screen nn" aria-label="Now and Next">
@@ -168,7 +187,7 @@
     <div class="nn-timer ${style} ${T.running ? 'running' : ''} ${T.done ? 'finished' : ''}" style="--p:${p.toFixed(4)}" role="timer" aria-label="${esc(words())}">${timerArt(style)}</div>
     <div class="nn-side">
       <span class="nn-words">${esc(words())}</span>
-      ${nn.numbers || state.profile.age === 'teen' ? `<span class="nn-num">${mmss(T.left)}</span>` : ''}
+      ${(nn.numbers || state.profile.age === 'teen') && style !== 'none' ? `<span class="nn-num">${mmss(T.left)}</span>` : ''}
       <div class="row gap12">${buttons}</div>
     </div>
   </div>
@@ -188,6 +207,8 @@
       const m = Math.ceil(T.left / 60);
       say(`${m} minute${m === 1 ? '' : 's'}. Then ${state.nownext.next ? state.nownext.next.label.toLowerCase() : 'the next thing'}.`);
     },
+    nnWarn: (d) => { state.nownext.warn = d.v; save(); render(); },
+    nnCue: (d) => { state.nownext.cue = d.v; save(); render(); if (d.v === 'chime' || d.v === 'both') tone(660, 0.4, 0.05); },
     nnPause: () => { T.running = false; render(); say('Timer paused.'); },
     nnFinish: () => { T.left = 0; T.running = false; T.done = true; clearInterval(tick); chime(); render(); say(`Well done! Time for ${state.nownext.next ? state.nownext.next.label : 'the next thing'}.`); },
     nnNext: () => {
@@ -249,7 +270,9 @@
       <h2 class="g-h top-gap">Timer look</h2>
       <div class="nn-styles">${STYLES.map(([id, name]) => `<button class="nn-style ${nn.style === id ? 'on' : ''}" data-a="nnStyle" data-v="${id}" aria-pressed="${nn.style === id}"><span class="nn-style-art" style="--p:.6">${timerArt(id, true)}</span><span>${name}</span></button>`).join('')}</div>
       <button class="check-row" data-a="nnNumbers" aria-pressed="${!!nn.numbers}"><span class="box ${nn.numbers ? 'on' : ''}">${nn.numbers ? ic('check', 14) : ''}</span><span>Also show the minutes as numbers</span></button>
-      <p class="g-note">Lumi says "5 more minutes" and "1 more minute" before the end, with a soft chime. The timer keeps going if your child leaves this screen, and a gentle banner pops up when time is up.</p>
+      <h2 class="g-h top-gap">Warnings before the change</h2>${seg(WARNS, nn.warn || 'long', 'nnWarn')}
+      <h2 class="g-h top-gap">How Lumi warns</h2>${seg(CUES, nn.cue || 'both', 'nnCue')}
+      <p class="g-note">"No countdown" hides the timer: Lumi just says first this, then that, and gives a soft cue. "Picture" makes the Next card glow without a sound. "Both" is a chime and words.</p>
     </div>
   </div>
 </section>`;

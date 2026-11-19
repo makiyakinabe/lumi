@@ -12,19 +12,35 @@
   const { D, L, S, state, ic, esc, say, save, award, track, render, go, later, applyGuide, hintNow, dots } = A;
 
   const GRID = { 1: [4, 3], 2: [6, 4], 3: [7, 5] };
-  const FOLDER_COLOURS = { out: '#4A78A8', core: '#2F7E79', feel: '#7E64C8', quick: '#C98A1E', food: '#E0913E', play: '#4F8A3F', places: '#4A78A8', people: '#C99A10', my: '#C2577A', abc: '#6B5A4E' };
+  // Here: words for where the child is right now. Core words stay where they are.
+  const HERE = {
+    home: ['Home', 'home', [['h-drink', 'drink', 'verb', 'drink'], ['h-eat', 'eat', 'verb', 'eat'], ['h-snack', 'snack', 'noun', 'snack'], ['h-toilet', 'toilet', 'noun', 'toilet'], ['h-tablet', 'tablet', 'noun', 'tablet'], ['h-tv', 'TV', 'noun', 'sTablet'], ['h-bath', 'bath', 'noun', 'bath'], ['h-bed', 'bed', 'noun', 'sMoon'], ['h-hug', 'hug', 'verb', 'hug'], ['h-play', 'play', 'verb', 'ball'], ['h-music', 'music', 'noun', 'music'], ['h-tired', 'tired', 'feel', 'sleep']]],
+    school: ['School', 'school', [['s-teacher', 'teacher', 'people', 'person'], ['s-friend', 'friend', 'people', 'together'], ['s-toilet', 'toilet', 'noun', 'toilet'], ['s-drink', 'water', 'noun', 'drink'], ['s-help', 'help', 'verb', 'help'], ['s-pencil', 'pencil', 'noun', 'pencil'], ['s-book', 'book', 'noun', 'book'], ['s-lunch', 'lunchbox', 'noun', 'lunchbox'], ['s-bag', 'bag', 'noun', 'bag'], ['s-break', 'break', 'noun', 'kBreak'], ['s-notunderstand', "I don't understand", 'q', 'what'], ['s-finished', 'finished', 'desc', 'wDone']]],
+    out: ['Out', 'busLine', [['o-bus', 'bus', 'noun', 'bus'], ['o-train', 'MRT', 'noun', 'train'], ['o-card', 'my card', 'noun', 'buscard'], ['o-toilet', 'toilet', 'noun', 'toilet'], ['o-wait', 'wait', 'verb', 'hourglass'], ['o-lost', 'I am lost', 'neg', 'pin'], ['o-loud', 'too loud', 'desc', 'volume'], ['o-home', 'go home', 'verb', 'home'], ['o-howmuch', 'how much?', 'q', 'shop'], ['o-rain', 'rain', 'noun', 'umbrella'], ['o-stop', 'stop', 'neg', 'stop'], ['o-thisone', 'this one', 'desc', 'thumb']]],
+    clinic: ['Clinic', 'dentist', [['c-hurt', 'it hurts', 'neg', 'hurt'], ['c-here', 'here', 'desc', 'pin'], ['c-medicine', 'medicine', 'noun', 'medicine'], ['c-wait', 'wait', 'verb', 'hourglass'], ['c-scared', 'scared', 'feel', 'hand'], ['c-stop', 'stop', 'neg', 'stop'], ['c-hand', 'hold my hand', 'verb', 'hand'], ['c-yes', 'yes', 'social', 'yes'], ['c-no', 'no', 'neg', 'no'], ['c-done', 'all done?', 'q', 'wDone'], ['c-toilet', 'toilet', 'noun', 'toilet'], ['c-tissue', 'tissue', 'noun', 'tissue']]],
+    meal: ['Meal', 'cutlery', [['m-more', 'more', 'desc', 'wMore'], ['m-finished', 'finished', 'desc', 'wDone'], ['m-eat', 'eat', 'verb', 'eat'], ['m-drink', 'drink', 'verb', 'drink'], ['m-hot', 'hot', 'desc', 'hot'], ['m-cold', 'cold', 'desc', 'cold'], ['m-yummy', 'yummy', 'desc', 'smile'], ['m-dontlike', "don't like", 'neg', 'dont'], ['m-spoon', 'spoon', 'noun', 'cutlery'], ['m-rice', 'rice', 'noun', 'sRice'], ['m-noodles', 'noodles', 'noun', 'sNoodles'], ['m-water', 'water', 'noun', 'drop']]],
+    play: ['Play', 'ball', [['p-myturn', 'my turn', 'people', 'me'], ['p-yourturn', 'your turn', 'people', 'you'], ['p-again', 'again', 'desc', 'wMore'], ['p-stop', 'stop', 'neg', 'stop'], ['p-help', 'help', 'verb', 'help'], ['p-ball', 'ball', 'noun', 'ball'], ['p-puzzle', 'puzzle', 'noun', 'puzzle'], ['p-swing', 'swing', 'noun', 'tree'], ['p-music', 'music', 'noun', 'music'], ['p-share', 'share', 'verb', 'together'], ['p-fast', 'fast', 'desc', 'jump'], ['p-finished', 'finished', 'desc', 'wDone']]]
+  };
+  const HERE_WORDS = Object.values(HERE).flatMap((h) => h[2].map(([id, label, t, icon]) => ({ id, label, t, icon })));
+  // guess where the child is from the step they are on (they can always change it)
+  const HERE_FROM_STEP = { school: 'school', bus: 'out', train: 'out', park: 'play', play: 'play', dentist: 'clinic', therapy: 'clinic', haircut: 'out', breakfast: 'meal', lunch: 'meal', dinner: 'meal', hawker: 'meal', cook: 'meal', wake: 'home', teeth: 'home', bath: 'home', bedtime: 'home' };
+  const hereNow = () => { if (S.aacHere) return S.aacHere; const st = S.day && S.day.plan[S.day.i]; const k = st && HERE_FROM_STEP[st.type || st.id]; return k || 'home'; };
+  const FOLDER_COLOURS = { here: '#2F7E79', out: '#4A78A8', core: '#2F7E79', feel: '#7E64C8', quick: '#C98A1E', food: '#E0913E', play: '#4F8A3F', places: '#4A78A8', people: '#C99A10', my: '#C2577A', abc: '#6B5A4E' };
 
   function folders() {
     const list = D.WORD_FOLDERS.filter((f) => !f.minAge || state.profile.age === f.minAge || A.level() === 3);
+    list.splice(1, 0, { id: 'here', name: 'Here', icon: 'pin' });
     if (A.level() === 3 || state.profile.age === 'teen') list.push({ id: 'abc', name: 'Type', icon: 'text' });
     return list;
   }
   function wordsIn(folder) {
     if (folder === 'my') return state.myWords.map((w) => Object.assign({ t: 'misc' }, w));
+    if (folder === 'here') return HERE[hereNow()][2].map(([id, label, t, icon]) => ({ id, label, t, icon }));
     return D.WORDS[folder] || [];
   }
   function findWord(id) {
     if (String(id).startsWith('txt:')) return { id, label: id.slice(4), t: 'misc', typed: true };
+    const hw = HERE_WORDS.find((x) => x.id === id); if (hw) return hw;
     for (const f of Object.keys(D.WORDS)) {
       const w = D.WORDS[f].find((x) => x.id === id);
       if (w) return w;
@@ -90,6 +106,10 @@
       if (folder === 'my' && !words.length) cells = `<div class="aac-empty">${ic('camera', 44)}<p>Grown-ups can add words with real photos here.</p><p class="small muted">Grown-ups › Activities › Talk words</p></div>`;
       for (let i = words.length; i < n && words.length; i++) cells += '<span class="word empty" aria-hidden="true"></span>';
       grid = `<div class="aac-grid" style="grid-template-columns:repeat(${cols},1fr);grid-template-rows:repeat(${r},1fr)">${cells}</div>`;
+      if (folder === 'here') {
+        const cur = hereNow();
+        grid = `<div class="col grow gap8" style="min-width:0;min-height:0"><div class="here-row" role="group" aria-label="Where are you?">${Object.entries(HERE).map(([k, h]) => `<button class="here-chip ${cur === k ? 'on' : ''}" data-a="aacHere" data-v="${k}" aria-pressed="${cur === k}">${ic(h[1], 26)}<span>${h[0]}</span></button>`).join('')}</div>${grid.replace('class="aac-grid"', 'class="aac-grid grow"')}</div>`;
+      }
     }
 
     const bottom = flow
@@ -109,6 +129,7 @@
     <button class="aac-ctrl" data-a="clearWords" aria-label="Clear message">${ic('x', 28)}</button>
     <button class="say-btn" data-a="sayWords" aria-label="Speak the message">${ic('speaker', 40)}</button>
   </div>
+  ${quickStrip()}
   <div class="row gap12 grow" style="align-items:stretch">
     <div class="folder-col" role="group" aria-label="Word folders">${folderBtns}</div>
     ${grid}
@@ -117,6 +138,21 @@
 </section>`;
   };
 
+  // quick phrases: one tap says the whole phrase; Repeat, Slower, Stop and Show big for the message
+  function quickStrip() {
+    const sp = A.supportState ? A.supportState() : null;
+    const phrases = sp ? sp.phrases : [];
+    return `<div class="quick-strip" role="group" aria-label="Quick phrases">
+      <button class="quick-card" data-a="nav" data-to="mycard">${ic('cards', 26)}<span>My card</span></button>
+      <div class="quick-phrases">${phrases.map((t) => `<button class="quick-p" data-a="aacQuick" data-v="${esc(t)}">${esc(t)}</button>`).join('')}</div>
+      <div class="play-ctrls" role="group" aria-label="Message controls">
+        <button class="aac-ctrl sm" data-a="aacRepeat" aria-label="Say it again">${ic('restart', 24)}<span>Again</span></button>
+        <button class="aac-ctrl sm" data-a="aacSlow" aria-label="Say it slowly">${ic('hourglass', 24)}<span>Slow</span></button>
+        <button class="aac-ctrl sm" data-a="aacStop" aria-label="Stop talking">${ic('stop', 24)}<span>Stop</span></button>
+        <button class="aac-ctrl sm" data-a="aacBig" aria-label="Show the message big">${ic('eye', 24)}<span>Show</span></button>
+      </div>
+    </div>${S.aacBig ? `<button class="aac-bigmsg" data-a="aacBigOff" aria-label="Close">${S.aacBig.map((w) => `<span class="big-w">${wordArt(w, 90)}<b>${esc(w.label)}</b></span>`).join('')}<small>Tap to close</small></button>` : ''}`;
+  }
   A.GUIDE.talk = () => {
     if (S.mode === 'flow') {
       if (S.replyShown) return { sel: '[data-a="talkNext"]', say: 'Tap the arrow.' };
@@ -162,6 +198,24 @@
       A.resetCalm();
       go('calm');
     },
+    aacHere: (d) => { S.aacHere = d.v; render(); say(HERE[d.v][0]); },
+    aacQuick: (d) => {
+      say(d.v);
+      state.stats.talkUses += 1; track('talk', d.v); save();
+      if (A.supportLog) A.supportLog('phrase', d.v);
+      if (S.day) S.day.stickers.add('talk');
+      const b = A.stage.querySelector(`.quick-p[data-v="${CSS.escape(d.v)}"]`); if (b) { b.classList.remove('said'); void b.offsetWidth; b.classList.add('said'); }
+    },
+    aacRepeat: () => { if (S.talk.length) { if (A.sayTalk) A.sayTalk(S.talk.map(findWord)); else say(sentenceText()); } else say('Tap pictures first.'); },
+    aacSlow: () => {
+      if (!S.talk.length) { say('Tap pictures first.'); return; }
+      const r = state.settings.voiceRate;
+      state.settings.voiceRate = Math.max(0.45, (r || 0.85) * 0.65);
+      try { if (A.sayTalk) A.sayTalk(S.talk.map(findWord)); else say(sentenceText()); } finally { state.settings.voiceRate = r; }
+    },
+    aacStop: () => { try { window.speechSynthesis.cancel(); } catch (e) { /* no speech */ } if (window.LumiAudio && window.LumiAudio.stopVoice) window.LumiAudio.stopVoice(); },
+    aacBig: () => { if (!S.talk.length) { say('Tap pictures first.'); return; } S.aacBig = S.talk.map(findWord); render(); },
+    aacBigOff: () => { S.aacBig = null; render(); },
     aacKey: (d) => {
       S.typed = S.typed || '';
       if (d.v === 'back') S.typed = S.typed.slice(0, -1);

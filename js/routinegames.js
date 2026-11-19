@@ -1005,12 +1005,12 @@
       if (g.id === 'task') {
         return `<div class="bar">${speakBtn(voiceFor(g), 52)}<span class="time-chip">${ic('clock', 26)}<span>${fmt(step.time)}</span></span><span class="grow"></span>
           <span class="sg-dots">${dots(def.progress(g), total, 'var(--green)', 22)}</span>
-          <button class="primary ${turn ? '' : 'faded'}" data-a="sgReal" style="height:76px">${ic('check', 32)}<span>Done</span></button></div>`;
+          ${turn && A.checkinHtml ? A.checkinHtml() : ''}<button class="primary ${turn ? '' : 'faded'}" data-a="sgReal" style="height:76px">${ic('check', 32)}<span>Done</span></button></div>`;
       }
       return `<div class="bar">${speakBtn(voiceFor(g), 52)}<span class="time-chip">${ic('clock', 26)}<span>${fmt(step.time)}</span></span>
         ${def.barMid && def.barMid(g) ? def.barMid(g) : barLine(g, def, turn)}<span class="grow"></span>
         <span class="sg-dots">${dots(def.progress(g), total, 'var(--green)', 24)}</span>
-        ${turn ? `<button class="primary" data-a="sgReal" style="height:76px">${ic('check', 32)}<span>${esc(def.real)}</span></button>`
+        ${turn ? `${A.checkinHtml ? A.checkinHtml() : ''}<button class="primary" data-a="sgReal" style="height:76px">${ic('check', 32)}<span>${esc(def.real)}</span></button>`
           : `<button class="sg-skip" data-a="sgSkip" aria-label="Skip the game">${ic('arrow', 22)}<span>Skip</span></button>`}</div>`;
     }
   };

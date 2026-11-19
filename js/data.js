@@ -304,7 +304,13 @@ window.DATA = {
       { id: 'q-hungry', label: "I'm hungry", t: 'misc', icon: 'eat' },
       { id: 'q-thirsty', label: "I'm thirsty", t: 'misc', icon: 'drink' },
       { id: 'q-hurt', label: 'Something hurts', t: 'misc', icon: 'hurt' },
-      { id: 'q-hello', label: 'Hello!', t: 'social', emoji: '👋' }
+      { id: 'q-hello', label: 'Hello!', t: 'social', emoji: '👋' },
+      { id: 'q-notmeant', label: "That's not what I meant", t: 'neg', icon: 'no' },
+      { id: 'q-again', label: 'Show me the choices again', t: 'q', icon: 'restart' },
+      { id: 'q-onequestion', label: 'One question at a time, please', t: 'social', icon: 'what' },
+      { id: 'q-thinking', label: "Please wait, I'm thinking", t: 'social', icon: 'hourglass' },
+      { id: 'q-sayagain', label: 'Can you say that again?', t: 'q', icon: 'speaker' },
+      { id: 'q-imeant', label: 'I meant…', t: 'social', icon: 'chat' }
     ],
     food: [
       { id: 'apple', label: 'apple', t: 'noun', emoji: '🍎' }, { id: 'banana', label: 'banana', t: 'noun', emoji: '🍌' },

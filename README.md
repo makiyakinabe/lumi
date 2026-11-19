@@ -375,6 +375,22 @@ It focuses on routines, communication and emotional regulation, with three modes
 
 It is plain HTML, CSS and JavaScript. There is nothing to install and no build step.
 
+## Support without taking control (js/support.js)
+
+Built from a product review: the child always has a clear next step, a way to say something, a way to pause or change direction, and a choice about how much help they want.
+
+- **Not yet** (My day, on the side rail, and in Now & Next): *More time* (waits calmly, with or without a countdown, then "Ready when you are"), *A break*, *Help me* (a big "I need help with teeth" card with three soft notes), *Do it later* (swaps with the next step; on the last step, *Not today*). Never counted as a fail.
+- **Together** sits next to the done button after each real-life step ("I'm up!", "Done"…). Grown-ups see how many steps were done on their own and how many together.
+- **Transitions** (Grown-ups › Now & Next): warnings 5 and 1 minute, 1 minute, or none; Lumi warns with a chime and words, a chime, words, the picture only (the Next card glows), or nothing; and a **No countdown** look where Lumi just says "First this, then that".
+- **Talk board**: a quick-phrase strip that speaks with one tap ("I need a break", "Help me, please", "Please wait", "I don't like this", "Something hurts", "I want to go home", editable), **Again / Slow / Stop / Show** for the message (Show puts it big on the screen to show someone), a **Here** folder with words for Home, School, Out, Clinic, Meal and Play (it guesses from the step the child is on; core words stay put), and fix-it phrases in Phrases ("That's not what I meant", "Show me the choices again", "One question at a time, please", "Please wait, I'm thinking", "Can you say that again?", "I meant…").
+- **My card** (Talk board › My card): big cards to show someone ("I need quiet", "Please give me space", "Please find my grown-up" with their name and number…), the quick phrases, Now & Next, and, if grown-ups allow it, **About me**: how I talk, what helps me, what I don't like, how to help me, my grown-up.
+- **Break space**: the child's own calm menu (squeeze, water, a quiet space, a hug, my grown-up, headphones, favourite toy, count) as picture prompts, **Show a card** to choose which card to show, and after **I'm ready**: *Carry on*, *Do it later / Something else*, *Do it together* or *Finish for now*.
+- **Feelings**: *Not sure* and *Skip* are always there; nobody has to name a feeling to get a break.
+- **Together mode**: before an activity, short tips for the grown-up (give time, show it once, few words, two choices, every way of answering counts) and the child picks *Show me*, *Together*, *Help me* or *My turn*. "Don't show tips again" turns them off.
+- **Grown-ups › Support** (on the Overview): quick phrases, the calm menu, the cards (plus your own), About me, how long More time lasts, and switches for Not yet, Together and the tips.
+- **Progress** now opens with **What helped this week**, strengths first: steps done on their own and together, steps getting easier (together before, on their own now), what the child asked for when not ready, what they chose after a break, their favourite calm supports and cards. It says plainly that these are observations, not a test.
+- **Share a report**: choose what to include (In short, What helped, Practice numbers, Feelings, What they told Lumi, What they say helps, Notes from home) before printing or downloading.
+
 ## Lumi's title page and story (js/intro.js)
 
 The app opens on Lumi's title page every time: **Play** goes to the home page and **Lumi's story** plays the story, so the child can watch it whenever they like. The first time, there is only **Start**, which plays the story.
@@ -902,6 +918,7 @@ web/
   js/music.js       the Music corner: six instruments, Keep the beat, Copy me (css/music.css)
   js/art.js         the Art studio: Colour in, Paint, My art (css/art.css)
   js/garden.js      Lumi's garden: plant, look after and pick (css/garden.css)
+  js/support.js     Not yet, Together check-in, My card, calm menu, Support page, What helped (css/support.css)
   js/games-fun.js   five "Go!" games (css/games-fun.css)
   js/rhythm-kitchen.js  Rhythm kitchen, the sixth (css/rhythm-kitchen.css)
   js/games-adventure.js Lumi's run, Lumi's kart, Star path (css/games-adventure.css)

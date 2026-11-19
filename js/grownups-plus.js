@@ -91,7 +91,9 @@
     const fs = A.focusChosen ? A.focusChosen() : [];
     const from = sinceT(n);
     const fromKey = A.dateKey(from);
-    const sec = (title, body) => (body ? `<section class="rp-sec"><h3>${title}</h3>${body}</section>` : '');
+    const hide = state.reportHide || [];
+    const sec = (title, body, id) => (body && !(id && hide.includes(id)) ? `<section class="rp-sec"><h3>${title}</h3>${body}</section>` : '');
+    const helped = A.supportWeekHtml ? A.supportWeekHtml(n) : '';
     const nums = fs.filter((f) => f.count).map((f) => `<div class="rp-num"><b>${sum(ds, f.count[0]) + (f.count[1] ? sum(ds, f.count[1]) : 0)}</b><span>${esc(f.unit)}</span></div>`).join('');
     const fc = feelCounts(ds);
     const talks = talksSince(n).slice(0, 10);
@@ -104,12 +106,13 @@
         <span class="rp-logo">${L.svg({ look: A.lookWith({ spark: 'none' }), mood: 'happy', size: 64 })}<b>Lumi</b></span>
       </header>
       ${fs.length ? `<p class="rp-focus"><b>Lumi helps with:</b> ${fs.map((f) => esc(f.name)).join(' · ')}</p>` : ''}
-      ${sec('In short', `<ul class="rp-list">${A.plainSummary(n).map(([, t]) => `<li>${t}</li>`).join('')}</ul>`)}
-      ${sec('Practice in this time', nums ? `<div class="rp-nums">${nums}</div>` : '')}
-      ${sec('Feelings shared', fc.length ? `<p>${fc.map(([f, k]) => `${esc(feelName(f))} <b>${k}</b>`).join(' · ')}</p>` : '')}
-      ${sec(`What ${name} told Lumi`, talks.length ? `<table class="rp-table"><tr><th>Story</th><th>Before</th><th>After</th><th>Has done it?</th></tr>${talks.map((r) => `<tr><td>${esc(r.title)}</td><td>${r.before ? esc(feelName(r.before)) : '–'}</td><td>${r.after ? esc(feelName(r.after)) : '–'}</td><td>${HAVE[r.have] || '–'}</td></tr>`).join('')}</table>` : '')}
-      ${sec(`What ${name} says helps`, helps.length ? `<p>${helps.map(([l, k]) => `${esc(l)} <b>${k}</b>`).join(' · ')}</p>` : '')}
-      ${sec('Notes from home', notes.length ? `<ul class="rp-notes">${notes.map((j) => `<li><b>${esc(fmtDate(new Date(j.when)))}</b>${j.tags && j.tags.length ? ` <span>${j.tags.map(esc).join(', ')}</span>` : ''}${j.note ? `<br>${esc(j.note)}` : ''}</li>`).join('')}</ul>` : '')}
+      ${sec('In short', `<ul class="rp-list">${A.plainSummary(n).map(([, t]) => `<li>${t}</li>`).join('')}</ul>`, 'summary')}
+      ${sec('What helped', helped ? helped.replace(/<h3[^>]*>.*?<\/h3>/, '').replace(/<p class="g-note">.*?<\/p>/, '') : '', 'helped')}
+      ${sec('Practice in this time', nums ? `<div class="rp-nums">${nums}</div>` : '', 'practice')}
+      ${sec('Feelings shared', fc.length ? `<p>${fc.map(([f, k]) => `${esc(feelName(f))} <b>${k}</b>`).join(' · ')}</p>` : '', 'feelings')}
+      ${sec(`What ${name} told Lumi`, talks.length ? `<table class="rp-table"><tr><th>Story</th><th>Before</th><th>After</th><th>Has done it?</th></tr>${talks.map((r) => `<tr><td>${esc(r.title)}</td><td>${r.before ? esc(feelName(r.before)) : '–'}</td><td>${r.after ? esc(feelName(r.after)) : '–'}</td><td>${HAVE[r.have] || '–'}</td></tr>`).join('')}</table>` : '', 'told')}
+      ${sec(`What ${name} says helps`, helps.length ? `<p>${helps.map(([l, k]) => `${esc(l)} <b>${k}</b>`).join(' · ')}</p>` : '', 'says')}
+      ${sec('Notes from home', notes.length ? `<ul class="rp-notes">${notes.map((j) => `<li><b>${esc(fmtDate(new Date(j.when)))}</b>${j.tags && j.tags.length ? ` <span>${j.tags.map(esc).join(', ')}</span>` : ''}${j.note ? `<br>${esc(j.note)}` : ''}</li>`).join('')}</ul>` : '', 'notes')}
       <footer class="rp-foot">Made with Lumi on ${fmtDate(new Date())}. Everything Lumi records stays on the family's tablet.</footer>
     </article>`;
   }
@@ -121,10 +124,12 @@
 <section class="screen grownup" aria-label="Report">
   ${A.gHeader('cgReport')}
   <div class="row gap16 grow" style="align-items:stretch">
-    <div class="g-panel" style="width:300px">
+    <div class="g-panel scroll" style="width:300px">
       <h2 class="g-h">Share a report</h2>
       <p class="g-note">One page for a teacher, therapist or doctor.</p>
       <div class="seg" role="group" aria-label="How long">${seg}</div>
+      <h3 class="g-sub-h top-gap">What to include</h3>
+      ${[['summary', 'In short'], ['helped', 'What helped'], ['practice', 'Practice numbers'], ['feelings', 'Feelings'], ['told', 'What they told Lumi'], ['says', 'What they say helps'], ['notes', 'Notes from home']].map(([id, l]) => { const on = !(state.reportHide || []).includes(id); return `<button class="check-row" data-a="rpSec" data-v="${id}" aria-pressed="${on}"><span class="box ${on ? 'on' : ''}">${on ? ic('check', 14) : ''}</span><span>${l}</span></button>`; }).join('')}
       <button class="g-btn top-gap" data-a="rpPrint">${ic('upload', 18)}<span>Print or save as PDF</span></button>
       <button class="g-btn outline" data-a="rpDownload">${ic('journal', 18)}<span>Download as a file</span></button>
       <p class="g-note">To save a PDF, choose <b>Save as PDF</b> (or Share › Save to Files) in the print window.</p>
@@ -149,6 +154,7 @@
   Object.assign(A.ACTIONS, {
     gsHide: () => { gs().hide = true; save(); render(); },
     rpDays: (d) => { S.rpDays = Number(d.v); render(); },
+    rpSec: (d) => { const h = state.reportHide = state.reportHide || []; const i = h.indexOf(d.v); if (i >= 0) h.splice(i, 1); else h.push(d.v); save(); render(); },
     rpPrint: () => {
       if (!printEl) { printEl = document.createElement('div'); printEl.id = 'printReport'; document.body.appendChild(printEl); }
       printEl.innerHTML = `<style>@media print{${RP_CSS.replace(/body\{[^}]*\}/, '')}}</style>${reportHtml(S.rpDays)}`;

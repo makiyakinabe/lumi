@@ -139,6 +139,7 @@
     ['cgActivities', 'target', 'Activities', 'Games, words, photo steps'],
     ['cgSensory', 'sliders', 'Sensory', 'Sound, motion, reminders'],
     ['cgProgress', 'chart', 'Progress', 'How it is going'],
+    ['cgSupport', 'heart', 'Support', 'Phrases, calm menu, My card'],
     ['cgJournal', 'journal', 'Notes', 'Write what you noticed'],
     ['cgReport', 'upload', 'Share a report', 'One page for school or therapy'],
     ['cgChild', 'person', 'Child', 'Name, age, colours, backup']

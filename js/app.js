@@ -1167,6 +1167,7 @@
     const rail = `<div class="rail">
       <button class="rail-btn" data-a="railTalk" aria-label="Talk"><span class="rail-circle" style="background:var(--teal-soft);border-color:var(--teal);color:var(--teal)">${ic('kTalk', 54)}</span><span>Talk</span></button>
       <button class="rail-btn" data-a="railCalm" aria-label="Calm"><span class="rail-circle" style="background:#EEE8F9;border-color:#7E64C8;color:#7E64C8">${ic('kCalm', 56)}</span><span>Calm</span></button>
+      ${A.notReadyRail && !d.celebrate ? A.notReadyRail() : ''}
       <button class="rail-btn" data-a="hint" aria-label="Hint: show me what to tap"><span class="rail-circle" style="background:var(--star-tint);border-color:var(--q);color:#9A6A10">${ic('kHint', 54)}</span><span>Hint</span></button>
     </div>`;
     return `
@@ -1214,6 +1215,7 @@
   </div>
   <div class="bar" style="height:96px">
     <button class="round-btn" data-a="hint" aria-label="Hint: show me what to tap" style="background:var(--star-tint);border-color:var(--q);color:#9A6A10">${ic('kHint', 46)}</button>
+    ${!ch ? `<button class="soft-btn" data-a="feelUnsure">${ic('what', 28)}<span>Not sure</span></button><button class="soft-btn" data-a="feelSkip">${ic('arrow', 28)}<span>Skip</span></button>` : ''}
     <span class="grow"></span>
     <button class="primary ${S.feelPick ? '' : 'faded'}" data-a="feelNext" aria-label="Next: help Lumi say it" style="height:72px">${ic('chat', 32)}${ic('arrow', 28)}</button>
   </div>
@@ -2027,6 +2029,7 @@
     }, 1500);
   }
 
+  A.prepareStep = () => prepareStep();
   function resetCalm() { S.calmDone = false; S.breaths = 0; S.squeeze = 0; S.countN = 0; S.bells = 0; }
 
   function noteCalmTool(t) {
@@ -2147,6 +2150,9 @@
         return 'keep';
       }
     },
+    // nobody has to name a feeling: Not sure and Skip are always there for the child's own feelings
+    feelUnsure: () => { track('feelings', 'unsure'); S.feelPick = null; say("That's okay. You don't have to know. Let's breathe together."); resetCalm(); go('calm'); },
+    feelSkip: () => { S.feelPick = null; goBack(); },
     feelNext: () => {
       if (!S.feelPick) { say('Tap a face first.'); hintNow(); return 'keep'; }
       S.talk = ['ifeel', S.feelPick];

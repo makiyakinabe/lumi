@@ -187,11 +187,12 @@
         <div class="brk-breathe"><span class="brk-ring"></span><span class="brk-ring r2"></span><span class="brk-lumi">${L.svg({ look: A.lookWith(), mood: 'calm', size: 200, label: 'Lumi breathing slowly' })}</span></div>
         <div class="brk-words" aria-hidden="true"><span class="in">Breathe in</span><span class="out">Breathe out</span></div>
       </div>`}
-      <div class="brk-opts">
-        <button class="brk-opt ${b.music ? 'on' : ''}" data-a="brkMusic" aria-pressed="${!!b.music}">${ic('music', 40)}<span>Music</span></button>
-        <button class="brk-opt ${b.quiet ? 'on' : ''}" data-a="brkQuiet" aria-pressed="${!!b.quiet}">${ic('quiet', 40)}<span>Quiet</span></button>
-        ${A.moveBreakOn && A.moveBreakOn() ? `<button class="brk-opt ${b.move ? 'on' : ''}" data-a="brkMove" aria-pressed="${!!b.move}">${ic(b.move ? 'kCalm' : 'stretch', 40)}<span>${b.move ? 'Breathe' : 'Move'}</span></button>` : ''}
-        <button class="brk-opt" data-a="brkTell">${ic('person', 40)}<span>Show a grown-up</span></button>
+      ${A.breakExtras ? A.breakExtras(b) : ''}
+      <div class="brk-opts" ${b.after ? 'hidden' : ''}>
+        ${!A.breakShows || A.breakShows('music') ? `<button class="brk-opt ${b.music ? 'on' : ''}" data-a="brkMusic" aria-pressed="${!!b.music}">${ic('music', 40)}<span>Music</span></button>` : ''}
+        ${!A.breakShows || A.breakShows('quiet') ? `<button class="brk-opt ${b.quiet ? 'on' : ''}" data-a="brkQuiet" aria-pressed="${!!b.quiet}">${ic('quiet', 40)}<span>Quiet</span></button>` : ''}
+        ${A.moveBreakOn && A.moveBreakOn() && (!A.breakShows || A.breakShows('move') || b.move) ? `<button class="brk-opt ${b.move ? 'on' : ''}" data-a="brkMove" aria-pressed="${!!b.move}">${ic(b.move ? 'kCalm' : 'stretch', 40)}<span>${b.move ? 'Breathe' : 'Move'}</span></button>` : ''}
+        <button class="brk-opt" data-a="brkTell">${ic('cards', 40)}<span>Show a card</span></button>
         <button class="primary brk-ready" data-a="brkDone">${ic('check', 36)}<span>I'm ready</span></button>
       </div>
       ${b.tell ? `<button class="brk-card" data-a="brkTellOff" aria-label="I need a break. Tap to close.">${ic('kBreak', 120)}<b>I need a break</b><span>${esc(state.childName || 'I')} ${state.childName ? 'needs' : 'need'} a quiet minute, please.</span></button>` : ''}
@@ -221,6 +222,7 @@
     }, 1000);
   }
   A.drawBreak = () => { if (S.brk) drawBreak(); };
+  A.endBreakNow = () => endBreak();
   function endBreak() {
     clearInterval(breakTick);
     if (A.moveBreakStop) A.moveBreakStop();
@@ -251,15 +253,19 @@
       return 'keep';
     },
     brkTell: () => {
+      A.track('breakAsk', screenName(S.brk.from), { quiet: true });
+      // pick which card to show (support.js); without it, the "I need a break" card
+      if (A.breakExtras) { S.brk.cards = true; drawBreak(); return 'keep'; }
       S.brk.tell = true;
       drawBreak();
       // three soft notes so a grown-up nearby notices
       if (!S.brk.quiet) { tone(659, 0.35, 0.06); setTimeout(() => tone(784, 0.35, 0.06), 260); setTimeout(() => tone(988, 0.5, 0.06), 520); }
-      A.track('breakAsk', screenName(S.brk.from), { quiet: true });
       return 'keep';
     },
     brkTellOff: () => { S.brk.tell = false; drawBreak(); return 'keep'; },
     brkDone: () => {
+      // ask what next (carry on, change it, together, finish) instead of going straight back
+      if (A.breakExtras && !S.brk.after) { S.brk.after = true; S.brk.tip = null; S.brk.cards = false; S.brk.card = null; drawBreak(); say('What would you like to do now?'); return 'keep'; }
       endBreak();
       const v = A.VOICE[S.screen] ? A.VOICE[S.screen]() : '';
       say('Welcome back! ' + (v || ''));

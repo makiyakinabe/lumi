@@ -15,7 +15,7 @@
 
   // Overview is the page Grown-ups opens on (focus.js); Notes (the journal) opens from Overview and Progress
   const TABS = [['cgHome', 'Overview', 'home'], ['builder', 'Timetable', 'calendar'], ['cgComingUp', 'Coming up', 'hourglass'], ['cgActivities', 'Activities', 'target'], ['cgChild', 'Child', 'person'], ['cgSensory', 'Sensory', 'sliders'], ['cgProgress', 'Progress', 'chart']];
-  const TAB_OF = { cgJournal: 'cgProgress', cgFocus: 'cgHome', cgVoice: 'cgSensory', cgLang: 'cgSensory', cgQuiz: 'cgSensory', cgNowNext: 'builder', cgReport: 'cgProgress' };
+  const TAB_OF = { cgJournal: 'cgProgress', cgFocus: 'cgHome', cgVoice: 'cgSensory', cgLang: 'cgSensory', cgQuiz: 'cgSensory', cgNowNext: 'builder', cgReport: 'cgProgress', cgSupport: 'cgHome' };
   const tz = () => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone.replace(/_/g, ' '); } catch (e) { return ''; } };
   A.gHeader = (active) => `<div class="row between g-header">
     <div class="row gap12">
@@ -365,6 +365,7 @@
     <div class="g-panel grow scroll">
       <div class="row between"><h2 class="g-h">How ${esc(state.childName || 'your child')} is doing</h2><div class="row gap8"><button class="g-btn small outline" data-a="nav" data-to="cgJournal">${ic('journal', 16)}<span>Notes</span></button><button class="g-btn small" data-a="nav" data-to="cgReport">${ic('upload', 16)}<span>Share a report</span></button></div></div>
       ${A.plainSummaryHtml ? A.plainSummaryHtml(7) : ''}
+      ${A.supportWeekHtml ? A.supportWeekHtml(7) : ''}
       ${A.focusWeekHtml ? A.focusWeekHtml() : ''}
       ${more('charts', 'Charts and details', 'Trends, feelings by day, accuracy, minutes', `<ul class="insights">${insights(week, prev).map((t) => `<li>${t}</li>`).join('')}</ul>
       ${A.feelChartHtml ? A.feelChartHtml() : ''}
