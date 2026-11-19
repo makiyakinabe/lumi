@@ -186,7 +186,8 @@
     const inner = `${p.ground}<g transform="${kidT}">${p.legs}${p.skirt}${p.torso}${p.over}${p.neck}</g>
       <g transform="${headT}">${hairBack(o)}${head(o, skin)}</g><g transform="${kidT}">${p.arms}${p.hold}</g>`;
     const flip = o.flip ? '<g transform="translate(200 0) scale(-1 1)">' : '<g>';
-    const crop = o.crop === 'head' ? '30 22 140 150' : o.crop === 'bust' ? '8 22 184 184' : '-20 0 240 400';
+    // a child's head sits lower (shorter body), so the head crop moves down with it
+    const crop = o.crop === 'head' ? (o.kid ? (o.baby ? '30 92 140 150' : '30 62 140 150') : '30 22 140 150') : o.crop === 'bust' ? '8 22 184 184' : '-20 0 240 400';
     const [, , vw, vh] = crop.split(' ').map(Number);
     const h = o.h == null ? 240 : o.h;
     const w = h === '1em' ? '1em' : Math.round((h * vw) / vh);

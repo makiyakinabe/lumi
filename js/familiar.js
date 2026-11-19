@@ -91,7 +91,11 @@
     audio = new Audio(c.url);
     const preset = A.voicePreset ? A.voicePreset() : {};
     audio.volume = Math.min(1, (preset.volume || 0.9) + 0.1);
-    audio.play().catch(() => { audio = null; A.tts(text); });
+    // the calm music gets quieter while the recording plays (audio.js listens for this)
+    window.LumiVoiceBusy = true;
+    const done = () => { window.LumiVoiceBusy = false; };
+    audio.addEventListener('ended', done); audio.addEventListener('pause', done); audio.addEventListener('error', done);
+    audio.play().catch(() => { done(); audio = null; A.tts(text); });
     return true;
   };
   A.familiarCount = () => { const l = lines(); return { have: l.filter((x) => clips[x.key]).length, total: l.length }; };

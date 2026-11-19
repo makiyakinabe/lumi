@@ -153,6 +153,11 @@
     ['all done?', '做完了吗？', 'sudah siap?', 'முடிந்ததா?'], ['tissue', '纸巾', 'tisu', 'டிஷ்யூ'], ['yummy', '好吃', 'sedap', 'சுவையாக இருக்கு'], ["don't like", '不喜欢', 'tak suka', 'பிடிக்கவில்லை'],
     ['spoon', '汤匙', 'sudu', 'கரண்டி'], ['my turn', '轮到我', 'giliran saya', 'என் முறை'], ['your turn', '轮到你', 'giliran awak', 'உன் முறை'], ['again', '再一次', 'lagi sekali', 'மீண்டும்'],
     ['share', '分享', 'kongsi', 'பகிர்'], ['fast', '快', 'laju', 'வேகமாக'],
+    // calm corner: Smell and blow, Count the stars; narrators (calmplus.js, narrator.js)
+    ['Smell the flower', '闻一闻花', 'Hidu bunga', 'பூவை முகர்ந்து பார்'], ['Blow out the candle', '吹灭蜡烛', 'Tiup lilin', 'மெழுகுவர்த்தியை ஊதி அணை'],
+    ['Smell', '闻一闻', 'Hidu', 'முகர்'], ['Blow', '吹', 'Tiup', 'ஊது'], ['Smell and blow', '闻一闻，吹一吹', 'Hidu dan tiup', 'முகர்ந்து ஊது'],
+    ['Count the stars', '数星星', 'Kira bintang', 'நட்சத்திரங்களை எண்ணு'], ['Who reads to me?', '谁给我读？', 'Siapa baca untuk saya?', 'எனக்கு யார் படிப்பார்கள்?'],
+    ['Choose a voice', '选一个声音', 'Pilih suara', 'ஒரு குரலைத் தேர்ந்தெடு'], ['Voice', '声音', 'Suara', 'குரல்'],
     // a few things Lumi often says
     ['How do you feel?', '你觉得怎么样？', 'Apa perasaan awak?', 'நீ எப்படி உணர்கிறாய்?'],
     ['Tap the pictures to talk.', '点图片来说话。', 'Tekan gambar untuk bercakap.', 'பேச படங்களைத் தொடு.'],

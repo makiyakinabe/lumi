@@ -58,6 +58,7 @@
 
   // the voice picker: who speaks, and how it sounds. Tapping one plays a short sample straight away.
   function whoArt(v, size) {
+    if (A.narratorPic) return A.narratorPic(v, size);
     if (v.id === 'lumi') return L.svg({ look: A.lookWith ? A.lookWith({ spark: 'none' }) : state.look, mood: 'happy', size });
     if (v.person && A.person) return A.person({ who: v.person, crop: 'head', h: size, mood: 'smile' });
     const pic = window.lumiPic && window.lumiPic(v.e, size);
@@ -71,14 +72,15 @@
     const how = st.voiceStyle || (st.voiceId === 'soft' ? 'quiet' : 'gentle');
     return `<div class="vp ${op.cls || ''}">
       <div class="vp-row"><span class="vp-label">${ic('speaker', 20)}<span>Who speaks</span></span>
-        <div class="vp-opts">${D.VOICES.map((v) => `<button class="vp-opt ${who === v.id ? 'on' : ''}" data-a="setVoice" data-v="${v.id}" aria-pressed="${who === v.id}"><span class="vp-art">${whoArt(v, size)}</span><span class="vp-name">${esc(v.name)}</span></button>`).join('')}</div></div>
+        <div class="vp-opts">${(A.kidVoices ? A.kidVoices() : D.VOICES).filter((v) => !op.only || v.id === who).map((v) => `<button class="vp-opt ${who === v.id ? 'on' : ''}" data-a="setVoice" data-v="${v.id}" aria-pressed="${who === v.id}"><span class="vp-art">${whoArt(v, size)}</span><span class="vp-name">${esc(v.name)}</span></button>`).join('')}</div></div>
       <div class="vp-row"><span class="vp-label">${ic('music', 20)}<span>How it sounds</span></span>
         <div class="vp-opts">${(D.VOICE_STYLES || []).map((v) => `<button class="vp-opt ${how === v.id ? 'on' : ''}" data-a="setVoiceStyle" data-v="${v.id}" aria-pressed="${how === v.id}"><span class="vp-art">${ic(v.icon, Math.round(size * 0.8))}</span><span class="vp-name">${esc(v.name)}</span>${op.subs ? `<small>${esc(v.sub)}</small>` : ''}</button>`).join('')}</div></div>
     </div>`;
   };
   function voiceRow() {
     if (!state.settings.childVoice) return '';
-    return `<div class="pause-voices">${A.voicePickerHtml({ size: 40, cls: 'kid' })}</div>`;
+    // the narrator in use, a button to choose another (a whole screen of narrators), and how it sounds
+    return `<div class="pause-voices">${A.voicePickerHtml({ size: 40, cls: 'kid', only: true })}${A.SCREENS.narrator ? `<button class="soft-btn nar-open" data-a="narOpen">${ic('speaker', 26)}<span>Choose a voice</span></button>` : ''}</div>`;
   }
   function drawPause() {
     const canRestart = !!RESTART[S.screen] || /^g-/.test(S.screen);
@@ -240,7 +242,7 @@
     brkMusic: () => {
       const b = S.brk;
       b.music = !b.music;
-      if (b.music) { b.quiet = false; S.mute = false; if (window.LumiAudio) window.LumiAudio.play('lullaby'); } else if (window.LumiAudio) window.LumiAudio.stop();
+      if (b.music) { b.quiet = false; S.mute = false; if (window.LumiAudio) window.LumiAudio.play(A.favTrack ? A.favTrack() : 'lullaby'); } else if (window.LumiAudio) window.LumiAudio.stop();
       drawBreak();
       return 'keep';
     },

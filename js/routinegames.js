@@ -308,7 +308,7 @@
     g.timer = 120;
     render();
     say("Let's brush together for two minutes. Top teeth first.");
-    if (window.LumiAudio && !window.LumiAudio.playing && state.settings.sounds) { window.LumiAudio.play('lullaby'); g.music = true; }
+    if (window.LumiAudio && !window.LumiAudio.playing && state.settings.sounds) { window.LumiAudio.play(A.favTrack ? A.favTrack() : 'lullaby'); g.music = true; }
     const id = A.every(() => {
       if (cur() !== g || S.screen !== 'routine') { clearInterval(id); if (g.music && window.LumiAudio) window.LumiAudio.stop(); return; }
       g.timer -= 1;

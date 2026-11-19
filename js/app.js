@@ -260,16 +260,25 @@
     if (NOVELTY.test(v.name)) s -= 50;
     return s;
   }
-  function pickVoice(prefer) {
+  // slot: narrators who share a kind of voice (two women, say) take the 1st, 2nd, 3rd... best match, so on a
+  // tablet with several voices each narrator really sounds different; with one voice they share it
+  // (and differ only by pitch and speed). The "Tablet voice" narrator uses the exact voice a grown-up picked.
+  function pickVoice(prefer, slot) {
     try {
-      if (voiceCache[prefer || 'any'] !== undefined) return voiceCache[prefer || 'any'];
-      const all = window.speechSynthesis.getVoices().filter((v) => /^en/i.test(v.lang));
-      if (!all.length) return null;
-      const best = all.slice().sort((a, b) => voiceScore(b, prefer) - voiceScore(a, prefer))[0];
-      voiceCache[prefer || 'any'] = best && voiceScore(best, prefer) > -10 ? best : null;
-      return voiceCache[prefer || 'any'];
+      const key = (prefer || 'any') + ':' + (slot || 0) + ':' + (state.settings.voiceName || '');
+      if (voiceCache[key] !== undefined) return voiceCache[key];
+      const all = window.speechSynthesis.getVoices().filter((v) => /^en/i.test(v.lang) && voiceScore(v, prefer) > -10);
+      if (!all.length) return (voiceCache[key] = null);
+      if (prefer === 'pinned') { const p = all.find((v) => v.name === state.settings.voiceName); if (p) return (voiceCache[key] = p); }
+      const sorted = all.slice().sort((a, b) => voiceScore(b, prefer) - voiceScore(a, prefer));
+      const match = sorted.filter((v) => (prefer === 'female' ? FEMALE.test(v.name) : prefer === 'male' ? MALE.test(v.name) && !/female/i.test(v.name) : true));
+      const pool = match.length ? match : sorted;
+      voiceCache[key] = pool[(slot || 0) % pool.length];
+      return voiceCache[key];
     } catch (e) { return null; }
   }
+  A.voiceList = () => { try { return window.speechSynthesis.getVoices().filter((v) => /^en/i.test(v.lang) && !NOVELTY.test(v.name)); } catch (e) { return []; } };
+  A.clearVoiceCache = () => Object.keys(voiceCache).forEach((k) => delete voiceCache[k]);
   if ('speechSynthesis' in window) {
     try {
       window.speechSynthesis.getVoices();
@@ -282,7 +291,7 @@
     const legacy = st.voiceId === 'soft';
     const who = D.VOICES.find((v) => v.id === (legacy ? 'lumi' : st.voiceId)) || D.VOICES[0];
     const how = (D.VOICE_STYLES || []).find((v) => v.id === (st.voiceStyle || (legacy ? 'quiet' : 'gentle'))) || { rate: 1, pitch: 1, volume: 1 };
-    return { prefer: who.prefer, rate: (who.rate || 1) * how.rate, pitch: (who.pitch || 1) * how.pitch, volume: Math.min(1, (who.volume || 0.9) * (how.volume / 0.9)) };
+    return { prefer: who.prefer, slot: who.slot || 0, rate: (who.rate || 1) * how.rate, pitch: (who.pitch || 1) * how.pitch, volume: Math.min(1, (who.volume || 0.9) * (how.volume / 0.9)) };
   }
   // Lumi speaks one sentence at a time, a little slower and softer, so each idea has room to land.
   function say(text, opts) {
@@ -298,12 +307,12 @@
     try {
       window.speechSynthesis.cancel();
       const preset = voicePreset();
-      const v = pickVoice(preset.prefer);
+      const v = pickVoice(preset.prefer, preset.slot);
       const parts = String(text).match(/[^.!?]+[.!?]*/g) || [text];
       parts.map((p) => p.trim()).filter(Boolean).forEach((p) => {
         const u = new SpeechSynthesisUtterance(p);
         u.rate = Math.min(1.15, (state.settings.voiceRate || 0.85) * (preset.rate || 1));
-        u.pitch = Math.max(0.5, Math.min(1.6, preset.pitch));
+        u.pitch = Math.max(0.5, Math.min(1.7, preset.pitch));
         u.volume = preset.volume || 0.9;
         if (v) { u.voice = v; u.lang = v.lang; }
         window.speechSynthesis.speak(u);
@@ -1226,6 +1235,7 @@
   VOICE.calm = () => "Let's calm down together.";
   function calmCenter() {
     const t = S.calmTool;
+    if (A.CALM_EXTRA && A.CALM_EXTRA[t]) return A.CALM_EXTRA[t].html();
     if (t === 'balloon') {
       return `<div class="balloon-box">
         <div class="balloon ${S.calmDone ? 'still' : ''}"><svg width="280" height="336" viewBox="0 0 300 360" aria-hidden="true"><path d="M150 282 C140 300 160 314 150 332 C142 346 156 352 150 360" fill="none" stroke="#7D8CA8" stroke-width="3" stroke-linecap="round"/><ellipse cx="150" cy="140" rx="120" ry="134" fill="#9BB7D4"/><ellipse cx="108" cy="84" rx="22" ry="38" fill="#fff" opacity=".5"/><polygon points="140 286 160 286 150 272" fill="#7FA0C2"/></svg></div>
@@ -1249,7 +1259,7 @@
   }
   SCREENS.calm = () => {
     const flow = S.mode === 'flow';
-    const tools = [['balloon', 'Balloon breathing'], ['squeeze', 'Squeeze'], ['count', 'Count'], ['music', 'Bells']];
+    const tools = [['balloon', 'Balloon breathing'], ['squeeze', 'Squeeze'], ['count', 'Count'], ['music', 'Bells']].concat(Object.keys(A.CALM_EXTRA || {}).map((k) => [k, A.CALM_EXTRA[k].name]));
     const now = window.LumiAudio ? window.LumiAudio.playing : null;
     const tracks = D.TRACKS.map((t) => `<button class="track ${now === t.id ? 'on' : ''}" data-a="music" data-v="${t.id}" aria-pressed="${now === t.id}" aria-label="${t.name}${now === t.id ? ', playing. Tap to stop' : ''}">
       <span class="track-ic">${ic(t.icon, 26)}</span><span class="track-name">${t.name}</span><span class="track-pp">${ic(now === t.id ? 'pauseFill' : 'playPause', 20)}</span></button>`).join('');
@@ -1261,7 +1271,7 @@
   <div class="blob" style="right:-60px;top:80px;width:320px;height:320px;background:#B5D8C7"></div>
   <div class="blob" style="right:120px;bottom:120px;width:220px;height:220px;background:#F6D6AD"></div>
   <div class="row between" style="height:60px">
-    <div class="row gap12">${backBtn()}${speakBtn("Let's calm down together.")}</div>
+    <div class="row gap12">${backBtn()}${speakBtn("Let's calm down together.")}${SCREENS.narrator ? `<button class="soft-btn calm-voice" data-a="nav" data-to="narrator">${ic('speaker', 26)}<span>Voice</span></button>` : ''}</div>
     ${flow ? stepPills('calm') : '<span></span>'}
   </div>
   <div class="row grow" style="justify-content:center;gap:60px">
@@ -1274,7 +1284,7 @@
     </div>
   </div>
   <div class="row between" style="height:100px">
-    <div class="row gap12">${tools.map(([t, name]) => `<button class="tool ${S.calmTool === t ? 'on' : ''}" data-a="calmTool" data-t="${t}" aria-label="${name}" aria-pressed="${S.calmTool === t}">${ic({ balloon: 'kBalloon', squeeze: 'kSqueeze', count: 'kCount', music: 'kBell' }[t], 58)}</button>`).join('')}</div>
+    <div class="row gap12">${tools.map(([t, name]) => `<button class="tool ${S.calmTool === t ? 'on' : ''}" data-a="calmTool" data-t="${t}" aria-label="${name}" aria-pressed="${S.calmTool === t}">${A.CALM_EXTRA && A.CALM_EXTRA[t] ? A.CALM_EXTRA[t].icon(58) : ic({ balloon: 'kBalloon', squeeze: 'kSqueeze', count: 'kCount', music: 'kBell' }[t], 58)}</button>`).join('')}</div>
     <button class="primary ${S.calmDone ? '' : 'soft'}" data-a="calmReady" style="height:84px">${ic('smile', 36)}<span>Ready</span></button>
   </div>
 </section>`;
@@ -1378,12 +1388,15 @@
   VOICE.room = () => (state.roomMoved ? "This is Lumi's room. Move things anywhere you like." : "This is Lumi's room. Drag things to move them anywhere you like. Tap something new to buy it.");
   // soft music-box music plays the whole time the child is in the room (and dressing Lumi up)
   const ROOM_SCREENS = ['room', 'dressup'];
+  // the calm track the child chose last in the calm corner (Lullaby until they choose)
+  const favTrack = () => (D.TRACKS.some((t) => t.id === state.settings.calmTrack && t.id !== 'mine') ? state.settings.calmTrack : 'lullaby');
+  A.favTrack = favTrack;
   const roomMusicOn = () => state.settings.roomMusic !== false && state.settings.sounds && !S.mute;
   function roomMusic(on) {
     const M = window.LumiAudio;
     if (!M) return;
-    if (on && roomMusicOn() && !M.playing) { M.play('lullaby'); S.roomMusic = true; }
-    if (!on && S.roomMusic) { if (M.playing === 'lullaby') M.stop(); S.roomMusic = false; }
+    if (on && roomMusicOn() && !M.playing) { M.play(favTrack()); S.roomMusic = true; }
+    if (!on && S.roomMusic) { if (M.playing) M.stop(); S.roomMusic = false; }
   }
   ENTER.room = () => roomMusic(true);
   ENTER.dressup = () => roomMusic(true);
@@ -2213,6 +2226,7 @@
       if (!A) return;
       if (A.playing === d.v) { A.stop(); render(); return; }
       A.setVolume(state.settings.musicVolume);
+      if (d.v !== 'mine') { state.settings.calmTrack = d.v; save(); } // the child's favourite plays in the break space, room and at bedtime too
       A.play(d.v).then((ok) => {
         if (!ok && d.v === 'mine') say('Ask a grown-up to add your music first.');
         render();
@@ -2237,6 +2251,7 @@
       if (d.t === 'squeeze') say('Press and hold the ball. Squeeze!');
       if (d.t === 'count') say("Let's count to five.");
       if (d.t === 'music') say('Tap the bells.');
+      if (A.CALM_EXTRA && A.CALM_EXTRA[d.t] && A.CALM_EXTRA[d.t].start) A.CALM_EXTRA[d.t].start();
     },
     countTap: (d) => {
       const n = Number(d.n);

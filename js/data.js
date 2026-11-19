@@ -523,19 +523,31 @@ window.DATA = {
     { id: 'waves', name: 'Ocean waves', icon: 'drop' },
     { id: 'rain', name: 'Soft rain', icon: 'rain' },
     { id: 'clouds', name: 'Floating', icon: 'cloud' },
+    // made for Lumi (audio.js): slow, the same short tune again and again, soft and low so words stay clear
+    { id: 'starlight', name: 'Starlight', icon: 'star', fresh: true },
+    { id: 'rocking', name: 'Rocking boat', icon: 'drop', fresh: true },
+    { id: 'forest', name: 'Quiet forest', icon: 'sTree', fresh: true },
     { id: 'mine', name: 'My music', icon: 'heart' }
   ],
   REMINDER_IDEAS: [['💧', 'Drink some water'], ['🚽', 'Toilet break'], ['🧘', 'Stretch with Lumi'], ['💊', 'Medicine with a grown-up'], ['🍎', 'Snack time']],
 
   // ---------------------------------------------------------------- Voices the child can choose (uses the voices installed on the tablet)
   VOICES: [
-    // Who speaks. Every voice is gentle: a little slower than normal, soft pitch, never shouty.
-    { id: 'lumi', name: 'Lumi', e: '✨', pitch: 1.12, rate: 0.95, volume: 0.9, prefer: 'female' },
-    { id: 'girl', name: 'Girl', e: '👧', pitch: 1.22, rate: 0.95, volume: 0.9, prefer: 'female', person: 'girl' },
-    { id: 'boy', name: 'Boy', e: '👦', pitch: 1.12, rate: 0.95, volume: 0.9, prefer: 'male', person: 'boy' },
-    { id: 'grown', name: 'Grown-up woman', e: '🧑', pitch: 1, rate: 0.9, volume: 0.9, prefer: 'female', person: 'mum' },
-    { id: 'man', name: 'Grown-up man', e: '🧔', pitch: 0.9, rate: 0.9, volume: 0.9, prefer: 'male', person: 'dad' },
-    { id: 'robot', name: 'Friendly robot', e: '🤖', pitch: 0.75, rate: 0.92, volume: 0.85, prefer: null }
+    // Who reads to the child (the narrator). Every voice is gentle: a little slower than normal, soft pitch,
+    // never shouty. slot: narrators of the same kind take different voices from the tablet when it has them.
+    { id: 'lumi', name: 'Lumi', e: '✨', pitch: 1.12, rate: 0.95, volume: 0.9, prefer: 'female', slot: 0, hello: "Hi! I'm Lumi. I'll read to you." },
+    { id: 'girl', name: 'Girl', e: '👧', pitch: 1.22, rate: 0.95, volume: 0.9, prefer: 'female', slot: 1, person: 'girl', hello: "Hi! I'll read to you. Let's go!" },
+    { id: 'boy', name: 'Boy', e: '👦', pitch: 1.12, rate: 0.95, volume: 0.9, prefer: 'male', slot: 1, person: 'boy', hello: "Hey! I'll read to you. Ready?" },
+    { id: 'grown', name: 'Grown-up woman', e: '🧑', pitch: 1, rate: 0.9, volume: 0.9, prefer: 'female', slot: 2, person: 'mum', hello: "Hello. I'll read to you, nice and slow." },
+    { id: 'man', name: 'Grown-up man', e: '🧔', pitch: 0.9, rate: 0.9, volume: 0.9, prefer: 'male', slot: 0, person: 'dad', hello: "Hello. I'll read to you. Take your time." },
+    { id: 'nana', name: 'Grandma', pitch: 0.96, rate: 0.84, volume: 0.88, prefer: 'female', slot: 3, person: 'grandma', hello: "Hello, my dear. Grandma will read to you." },
+    { id: 'grandpa', name: 'Grandpa', pitch: 0.84, rate: 0.84, volume: 0.88, prefer: 'male', slot: 2, person: 'grandpa', hello: "Hello there. Grandpa will read to you, slowly." },
+    { id: 'teacher', name: 'Teacher', pitch: 1.04, rate: 0.9, volume: 0.9, prefer: 'female', slot: 4, person: 'teacher', hello: "Good morning! I'll read to you, one step at a time." },
+    { id: 'owl', name: 'Storyteller Owl', pitch: 0.8, rate: 0.84, volume: 0.88, prefer: 'male', slot: 1, art: 'owl', hello: "Hoo, hoo. Hello. I'm Storyteller Owl. Let me read to you." },
+    { id: 'bear', name: 'Big Bear', pitch: 0.64, rate: 0.82, volume: 0.9, prefer: 'male', slot: 0, art: 'bear', hello: "Hello, little friend. I'm Big Bear. I'll read to you." },
+    { id: 'star', name: 'Little Star', pitch: 1.45, rate: 0.96, volume: 0.85, prefer: 'female', slot: 2, art: 'star', hello: "Twinkle! I'm Little Star. I'll read to you." },
+    { id: 'robot', name: 'Friendly robot', e: '🤖', pitch: 0.75, rate: 0.92, volume: 0.85, prefer: null, slot: 0, hello: 'Beep. Hello. I am a friendly robot. I will read to you.' },
+    { id: 'tablet', name: 'Tablet voice', pitch: 1, rate: 1, volume: 0.9, prefer: 'pinned', slot: 0, art: 'tablet', grownOnly: true, hello: "Hello. This is the tablet's own voice." }
   ],
   // How the voice sounds (multiplies the voice above). Grown-ups or the child can pick one.
   VOICE_STYLES: [

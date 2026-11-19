@@ -1,0 +1,78 @@
+/* calmplus.css: Smell and blow, Count the stars, the narrator picker, more calm music */
+
+/* the music list now holds more tracks: it scrolls if it has to, new tunes get a small dot */
+.calm-screen .music-list { max-height: 100%; overflow-y: auto; scrollbar-width: none; gap: 6px; }
+.calm-screen .music-list::-webkit-scrollbar { display: none; }
+.calm-screen .track { height: 46px; flex: none; }
+.calm-voice { height: 56px; padding: 0 16px; font-size: 18px; border-width: 2px; }
+.calm-tool-ic { display: flex; align-items: center; justify-content: center; line-height: 0; }
+.calm-tool-ic.star-ic { color: #F4B63F; }
+.tool.on .calm-tool-ic.star-ic { color: #FFE38A; }
+
+/* Lumi breathes with the child: grows a little on the breath in (4 s), shrinks on the breath out (6 s) */
+.calm-lumi.lumi-breathes { transform-origin: 50% 90%; transition: transform 6s ease-in-out; }
+.calm-lumi.lumi-breathes.in { transform: scale(1.07); transition-duration: 4s; }
+
+/* ---------- Smell and blow */
+.fb-box { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.fb-pair { display: flex; gap: 26px; }
+.fb-item { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 200px; height: 236px; border-radius: 40px; background: rgba(255, 255, 255, .78); border: 4px solid transparent; transition: border-color .6s, background .6s, opacity .6s; opacity: .55; }
+.fb-item svg { position: relative; z-index: 1; overflow: visible; }
+.fb-cap { position: relative; z-index: 1; font-size: 22px; font-weight: 900; color: var(--muted); }
+.fb-ring { position: absolute; left: 50%; top: 44%; width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 255, 255, .0) 40%, rgba(240, 140, 176, .28) 70%, rgba(240, 140, 176, 0) 72%); transform: scale(.7); opacity: 0; transition: transform 6s ease-in-out, opacity 1s; }
+.fb-item.candle .fb-ring { background: radial-gradient(circle, rgba(255, 255, 255, 0) 40%, rgba(244, 182, 63, .3) 70%, rgba(244, 182, 63, 0) 72%); }
+.fb-box.in .fb-item.flower, .fb-box.out .fb-item.candle { opacity: 1; background: #fff; border-color: #EBDDF5; }
+.fb-box.in .fb-item.flower .fb-ring { opacity: 1; transform: scale(1.25); transition-duration: 4s, 1s; }
+.fb-box.out .fb-item.candle .fb-ring { opacity: 1; transform: scale(.75); transition-duration: 6s, 1s; }
+.fb-petals { transform-origin: 60px 54px; transform: scale(.82); transition: transform 4s ease-in-out; }
+.fb-box.in .fb-petals { transform: scale(1.06); }
+.fb-flame { transform-origin: 60px 42px; transition: transform 6s ease-in-out, opacity 6s ease-in; }
+.fb-box.out .fb-flame { transform: rotate(-24deg) scale(.55, .7); opacity: .25; }
+.fb-smoke { opacity: 0; transition: opacity 2s; }
+.fb-box.out .fb-smoke { opacity: .8; transition-delay: 3.5s; }
+.fb-box.done .fb-item { opacity: 1; }
+.fb-word { font-size: 40px; font-weight: 900; color: #2B4566; min-height: 50px; text-align: center; }
+
+/* ---------- Count the stars */
+.st-box { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.st-sky { position: relative; width: 470px; height: 380px; border-radius: 40px; overflow: hidden; background: radial-gradient(120% 90% at 30% 10%, #3B4C86 0%, #22305E 55%, #161F44 100%); box-shadow: inset 0 0 0 4px rgba(255, 255, 255, .5), 0 6px 0 rgba(30, 40, 80, .15); transition: background 2s; }
+.st-sky.done { background: radial-gradient(120% 90% at 30% 10%, #4A5C9A 0%, #2C3B70 55%, #1C2752 100%); }
+.st-far { position: absolute; width: 4px; height: 4px; margin: -2px; border-radius: 50%; background: #fff; opacity: .45; animation: stTwinkle 4s ease-in-out infinite; }
+@keyframes stTwinkle { 50% { opacity: .15; } }
+.st-moon { position: absolute; right: 22px; top: 18px; line-height: 0; filter: drop-shadow(0 0 10px rgba(255, 243, 196, .6)); }
+.st-lines { position: absolute; inset: 0; width: 100%; height: 100%; }
+.st-lines line { stroke: #FFE38A; stroke-width: .6; stroke-linecap: round; opacity: 0; transition: opacity 1.2s; vector-effect: non-scaling-stroke; stroke-dasharray: 2 2; }
+.st-lines line { stroke-width: 3px; }
+.st-lines line.on { opacity: .55; }
+.st-sky.done .st-lines line { opacity: .9; stroke-dasharray: none; }
+.st-star { position: absolute; width: 64px; height: 64px; margin: -32px 0 0 -32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: #FFF3C4; opacity: 0; transform: scale(.4); transition: opacity 1.2s, transform 1.2s, color .6s; pointer-events: none; }
+.st-star.show { opacity: .9; transform: scale(1); pointer-events: auto; animation: stCome 2.4s ease-in-out infinite; }
+@keyframes stCome { 50% { transform: scale(1.18); filter: drop-shadow(0 0 10px rgba(255, 243, 196, .9)); } }
+.st-star.lit { opacity: 1; transform: scale(.9); color: #FFD54F; filter: drop-shadow(0 0 8px rgba(255, 213, 79, .8)); animation: none; }
+.st-sky.done .st-star.lit { transform: scale(1); }
+.st-dir { position: absolute; left: 14px; bottom: 12px; height: 44px; padding: 0 14px; border-radius: 22px; background: rgba(255, 255, 255, .16); color: #fff; font-size: 18px; font-weight: 900; border: 2px solid rgba(255, 255, 255, .35); }
+.st-count { font-size: 56px; font-weight: 900; color: #2B4566; height: 64px; line-height: 64px; }
+@media (prefers-reduced-motion: reduce) { .st-star.show, .st-far { animation: none; } }
+.reduce-motion .st-star.show, .reduce-motion .st-far { animation: none; }
+
+/* ---------- Who reads to me? */
+.nar-screen { gap: 14px; background: linear-gradient(180deg, #F3EEFB 0%, #FBF7F0 100%); }
+.nar-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-auto-rows: minmax(0, 1fr); gap: 14px; min-height: 0; }
+.nar-card { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 8px; border-radius: 28px; background: #fff; border: 4px solid #EEE6F7; box-shadow: 0 5px 0 rgba(59, 47, 47, .07); font-size: calc(19px * var(--ts, 1)); font-weight: 900; color: var(--ink); text-align: center; line-height: 1.1; min-height: 0; }
+.nar-card.on { border-color: var(--teal); background: var(--teal-soft); }
+.nar-art { width: 96px; height: 96px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #F7F2FC; overflow: hidden; flex: none; }
+.nar-art svg { max-width: 100%; max-height: 100%; }
+.nar-tick { position: absolute; right: 10px; top: 10px; width: 32px; height: 32px; border-radius: 50%; background: var(--teal); color: #fff; display: flex; align-items: center; justify-content: center; }
+.nar-bar { display: flex; align-items: center; gap: 12px; height: 96px; flex: none; padding: 0 14px; border-radius: 28px; background: #fff; }
+.nar-bar-label { display: flex; align-items: center; gap: 6px; font-weight: 900; color: var(--muted); flex: none; }
+.nar-styles { display: flex; gap: 8px; flex: 1; min-width: 0; }
+.nar-style { flex: 1 1 0; min-width: 0; height: 68px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 18px; background: #F7F2FC; border: 3px solid transparent; font-size: 14px; font-weight: 800; color: #5B45A8; }
+.nar-style.on { border-color: #7E64C8; background: #EEE8F9; }
+.nar-done { display: flex; align-items: center; gap: 8px; height: 72px; padding: 0 26px; font-size: 22px; flex: none; }
+.nar-open { height: 56px; font-size: 18px; border-width: 2px; }
+
+/* ---------- Grown-ups › Sensory: voices on this device */
+.tv-list { display: flex; flex-direction: column; gap: 6px; }
+.tv-row { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 14px; border: 2px solid #EEE6DA; background: #fff; }
+.tv-row.on { border-color: var(--teal); background: var(--teal-soft); }
+.tv-row small { color: var(--muted); font-weight: 700; }

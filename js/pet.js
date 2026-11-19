@@ -499,7 +499,7 @@
     later(sleepTick, 700);
   }
   function stopLullaby() {
-    if (S.petLullaby && window.LumiAudio && window.LumiAudio.playing === 'lullaby') window.LumiAudio.stop();
+    if (S.petLullaby && window.LumiAudio && window.LumiAudio.playing) window.LumiAudio.stop();
     S.petLullaby = false;
   }
   A.petStopLullaby = stopLullaby;
@@ -532,7 +532,7 @@
       tone(392, 0.4, 0.05);
       render();
       say(`Click. Goodnight, ${p.name}.`);
-      if (window.LumiAudio && state.settings.sounds && state.settings.roomMusic !== false && !S.mute && !window.LumiAudio.playing) { window.LumiAudio.play('lullaby'); S.petLullaby = true; }
+      if (window.LumiAudio && state.settings.sounds && state.settings.roomMusic !== false && !S.mute && !window.LumiAudio.playing) { window.LumiAudio.play(A.favTrack ? A.favTrack() : 'lullaby'); S.petLullaby = true; }
       later(sleepTick, 1200);
     },
     petWake: () => {

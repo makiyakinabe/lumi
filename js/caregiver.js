@@ -197,6 +197,7 @@
     const nr = S.newRem || (S.newRem = { e: '💧', text: '', mode: 'every', every: 60, at: '08:00' });
     const voiceBits = `
       <div class="g-field"><span>Lumi's voice (tap to hear)</span>${A.voicePickerHtml ? A.voicePickerHtml({ size: 40, cls: 'grown', subs: true }) : ''}</div>
+      ${A.tabletVoicesHtml ? `<div class="g-field"><span>Voices on this device</span>${A.tabletVoicesHtml()}</div>` : ''}
       ${toggle(st.childVoice, 'bToggle', 'childVoice', 'Child can choose the voice')}
       <button class="fv-entry" data-a="nav" data-to="cgVoice">${ic('heart', 26)}<span class="grow"><b>Your own voice for Lumi</b><span>${A.familiarCount ? (() => { const c = A.familiarCount(); return c.have ? `${c.have} of ${c.total} lines recorded` : 'Record lines your child knows'; })() : ''}</span></span>${ic('chev', 22)}</button>
       ${toggle(st.speakWords, 'bToggle', 'speakWords', 'Talk board says each word')}
