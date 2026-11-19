@@ -96,3 +96,60 @@
 .mu-lvl svg { margin: 0 -2px; }
 .mu-drum.cym { background: var(--c); }
 .mu-inst { gap: 6px; padding: 0 8px; } .mu-inst svg { width: 40px; height: 40px; } .mu-inst b { font-size: 17px; }
+
+/* ---- detailed, softly 3D instruments */
+/* drums: a drum head with chrome rim and tuning bolts sitting on a shell you can see */
+.mu-kit .mu-drum { background: none; border: 0; box-shadow: none; isolation: isolate; }
+.mu-kit .dr-shell { position: absolute; left: 4%; right: 4%; top: 50%; height: 64%; z-index: 0; border-radius: 0 0 50% 50% / 0 0 24% 24%; background: linear-gradient(90deg, rgba(0,0,0,.3), rgba(0,0,0,0) 20%, rgba(255,255,255,.38) 40%, rgba(255,255,255,0) 56%, rgba(0,0,0,.32)), var(--d); box-shadow: 0 12px 16px rgba(59,47,47,.18); pointer-events: none; }
+.mu-kit .dr-shell::before { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 18%; border-radius: inherit; background: linear-gradient(90deg, #8F9CA8, #F2F5F8 42%, #A9B4BF 70%, #7F8C98); }
+.mu-kit .dr-shell::after { content: ''; position: absolute; left: 6%; right: 6%; top: 36%; height: 30%; background: repeating-linear-gradient(90deg, transparent 0 8%, #E9EEF2 8% 11%, #A9B4BF 11% 12%, transparent 12% 21%); }
+.mu-kit .dr-head { position: absolute; inset: 0; z-index: 1; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 9px solid #D3DAE1; background: radial-gradient(circle at 36% 30%, #fff 0, #FFFDF8 36%, var(--c) 100%); box-shadow: inset 0 0 0 3px #A9B4BF, inset 0 -10px 16px rgba(59,47,47,.12), 0 0 0 4px #8F9CA8; }
+.mu-kit .dr-head::before { content: ''; position: absolute; inset: -9px; border-radius: 50%; background: repeating-conic-gradient(#7F8C98 0 5deg, transparent 5deg 45deg); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 9px), #000 calc(100% - 9px)); mask: radial-gradient(farthest-side, transparent calc(100% - 9px), #000 calc(100% - 9px)); }
+.mu-kit .dr-head b { position: relative; font-size: 26px; }
+/* cymbals: grooved bronze on a stand */
+.mu-kit .dr-stand { position: absolute; left: 50%; top: 50%; width: 10px; margin-left: -5px; height: 110%; z-index: 0; border-radius: 5px; background: linear-gradient(90deg, #7F8C98, #F2F5F8 50%, #8F9CA8); pointer-events: none; }
+.mu-kit .dr-stand::after { content: ''; position: absolute; left: -36px; bottom: 0; width: 82px; height: 9px; border-radius: 5px; background: #8F9CA8; }
+.mu-kit .dr-cym { position: absolute; inset: 0; z-index: 1; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: radial-gradient(circle, #8A6512 0 5%, #E8C35A 5.5% 13%, transparent 13.5%), repeating-radial-gradient(circle, rgba(255,255,255,.22) 0 2px, rgba(120,80,0,.12) 2px 5px), radial-gradient(circle at 34% 28%, #FFF7D6 0, var(--c) 42%, var(--d) 100%); box-shadow: 0 6px 0 #A57E16, 0 14px 18px rgba(59,47,47,.18); }
+.mu-kit .dr-cym b { font-size: 26px; text-shadow: 0 1px 0 rgba(255,255,255,.6); }
+/* xylophone: coloured bars nailed onto a wooden frame */
+.mu-xylo { position: relative; max-width: 880px; margin: 0 auto; padding: 0 2%; }
+.mu-xylo .xy-frame { position: absolute; inset: 0; width: 100%; height: 100%; filter: drop-shadow(0 6px 4px rgba(59,47,47,.18)); pointer-events: none; }
+.mu-xylo .mu-bar { position: relative; z-index: 1; align-items: center; padding: 0; border-radius: 16px; background: linear-gradient(90deg, rgba(255,255,255,.42) 0, rgba(255,255,255,.1) 28%, rgba(255,255,255,0) 60%, rgba(0,0,0,.12) 100%), var(--c); box-shadow: inset 0 4px 0 rgba(255,255,255,.5), inset 0 -9px 0 rgba(0,0,0,.13), 0 8px 0 rgba(59,47,47,.16), 0 16px 18px rgba(59,47,47,.12); }
+.mu-xylo .mu-bar::before, .mu-xylo .mu-bar::after { content: ''; position: absolute; left: 50%; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff 0, #C9D2DA 45%, #7F8C98 100%); box-shadow: 0 2px 2px rgba(59,47,47,.3); }
+.mu-xylo .mu-bar::before { top: 14%; } .mu-xylo .mu-bar::after { bottom: 14%; }
+.mu-xylo .mu-bar b { text-shadow: 0 1px 0 rgba(255,255,255,.45); }
+/* piano: wooden case, red felt, rounded keys and glossy black keys */
+.mu-piano { padding-top: 46px; }
+.mu-piano::before { content: ''; position: absolute; left: -4px; right: -4px; top: 0; height: 40px; border-radius: 16px 16px 4px 4px; background: linear-gradient(180deg, #B07C50, #7A4E2C); box-shadow: inset 0 3px 0 rgba(255,255,255,.28), 0 4px 6px rgba(59,47,47,.2); }
+.mu-piano::after { content: ''; position: absolute; left: 0; right: 0; top: 38px; height: 7px; border-radius: 3px; background: #C2577A; }
+.mu-piano .mu-key { border: 3px solid #D9C9B4; border-top: 0; border-radius: 0 0 18px 18px; background: linear-gradient(180deg, #EDE5DA 0, #fff 14%, #fff 72%, #F6F1EA 100%); box-shadow: inset 0 -7px 0 #EFE6DA, 0 9px 0 #CDBBA4, 0 16px 18px rgba(59,47,47,.12); }
+.mu-piano .mu-key i { background: radial-gradient(circle at 34% 30%, rgba(255,255,255,.75), rgba(255,255,255,0) 46%), var(--c); box-shadow: 0 3px 0 rgba(59,47,47,.18); }
+.mu-piano .mu-black { top: 45px; height: 52%; border-radius: 0 0 10px 10px; background: linear-gradient(90deg, #241D1B, #5A4E4A 30%, #3A312E 70%, #1A1413); box-shadow: 0 8px 0 #1A1413, 0 14px 16px rgba(0,0,0,.25); }
+.mu-piano .mu-black::after { content: ''; position: absolute; left: 20%; right: 20%; top: 5%; height: 46%; border-radius: 4px; background: linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,0)); pointer-events: none; }
+/* ukulele: body, sound hole and bridge, fretboard, headstock with pegs */
+.mu-uke { container-type: size; }
+.mu-uke .uke-body { position: absolute; left: 1%; top: 4%; height: 92%; width: auto; aspect-ratio: 1.35; z-index: 0; filter: drop-shadow(0 10px 10px rgba(59,47,47,.18)); pointer-events: none; }
+.mu-uke .uke-neck { position: absolute; left: calc(1cqw + 100cqh); right: 0; top: 30%; height: 56%; z-index: 1; border-radius: 6px 0 0 6px; pointer-events: none;
+  background: radial-gradient(circle, #F7F1E6 0 6px, transparent 7px) 22% 50% / 100% 100% no-repeat, radial-gradient(circle, #F7F1E6 0 6px, transparent 7px) 44% 50% / 100% 100% no-repeat, radial-gradient(circle, #F7F1E6 0 6px, transparent 7px) 66% 50% / 100% 100% no-repeat,
+    repeating-linear-gradient(90deg, transparent 0 calc(11% - 4px), #C9D2DA calc(11% - 4px) calc(11% - 1px), #7F8C98 calc(11% - 1px) 11%), linear-gradient(180deg, #7A4E2C, #5A3820 50%, #4A2C18); box-shadow: 0 8px 10px rgba(59,47,47,.2); }
+.mu-uke .uke-head { position: absolute; right: 0; top: -16%; bottom: -16%; width: 8%; border-radius: 10px 4px 4px 10px; background: radial-gradient(circle, #fff 0 5px, #C9D2DA 6px 8px, transparent 9px) 50% 0 / 100% 25% repeat-y, linear-gradient(90deg, #6B4425, #8A5A34 60%, #6B4425); }
+.mu-uke .mu-string { left: calc(1cqw + 24cqh); right: 8%; height: 14%; z-index: 2; padding-right: 2%; }
+.mu-uke .mu-string i { height: 7px; margin-top: -3px; background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,0) 60%), var(--c); box-shadow: 0 4px 3px rgba(59,47,47,.28); }
+.mu-uke .mu-string b { box-shadow: 0 4px 0 rgba(59,47,47,.18); }
+.mu-uke .mu-uke-body { display: none; }
+/* kompang: skin with a soft dome, brass tacks, wooden frame with depth */
+.mu-kompang .mu-rim { position: relative; border: 16px solid transparent; background: radial-gradient(circle at 38% 30%, #FFFFFF 0, #F8EEDF 50%, #E9D6BA 84%, #D3B48E 100%) padding-box, repeating-radial-gradient(circle, #9B6B43 0 3px, #AD7D52 3px 6px) border-box; box-shadow: inset 0 0 0 3px #7A4E2C, 0 14px 0 #6B4425, 0 22px 26px rgba(59,47,47,.2); }
+.mu-kompang .mu-rim::before { content: ''; position: absolute; inset: 4px; border-radius: 50%; background: repeating-conic-gradient(#C99A3E 0 2.6deg, transparent 2.6deg 12deg); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 8px), #000 calc(100% - 8px)); mask: radial-gradient(farthest-side, transparent calc(100% - 8px), #000 calc(100% - 8px)); pointer-events: none; }
+.mu-kompang .mu-rim b { position: relative; margin-top: 3%; }
+.mu-kompang .mu-skin { border: 4px dashed rgba(155, 107, 67, .38); background: radial-gradient(circle at 40% 34%, #FFFFFF 0, #FCF5EA 62%, #F3E4CF 100%); }
+/* shakers: round, painted, with wooden handles */
+.mu-shakers .mu-maraca { border-width: 6px; background: radial-gradient(circle at 33% 26%, rgba(255,255,255,.78) 0, rgba(255,255,255,0) 30%), radial-gradient(circle at 62% 74%, rgba(0,0,0,0) 38%, rgba(0,0,0,.2) 100%), radial-gradient(circle, rgba(255,255,255,.75) 0 5px, transparent 6px) 0 63% / 30px 30px repeat-x, linear-gradient(180deg, transparent 54%, rgba(255,255,255,.6) 54% 57%, transparent 57% 69%, rgba(255,255,255,.6) 69% 72%, transparent 72%), var(--c); box-shadow: 0 16px 20px rgba(59,47,47,.16); }
+.mu-shakers .mu-maraca i { width: 30px; margin-left: -15px; background: linear-gradient(90deg, #8A6A4A, #E0BE92 45%, #A57A50); box-shadow: 0 8px 10px rgba(59,47,47,.18); }
+.mu-shakers .mu-maraca i::before { content: ''; position: absolute; left: -7px; right: -7px; top: 0; height: 14px; border-radius: 7px; background: var(--d); }
+.mu-shakers .mu-maraca b { position: relative; z-index: 1; }
+.mu-kit .dr-cym { align-items: flex-end; padding-bottom: 14%; }
+/* ukulele keeps its shape on any screen: everything is sized from --bh (the body height) */
+.mu-uke { --bh: min(92cqh, 44cqw); --sp: calc(var(--bh) * .15); }
+.mu-uke .uke-body { top: calc(50% - var(--bh) * .49); height: var(--bh); }
+.mu-uke .uke-neck { left: calc(1cqw + var(--bh) * 1.087); top: calc(50% - var(--bh) * .3); height: calc(var(--bh) * .6); }
+.mu-uke .mu-string { left: calc(1cqw + var(--bh) * .26); height: var(--sp); margin-top: calc(var(--sp) / -2); }

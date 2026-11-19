@@ -388,6 +388,8 @@ The app opens on Lumi's title page every time: **Play** goes to the home page an
 Each day task is drawn on one fixed stage that scales to fit any screen, so nothing slides or floats on tall or wide tablets. Things sit where they would in real life: Lumi sits in the bath water, the tap and shower pipe are fixed to the wall, the sink has a stand, lamps and books are on a bedside table, the stove and food are on a kitchen counter, the noodle stall reaches the floor with the uncle behind the counter, the train stops at the platform edge, and teachers, therapists and dentists stand on the floor. A soft shadow, gentle light and floorboards add depth without extra clutter.
 
 ## Music corner (js/music.js)
+The instruments look like the real thing, with soft shading: a drum kit with chrome rims, tuning bolts, shells and cymbal stands; a xylophone nailed onto a wooden frame; a piano with a wooden case, red felt and glossy black keys; a ukulele with a sound hole, bridge, fretboard and tuning pegs (it keeps its shape on any screen); a kompang with brass tacks and a wooden frame; and painted shakers with wooden handles.
+
 
 Fun › **Music**. Six instruments to play, and two ways to practise rhythm.
 
