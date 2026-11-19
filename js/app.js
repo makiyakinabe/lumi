@@ -1781,6 +1781,7 @@
     return timeline;
   }
 
+  A.builderApi = { bPlan: () => bPlan(), sortDay, entry, select: (u) => { S.bSel = u; } };
   SCREENS.builder = () => {
     if (S.bToday && (S.bDay !== todayKey() || !todayOnly())) S.bToday = false;
     const plan = bPlan();
@@ -1803,7 +1804,7 @@
 
     // right panel
     if (S.bTab === 'settings') S.bTab = 'step';
-    const tabs = [['step', 'Step'], ['new', 'New step']].map(([id, name]) => `<button class="seg-opt ${S.bTab === id ? 'on' : ''}" data-a="bTab" data-v="${id}" aria-pressed="${S.bTab === id}">${name}</button>`).join('');
+    const tabs = [['step', 'Step'], ['new', 'New step']].concat(A.routineTplHtml ? [['tpl', 'Routines']] : []).map(([id, name]) => `<button class="seg-opt ${S.bTab === id ? 'on' : ''}" data-a="bTab" data-v="${id}" aria-pressed="${S.bTab === id}">${name}</button>`).join('');
     let right = '';
     if (S.bTab === 'step') {
       if (!step) {
@@ -1834,6 +1835,8 @@
           <div class="row gap8"><button class="g-btn outline grow" data-a="bMove" data-v="-1">${ic('up', 16)}<span>Earlier</span></button><button class="g-btn outline grow" data-a="bMove" data-v="1">${ic('down', 16)}<span>Later</span></button></div>
           <div class="row gap8"><button class="g-btn outline grow" data-a="bDup">Duplicate</button><button class="g-btn outline grow danger-text" data-a="bDel" data-v="${step.uid}">Remove</button></div>`;
       }
+    } else if (S.bTab === 'tpl' && A.routineTplHtml) {
+      right = A.routineTplHtml(S.bDay);
     } else if (S.bTab === 'new') {
       const n = S.newStep;
       right = `

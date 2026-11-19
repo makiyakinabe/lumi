@@ -84,7 +84,7 @@
       const opts = [['more', 'More time', 'hourglass'], ['break', 'A break', 'kBreak'], ['help', 'Help me', 'help']];
       if (n.from === 'routine') opts.push(['later', S.day && S.day.i + 1 < S.day.plan.length ? 'Do it later' : 'Not today', 'arrow']);
       body = `<div class="nr-head"><span class="nr-lumi">${L.svg({ look: A.lookWith(), mood: 'calm', size: 120 })}</span><div><b>Not ready yet?</b><span>That's okay. What would help?</span></div></div>
-        <div class="nr-opts n${opts.length}">${opts.map(([k, l, i]) => `<button class="nr-opt" data-a="nrPick" data-v="${k}">${ic(i, 56)}<span>${l}</span></button>`).join('')}</div>
+        <div class="nr-opts n${opts.length}">${opts.map(([k, l, i]) => `<button class="nr-opt" data-a="nrPick" data-v="${k}">${ic(i, 56)}<span>${l}${A.l2Html ? A.l2Html(l) : ''}</span></button>`).join('')}</div>
         <button class="nr-back" data-a="nrClose">${ic('back', 24)}<span>Back to ${esc(what)}</span></button>`;
     } else if (n.view === 'more') {
       const secs = (SP().more || 2) * 60, left = Math.max(0, secs - Math.round((Date.now() - n.t) / 1000));
@@ -163,7 +163,7 @@
   // ================================================================ cards to show someone, and My card
   const cardList = () => SP().cards.map((id) => CARDS.find((c) => c[0] === id)).filter(Boolean).concat(SP().custom.map((t, i) => ['c' + i, t, 'chat', '#FFFFFF']));
   const bigCard = (c) => `<button class="su-big" data-a="spCardOff" style="--bg:${c[3]}" aria-label="${esc(c[1])}. Tap to close.">${ic(c[2], 130)}<b>${esc(c[1])}</b>${c[0] === 'find' && SP().me.adult ? `<span>${esc(SP().me.adult)}${SP().me.phone ? ' · ' + esc(SP().me.phone) : ''}</span>` : kid() ? `<span>${esc(kid())}</span>` : ''}<small>Tap to close</small></button>`;
-  const cardBtns = (action) => cardList().map((c) => `<button class="su-card" data-a="${action}" data-v="${c[0]}" style="--bg:${c[3]}">${ic(c[2], 46)}<span>${esc(c[1])}</span></button>`).join('');
+  const cardBtns = (action) => cardList().map((c) => `<button class="su-card" data-a="${action}" data-v="${c[0]}" style="--bg:${c[3]}">${ic(c[2], 46)}<span>${esc(c[1])}${A.l2Html ? A.l2Html(c[1]) : ''}</span></button>`).join('');
   function meHtml() {
     const me = SP().me;
     const chips = (arr) => arr.map((x) => `<span class="su-chip">${esc(x)}</span>`).join('');
@@ -192,8 +192,9 @@
     ${view === 'me' && canMe ? `<div class="panel grow scroll su-panel">${meHtml()}</div>` : `<div class="su-cards grow">${cardBtns('spCard')}</div>`}
     <div class="su-side">
       <span class="su-side-l">Say it now</span>
-      ${sp.phrases.slice(0, 6).map((p) => `<button class="su-phrase" data-a="spSay" data-v="${esc(p)}">${ic('speaker', 22)}<span>${esc(p)}</span></button>`).join('')}
+      ${sp.phrases.slice(0, 6).map((p) => `<button class="su-phrase" data-a="spSay" data-v="${esc(p)}">${ic('speaker', 22)}<span>${esc(p)}${A.l2Html ? A.l2Html(p) : ''}</span></button>`).join('')}
       <button class="su-phrase nn" data-a="nav" data-to="nownext">${ic('clock', 22)}<span>Now &amp; Next</span></button>
+      ${A.SCREENS.outkit ? `<button class="su-phrase out" data-a="nav" data-to="outkit">${ic('busLine', 22)}<span>Out and about</span></button>` : ''}
     </div>
   </div>
   ${S.spCard ? bigCard(cardList().find((c) => c[0] === S.spCard) || CARDS[0]) : ''}
@@ -278,6 +279,7 @@
       <button class="g-btn outline" data-a="nav" data-to="cgNowNext">${ic('clock', 18)}<span>Warnings and countdowns</span></button>
       <p class="g-note">Choose how Lumi warns before a change, and turn countdowns off if they are stressful.</p>
       <button class="g-btn outline top-gap" data-a="spPreview">${ic('eye', 18)}<span>See My card as your child does</span></button>
+      ${A.SCREENS.cgPassport ? `<button class="g-btn top-gap" data-a="nav" data-to="cgPassport">${ic('cards', 18)}<span>Support Passport</span></button><p class="g-note">A one-page About me to print or share.</p>` : ''}
     </div>
   </div>
 </section>`;

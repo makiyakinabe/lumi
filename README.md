@@ -375,6 +375,24 @@ It focuses on routines, communication and emotional regulation, with three modes
 
 It is plain HTML, CSS and JavaScript. There is nothing to install and no build step.
 
+## Out and about, Support Passport, ready routines, switch access
+
+The rest of the product review.
+
+- **Out and about** (My card › Out and about): one screen for outings with eight big buttons. *Toilet* and *Too loud* show a big card to show someone (Too loud also offers cover my ears, headphones, a quiet place, breathe). *Wait with me* waits 1, 3 or 5 minutes, or "until my turn", with breathe / count / squeeze / look around. *What's next* opens Now & Next. *I'm lost* shows "Please call Mum" and the phone number in big type, if grown-ups added them. There are also *A break*, *Talk* (opens the talk board on the Out words) and *My card*. Code: `js/toolkit.js`.
+- **Support Passport** (Grown-ups › Support › Support Passport): a one-page About me for school, therapists, relief staff and family. It is made from the Support page: how I communicate, how to help me, what helps me, things I find hard, things I might say, and my grown-up. Tick what to include. The name and phone number are left out unless ticked. Then *Print or save as PDF*, *Save a copy* (an HTML file), or *Show full screen* on the tablet.
+- **Ready routines** (Timetable › Routines): add a whole routine to the chosen day in one tap: School morning, After school, Evening and bed, Weekend outing, Therapy day, or Dentist or doctor. Each comes with its before-you-go items (bag, water bottle, bus card…). *Replace day* swaps the day for the routine; tap twice to confirm. *Save Monday* keeps one of your own days as a routine to reuse.
+- **Stories to keep** (Grown-ups › Coming up › New story): personal stories with no date that stay in Stories under "Made for Mia". There are five to start from: All about me, When I feel angry, Taking turns, Visiting family, and A different toilet. Add real photos and use the sentence starters ("I will…", "I can…", "Other people…", "It is okay to…", "If I feel worried, I can…"). Any dated story can become a story to keep, and the other way round. Coming-up stories show on the same shelf while their countdown is on.
+- **Switch access** (Grown-ups › Sensory › Switch access):
+  - *One switch*: an orange frame moves from button to button. Press the switch, or Space, to choose.
+  - *Two switches*: Space or → moves the frame, Enter chooses.
+  - The main choices come first and the top bar comes last. Pop-ups are scanned on their own.
+  - Grown-ups pages and the press-and-hold Grown-ups button are never scanned.
+  - Choose the speed, and whether Lumi says each button's name. Turning it on also turns on *Tap instead of drag*.
+  - Code: `js/access.js`.
+- **Home language**: the new phrases, cards, Not yet choices, calm menu, Out and about buttons and Here words now have Chinese, Malay and Tamil. They show under the English, and Lumi says them. Please ask a native speaker to check them before a real release.
+- **Screen readers**: every button and field on every screen now has a name (checked with a script). Tested in a browser only. Still to try with VoiceOver and TalkBack on a real tablet, and with real switches.
+
 ## Support without taking control (js/support.js)
 
 Built from a product review: the child always has a clear next step, a way to say something, a way to pause or change direction, and a choice about how much help they want.
@@ -642,7 +660,7 @@ Lumi shows no emoji. Every picture (talk board, stories, games, settings) is a d
 
 ## Coming up stories (social stories)
 
-Grown-ups › **Coming up** prepares a child for something new or different. Pick a ready-made story (dentist, doctor, haircut, new school, visitors, birthday party, a new place, change of plan, or your own), set the date and time, edit the sentences and add real photos.
+Grown-ups › **Coming up** prepares a child for something new or different. Pick a ready-made story (dentist, doctor, haircut, new school, visitors, birthday party, a new place, change of plan, or your own), set the date and time, edit the sentences and add real photos. Or make a **story to keep** (no date): All about me, When I feel angry, Taking turns, Visiting family, A different toilet. It stays in Stories under "Made for Mia".
 
 - From a few days before (3 days, 1 week or 2 weeks), Lumi's home screen shows a countdown: "3 sleeps until Dentist", with a moon for each sleep. Tapping it opens the story.
 - The story reader: a countdown cover, the grown-up's pages read aloud by Lumi, then "How do you feel about it?" (happy, worried, scared) and "I'm ready". The answer shows in Progress.
@@ -919,6 +937,8 @@ web/
   js/art.js         the Art studio: Colour in, Paint, My art (css/art.css)
   js/garden.js      Lumi's garden: plant, look after and pick (css/garden.css)
   js/support.js     Not yet, Together check-in, My card, calm menu, Support page, What helped (css/support.css)
+  js/toolkit.js     Out and about, Support Passport, ready routines (css/toolkit.css)
+  js/access.js      switch access (one or two switches, scanning)
   js/games-fun.js   five "Go!" games (css/games-fun.css)
   js/rhythm-kitchen.js  Rhythm kitchen, the sixth (css/rhythm-kitchen.css)
   js/games-adventure.js Lumi's run, Lumi's kart, Star path (css/games-adventure.css)

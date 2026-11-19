@@ -68,12 +68,46 @@
       'Something new is happening.',
       'Here is what will happen.',
       'If I feel worried, I can take slow breaths with Lumi.',
-      'When it is finished, I did it!'] }
+      'When it is finished, I did it!'] },
+    // stories to keep: no date, always in Stories ("Made for Mia")
+    me: { keep: true, name: 'All about me', icon: 'me', tint: '#FFF4D6', pages: [
+      'My name is {name}.',
+      'I like …',
+      'I am good at …',
+      'Things that help me feel calm are …',
+      'The people who love me are …'] },
+    angry: { keep: true, name: 'When I feel angry', icon: 'kCalm', tint: '#FCE6E2', pages: [
+      'Sometimes I feel angry. Everyone feels angry sometimes. That is okay.',
+      'When I feel angry, my face may feel hot and my hands may feel tight.',
+      'I can stop and take three slow breaths.',
+      'I can squeeze my hands, or ask for a break.',
+      'When I feel calmer, I can tell someone what happened.',
+      'Keeping myself and other people safe is a good choice.'] },
+    turns: { keep: true, name: 'Taking turns', icon: 'together', tint: '#F8E4EC', pages: [
+      'When I play with other people, we take turns.',
+      'First it may be my friend\'s turn. I wait and watch.',
+      'Then it is my turn. My friend waits for me.',
+      'Waiting can be hard. I can count, or squeeze my hands.',
+      'Taking turns makes games fun for everyone.'] },
+    family: { keep: true, name: 'Visiting family', icon: 'house', tint: '#E7F3E1', pages: [
+      'Sometimes we visit our family.',
+      'There may be many people. They may want to say hello.',
+      'I can wave, smile, or say hi with my talk board.',
+      'If it gets too loud, I can ask for a quiet break.',
+      'After the visit, we will go home.'] },
+    newtoilet: { keep: true, name: 'A different toilet', icon: 'toilet', tint: '#DCEEF7', pages: [
+      'Sometimes I use a toilet that is not at home.',
+      'It may look different. The flush may be loud.',
+      'I can cover my ears when I flush.',
+      'Then I wash my hands with soap and water.',
+      'I did it!'] }
   };
+  const STARTERS = ['I will …', 'I can …', 'Other people …', 'It is okay to …', 'If I feel worried, I can …', 'When it is finished, …'];
   const MAX_PAGES = 8;
   // each kind of event is also a My day step, so it can sit in the plan on the day
   Object.keys(TPL).forEach((k) => {
     const t = TPL[k];
+    if (t.keep) return;
     D.STEPS['cu_' + k] = { label: t.name, icon: t.icon, tint: t.tint, voice: `Today is ${t.name}.` };
   });
 
@@ -84,12 +118,13 @@
   const daysUntil = (ev) => Math.round((parse(ev.date) - today()) / 864e5);
   const niceDate = (ev) => { try { return parse(ev.date).toLocaleDateString('en-SG', { weekday: 'short', day: 'numeric', month: 'short' }); } catch (e) { return ev.date; } };
   const sortKey = (ev) => `${ev.date} ${ev.time || '00:00'}`;
-  const visible = (ev) => { const n = daysUntil(ev); return n >= 0 && n <= (ev.show || 7); };
+  const visible = (ev) => { if (ev.keep) return false; const n = daysUntil(ev); return n >= 0 && n <= (ev.show || 7); };
   const nextUp = () => list().filter(visible).sort((a, b) => (sortKey(a) < sortKey(b) ? -1 : 1));
   const find = (id) => list().find((e) => e.id === id) || null;
   const tplOf = (ev) => TPL[ev && ev.kind] || TPL.other;
 
   function countLine(ev) {
+    if (ev.keep) return `A story for ${state.childName || 'me'}.`;
     const n = daysUntil(ev);
     if (n <= 0) return `${ev.title} is today!`;
     if (n === 1) return `1 sleep until ${ev.title}. That's tomorrow!`;
@@ -131,7 +166,7 @@
   const cur = () => (S.cu && find(S.cu.id)) || null;
   const pageCount = (ev) => ev.pages.length + 2;
   function pageVoice(ev, p) {
-    if (p === 0) return `${ev.title}. ${countLine(ev)} Let's read about it.`;
+    if (p === 0) return ev.keep ? `${ev.title}. Let's read my story.` : `${ev.title}. ${countLine(ev)} Let's read about it.`;
     if (p <= ev.pages.length) return ev.pages[p - 1].text;
     return `How do you feel about ${ev.title}?`;
   }
@@ -148,7 +183,9 @@
     const last = p === total - 1;
     const pd = Array.from({ length: total }, (_, k) => `<span class="cu-dot ${k === p ? 'on' : k < p ? 'done' : ''}"></span>`).join('');
     let words;
-    if (p === 0) {
+    if (p === 0 && ev.keep) {
+      words = `<b class="cu-title">${esc(ev.title)}</b><p class="cu-line">${esc(countLine(ev))}</p>`;
+    } else if (p === 0) {
       words = `<div class="cu-count">${moons(ev, 46)}</div><b class="cu-title">${esc(ev.title)}</b>
         <p class="cu-line">${esc(countLine(ev))}</p><p class="cu-when">${ic('clock', 22)}<span>${esc(niceDate(ev))}${ev.time ? ', ' + A.fmt(ev.time) : ''}</span></p>`;
     } else if (pg) {
@@ -156,7 +193,7 @@
     } else {
       words = `<p class="cu-sentence small">How do you feel about ${esc(ev.title)}?</p>
         <div class="cu-feel">${FEEL.map(([k, label]) => `<button class="cu-feel-btn ${S.cu.felt === k ? 'on' : ''}" data-a="cuFeel" data-v="${k}" aria-pressed="${S.cu.felt === k}">${L.face(k, 96)}<span>${label}</span></button>`).join('')}</div>
-        <button class="primary big cu-ready" data-a="cuReady">${ic('check', 40)}<span>I'm ready</span></button>`;
+        <button class="primary big cu-ready" data-a="cuReady">${ic('check', 40)}<span>${ev.keep ? 'The end' : "I'm ready"}</span></button>`;
     }
     const mood = last ? (S.cu.felt === 'happy' || !S.cu.felt ? 'happy' : 'calm') : p === 0 ? 'excited' : 'happy';
     return `
@@ -200,7 +237,7 @@
   A.comingUpSteps = (dayKey) => {
     if (dayKey !== A.todayKey()) return [];
     const iso = A.dateKey();
-    return list().filter((ev) => ev.date === iso && ev.inDay !== false).map((ev) => ({
+    return list().filter((ev) => !ev.keep && ev.date === iso && ev.inDay !== false).map((ev) => ({
       uid: 'cu-' + ev.id, id: 'cu_' + (TPL[ev.kind] ? ev.kind : 'other'), cu: ev.id, time: ev.time || '10:00',
       label: ev.title, voice: `Today is ${ev.title}! Let's read my story first.`
     }));
@@ -239,6 +276,7 @@
     <div class="col gap6"><label class="g-btn outline small file-btn">${ic('camera', 16)}<span>${photo ? 'Change' : 'Add photo'}</span><input type="file" accept="image/*" data-photo="${name}"></label>
     ${photo ? `<button class="g-link" data-a="cuPhotoDel" data-v="${name}">Remove</button>` : ''}</div></div>`;
   function statusChip(ev) {
+    if (ev.keep) return '<span class="cu-tag on">In Stories</span>';
     const n = daysUntil(ev);
     if (n < 0) return '<span class="cu-tag past">Past</span>';
     if (n === 0) return '<span class="cu-tag today">Today</span>';
@@ -246,15 +284,17 @@
   }
   A.SCREENS.cgComingUp = () => {
     const all = list().slice().sort((a, b) => (sortKey(a) < sortKey(b) ? -1 : 1));
-    const upcoming = all.filter((e) => daysUntil(e) >= 0);
-    const past = all.filter((e) => daysUntil(e) < 0);
+    const kept = all.filter((e) => e.keep);
+    const upcoming = all.filter((e) => !e.keep && daysUntil(e) >= 0);
+    const past = all.filter((e) => !e.keep && daysUntil(e) < 0);
     const row = (ev) => `<button class="cu-row ${S.cuSel === ev.id && !S.cuNew ? 'sel' : ''}" data-a="cuSel" data-v="${ev.id}">
       <span class="cu-row-art" style="background:${tplOf(ev).tint}">${art(ev, 44)}</span>
-      <span class="col grow"><b>${esc(ev.title)}</b><span class="g-note">${esc(niceDate(ev))}${ev.time ? ' · ' + A.fmt(ev.time) : ''}</span></span>${statusChip(ev)}</button>`;
+      <span class="col grow"><b>${esc(ev.title)}</b><span class="g-note">${ev.keep ? `${ev.pages.length} pages` : esc(niceDate(ev)) + (ev.time ? ' · ' + A.fmt(ev.time) : '')}</span></span>${statusChip(ev)}</button>`;
     const left = `<div class="g-panel scroll" style="width:380px">
       <div class="row between"><h2 class="g-h">Coming up</h2><button class="g-btn small" data-a="cuNew">${ic('plus', 16)}<span>New story</span></button></div>
       <p class="g-note">Prepare your child for something new or different. They see a countdown on Lumi's home screen and can read the story with Lumi.</p>
       ${upcoming.map(row).join('') || '<p class="g-note">Nothing coming up yet.</p>'}
+      ${kept.length ? `<div class="g-sub-h">Stories to keep</div>${kept.map(row).join('')}` : ''}
       ${past.length ? `<div class="g-sub-h">Past</div>${past.map(row).join('')}` : ''}
     </div>`;
     let right;
@@ -263,7 +303,10 @@
       right = `<div class="g-panel grow scroll">
         <h2 class="g-h">What is coming up?</h2>
         <p class="g-note">Pick one to start. You can change every sentence and add your own photos.</p>
-        <div class="cu-tpl-grid">${Object.keys(TPL).map((k) => `<button class="cu-tpl" data-a="cuMake" data-v="${k}" style="background:${TPL[k].tint}">${ic(TPL[k].icon, 64)}<span>${esc(TPL[k].name)}</span></button>`).join('')}</div>
+        <div class="g-sub-h">Something coming up (with a countdown)</div>
+        <div class="cu-tpl-grid">${Object.keys(TPL).filter((k) => !TPL[k].keep).map((k) => `<button class="cu-tpl" data-a="cuMake" data-v="${k}" style="background:${TPL[k].tint}">${ic(TPL[k].icon, 64)}<span>${esc(TPL[k].name)}</span></button>`).join('')}</div>
+        <div class="g-sub-h">A story to keep (no date, always in Stories)</div>
+        <div class="cu-tpl-grid">${Object.keys(TPL).filter((k) => TPL[k].keep).map((k) => `<button class="cu-tpl" data-a="cuMake" data-v="${k}" style="background:${TPL[k].tint}">${ic(TPL[k].icon, 64)}<span>${esc(TPL[k].name)}</span></button>`).join('')}</div>
         <div class="cu-tips"><b>Tips for a good story</b>
           <ul><li>Write as your child: "I will…", "I can…".</li><li>Keep each page to one or two short sentences.</li><li>Real photos of the place or person help most.</li><li>Say what will happen, what they can do if they feel worried, and how it ends.</li><li>Read it together a few times before the day.</li></ul></div>
       </div>`;
@@ -276,6 +319,9 @@
         <div class="row between"><h2 class="g-h">${ic(tplOf(ev).icon, 28)} Story</h2>
           <div class="row gap8"><button class="g-btn small outline" data-a="cuOpen" data-v="${ev.id}" data-from="cgComingUp">${ic('eye', 16)}<span>Preview</span></button>
           <button class="g-btn small ${S.cuDel === ev.id ? 'danger' : 'outline'}" data-a="cuDelete" data-v="${ev.id}">${ic('trash', 16)}<span>${S.cuDel === ev.id ? 'Tap again to delete' : 'Delete'}</span></button></div></div>
+        ${ev.keep ? `<label class="g-field"><span>Name (short works best)</span><input class="g-input" type="text" data-input="cu-title" value="${esc(ev.title)}" maxlength="24"></label>
+        <div class="row gap12 wrap"><div class="g-field"><span>Cover photo</span>${photoBox('cu-cover', ev.photo, 56)}</div>
+          <p class="g-note grow">This story stays in Stories for ${esc(state.childName || 'your child')} to read any time. <button class="g-link inline" data-a="cuKeep">Give it a date instead</button></p></div>` : `
         <div class="row gap12">
           <label class="g-field grow"><span>Name (short works best)</span><input class="g-input" type="text" data-input="cu-title" value="${esc(ev.title)}" maxlength="24"></label>
           <label class="g-field"><span>Date</span><input class="g-input" type="date" data-input="cu-date" value="${esc(ev.date)}" min="${A.dateKey()}"></label>
@@ -286,10 +332,12 @@
           <div class="g-field"><span>Cover photo</span>${photoBox('cu-cover', ev.photo, 56)}</div>
         </div>
         <button class="check-row" data-a="cuInDay" aria-pressed="${ev.inDay !== false}"><span class="box ${ev.inDay !== false ? 'on' : ''}">${ev.inDay !== false ? ic('check', 14) : ''}</span><span>Add it to My day on the day, with the story to read before going</span></button>
+        <button class="g-link" data-a="cuKeep">Keep it in Stories instead (no date)</button>`}
         <div class="g-sub-h">Pages</div>
         <div class="cu-edit-pages">${pages}</div>
-        ${ev.pages.length < MAX_PAGES ? `<button class="g-btn outline" data-a="cuPageAdd">${ic('plus', 18)}<span>Add a page</span></button>` : ''}
-        <p class="g-note">Lumi adds a first page with the countdown, and a last page where your child can say how they feel and tap "I'm ready". What they choose shows in Progress.</p>
+        ${ev.pages.length < MAX_PAGES ? `<div class="cu-starters"><span class="g-note">Add a page starting with</span>${STARTERS.map((t) => `<button class="su-pick" data-a="cuStarter" data-v="${esc(t)}">${esc(t)}</button>`).join('')}</div>
+        <button class="g-btn outline" data-a="cuPageAdd">${ic('plus', 18)}<span>Add a blank page</span></button>` : ''}
+        <p class="g-note">${ev.keep ? 'Lumi adds a cover page, and a last page where your child can say how they feel.' : 'Lumi adds a first page with the countdown, and a last page where your child can say how they feel and tap "I\'m ready".'} What they choose shows in Progress.${ev.keep ? ' {name} becomes your child\'s name.' : ''}</p>
       </div>`;
     }
     return `
@@ -361,19 +409,28 @@
         if (g && g.id === 'cu') { g.read = true; A.SG.setPhase(g, 'turn'); }
         return;
       }
-      go(from === 'cgComingUp' ? 'cgComingUp' : 'home');
-      say(daysUntil(ev) === 0 ? `You're ready for ${ev.title}!` : `Great reading! ${countLine(ev)}`);
+      go(from === 'cgComingUp' ? 'cgComingUp' : from === 'stories' ? 'stories' : 'home');
+      say(ev.keep ? 'Great reading! You can read it again any time.' : daysUntil(ev) === 0 ? `You're ready for ${ev.title}!` : `Great reading! ${countLine(ev)}`);
     },
     cuNew: () => { S.cuNew = true; S.cuDel = null; render(); },
     cuSel: (d) => { S.cuSel = d.v; S.cuNew = false; S.cuDel = null; render(); },
     cuMake: (d) => {
       const t = TPL[d.v] || TPL.other;
-      const ev = { id: 'cu' + uid(), kind: d.v, title: t.name, date: tomorrow(), time: '10:00', show: 7, inDay: true, photo: null, pages: t.pages.map((text) => ({ text, photo: null })) };
+      const nm = state.childName || 'me';
+      const ev = { id: 'cu' + uid(), kind: d.v, title: t.name, date: tomorrow(), time: '10:00', show: 7, inDay: !t.keep, keep: !!t.keep, photo: null, pages: t.pages.map((text) => ({ text: text.replace(/\{name\}/g, nm), photo: null })) };
       list().push(ev);
       S.cuSel = ev.id;
       S.cuNew = false;
       save();
       render();
+    },
+    cuKeep: () => { const ev = find(S.cuSel); if (!ev) return; ev.keep = !ev.keep; ev.inDay = !ev.keep; if (!ev.keep && daysUntil(ev) < 0) ev.date = tomorrow(); save(); render(); },
+    cuStarter: (d) => {
+      const ev = find(S.cuSel);
+      if (!ev || ev.pages.length >= MAX_PAGES) return;
+      const t = d.v.replace(/ …$/, ' ').replace(/…$/, '');
+      ev.pages.push({ text: t, photo: null }); save(); render();
+      const f = A.stage.querySelector(`[data-input="cu-page-${ev.pages.length - 1}"]`); if (f) { f.focus(); try { f.setSelectionRange(t.length, t.length); } catch (e) { /* ok */ } }
     },
     cuShow: (d) => { const ev = find(S.cuSel); if (ev) { ev.show = Number(d.v); save(); render(); } },
     cuInDay: () => { const ev = find(S.cuSel); if (ev) { ev.inDay = ev.inDay === false; save(); render(); } },
@@ -398,4 +455,20 @@
     }
   });
   A.comingUp = { list, nextUp, daysUntil, countLine, open, TPL };
+
+  // ---------------------------------------------------------------- Stories: "Made for Mia" (stories to keep, and what is coming up)
+  const storiesScreen = A.SCREENS.stories;
+  if (storiesScreen) {
+    A.SCREENS.stories = () => {
+      const html = storiesScreen();
+      const mine = list().filter((e) => e.keep).concat(nextUp());
+      if (!mine.length) return html;
+      const who = esc(state.childName || 'you');
+      const cards = mine.map((ev) => `<button class="story-card cu-mine" data-a="cuOpen" data-v="${ev.id}" data-from="stories" style="background:${tplOf(ev).tint}">
+        <span class="cu-mine-art">${art(ev, 150)}<span class="cu-mine-lumi">${L.svg({ look: A.lookWith(), mood: 'happy', size: 110 })}</span></span>
+        <span class="fo-for">${ic('heart', 16)}<span>Made for ${who}</span></span>
+        <span class="sc-foot"><span class="story-name">${esc(ev.title)}</span><span class="tag">${ev.keep ? `${ev.pages.length} pages` : esc(countLine(ev).replace(/\..*$/, ''))}</span></span></button>`).join('');
+      return html.replace('<div class="story-grid grow">', `<div class="story-grid grow">${cards}`);
+    };
+  }
 })();

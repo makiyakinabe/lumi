@@ -136,7 +136,7 @@
     const wet = isWet(pl), dry = pl.p && !wet && !task;
     const soil = task ? (task.step === 'water' && task.done ? 'url(#gdWet)' : 'url(#gdDry)') : wet ? 'url(#gdWet)' : 'url(#gdDry)';
     const dim = s.task && !task ? 'opacity=".45"' : '';
-    let out = `<g class="gd-plot ${task ? 'focus' : ''}" transform="${plotT(i)}" ${dim} data-a="gdPlot" data-plot="${i}">
+    let out = `<g class="gd-plot ${task ? 'focus' : ''}" transform="${plotT(i)}" ${dim} data-a="gdPlot" data-plot="${i}" role="button" aria-label="Garden plot ${i + 1}">
       <rect class="gd-hit" x="${cx - 104}" y="290" width="208" height="160" fill="transparent" data-plot="${i}" role="button" aria-label="Planter ${i + 1}${pl.p ? ', ' + PLANTS[pl.p].name : ', empty'}"/>
       <ellipse cx="${cx}" cy="446" rx="108" ry="14" fill="#3B2F2F" opacity=".14"/>
       <path d="M${cx - 96} 368L${cx - 82} 338V408L${cx - 96} 440Z" fill="url(#gdSide)" ${K}/>

@@ -15,7 +15,7 @@
 
   // Overview is the page Grown-ups opens on (focus.js); Notes (the journal) opens from Overview and Progress
   const TABS = [['cgHome', 'Overview', 'home'], ['builder', 'Timetable', 'calendar'], ['cgComingUp', 'Coming up', 'hourglass'], ['cgActivities', 'Activities', 'target'], ['cgChild', 'Child', 'person'], ['cgSensory', 'Sensory', 'sliders'], ['cgProgress', 'Progress', 'chart']];
-  const TAB_OF = { cgJournal: 'cgProgress', cgFocus: 'cgHome', cgVoice: 'cgSensory', cgLang: 'cgSensory', cgQuiz: 'cgSensory', cgNowNext: 'builder', cgReport: 'cgProgress', cgSupport: 'cgHome' };
+  const TAB_OF = { cgJournal: 'cgProgress', cgFocus: 'cgHome', cgVoice: 'cgSensory', cgLang: 'cgSensory', cgQuiz: 'cgSensory', cgNowNext: 'builder', cgReport: 'cgProgress', cgSupport: 'cgHome', cgPassport: 'cgHome' };
   const tz = () => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone.replace(/_/g, ' '); } catch (e) { return ''; } };
   A.gHeader = (active) => `<div class="row between g-header">
     <div class="row gap12">
@@ -170,7 +170,7 @@
         <div class="g-field"><span>Rest days (never break the streak)</span><div class="row gap6">${D.DAYS.map((d) => { const on = (state.streak.restDays || []).includes(d.id); return `<button class="partner-chip ${on ? 'on' : ''}" data-a="cgRest" data-v="${d.id}" aria-pressed="${on}"><span>${d.short}</span></button>`; }).join('')}</div></div>
         <p class="g-note">${ic('flame', 16)} Streak <b>${state.streak.count}</b> · best <b>${state.streak.best || 0}</b> · shields <b>${state.streak.shields || 0}</b></p>
         <div class="g-field"><span>Real-life goal (stars count towards it)</span>
-          <div class="row gap8"><input id="f-goal" class="g-input grow" type="text" data-input="goalName" value="${esc(state.goal.name)}" maxlength="24">
+          <div class="row gap8"><input id="f-goal" class="g-input grow" type="text" data-input="goalName" value="${esc(state.goal.name)}" maxlength="24" aria-label="Goal name">
           <button class="mini-btn bordered" data-a="bGoal" data-v="-5" aria-label="Fewer">${ic('minus', 16)}</button><span class="row gap4 g-strong">${ic('star', 18)}${state.goal.target}</span><button class="mini-btn bordered" data-a="bGoal" data-v="5" aria-label="More">${ic('plus', 16)}</button></div></div>`)}
       ${more('bus', 'Live bus times', state.bus.live ? 'On' : 'Off', busSettings())}
       ${A.lockHtml ? more('lock', 'Grown-ups lock', A.lockLabel(), A.lockHtml()) : ''}
@@ -224,6 +224,7 @@
       ${toggle(st.highContrast, 'bToggle', 'highContrast', 'High contrast')}
       ${toggle(st.tapMove, 'bToggle', 'tapMove', 'Tap instead of drag')}
       <div class="g-field"><span>Text size</span>${seg([[0.9, 'Small'], [1, 'Normal'], [1.15, 'Large'], [1.3, 'Extra large']], st.textSize, 'cgText')}</div>
+      ${A.switchSettingsHtml ? A.switchSettingsHtml() : ''}
       <h2 class="g-h top-gap">Sound</h2>
       ${toggle(st.sounds, 'bToggle', 'sounds', 'Sounds and chimes')}
       ${toggle(st.voice, 'bToggle', 'voice', "Lumi's voice")}
@@ -249,7 +250,7 @@
       <div class="row gap6 wrap">${D.REMINDER_IDEAS.map(([e, t]) => `<button class="partner-chip" data-a="cgRemIdea" data-v="${e}|${t}"><span class="emoji">${e}</span><span>${t}</span></button>`).join('')}</div>
       <label class="g-field"><span>Text</span><input id="f-rem" type="text" data-input="remText" value="${esc(nr.text)}" maxlength="40" placeholder="Drink some water"></label>
       <div class="row gap8">${seg([['every', 'Every'], ['at', 'At a time']], nr.mode, 'cgRemMode')}
-        ${nr.mode === 'every' ? seg([[30, '30 min'], [60, '1 hour'], [120, '2 hours']], nr.every, 'cgRemEvery') : `<input class="g-input" type="time" data-input="remAt" value="${nr.at}">`}</div>
+        ${nr.mode === 'every' ? seg([[30, '30 min'], [60, '1 hour'], [120, '2 hours']], nr.every, 'cgRemEvery') : `<input class="g-input" type="time" data-input="remAt" value="${nr.at}" aria-label="Reminder time">`}</div>
       <div class="row gap8"><button class="g-btn" data-a="cgRemAdd">${ic('plus', 18)}<span>Add</span></button><button class="g-btn outline" data-a="cgRemTest">${ic('bell', 18)}<span>Test</span></button></div>
     </div>
   </div>
