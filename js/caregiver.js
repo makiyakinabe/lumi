@@ -36,7 +36,7 @@
   const seg = (items, cur, action) => `<div class="seg" role="group">${items.map(([v, label]) => `<button class="seg-opt ${String(cur) === String(v) ? 'on' : ''}" data-a="${action}" data-v="${v}" aria-pressed="${String(cur) === String(v)}">${label}</button>`).join('')}</div>`;
 
   // ================================================================ Activities
-  const TILE_NAMES = { day: 'My day', talk: 'Talk', calm: 'Calm', play: 'Games (in Fun)', stories: 'Stories (in Fun)', learn: 'Learn (in Fun)', pet: 'Pet (in Fun)', me: 'Dress up (in Fun)', room: 'Room (in Fun)', music: 'Music corner (in Fun)' };
+  const TILE_NAMES = { day: 'My day', talk: 'Talk', calm: 'Calm', play: 'Games (in Fun)', stories: 'Stories (in Fun)', learn: 'Learn (in Fun)', pet: 'Pet (in Fun)', me: 'Dress up (in Fun)', room: 'Room (in Fun)', music: 'Music corner (in Fun)', art: 'Art studio (in Fun)', garden: 'Garden (in Fun)' };
   function selectedActivity() { return state.customActivities.find((a) => a.id === S.cgAct) || null; }
 
   A.SCREENS.cgActivities = () => {

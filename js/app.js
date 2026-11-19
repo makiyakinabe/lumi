@@ -902,7 +902,9 @@
     ['pet', 'Pet', 'kPet', 'pet', '#F2D2C4', '#C0674A', 'lifeskills'],
     ['me', 'Dress up', 'kDress', 'dressup', '#F2C9D6', '#C2577A', null],
     ['room', 'Room', 'kRoom', 'room', '#F6D2C8', '#C0574A', null],
-    ['music', 'Music', 'kMusic', 'music', '#E4DAF6', '#6A55B0', 'thinking']
+    ['music', 'Music', 'kMusic', 'music', '#E4DAF6', '#6A55B0', 'thinking'],
+    ['art', 'Art', 'kArt', 'art', '#F8D3C2', '#C9573A', null],
+    ['garden', 'Garden', 'kGarden', 'garden', '#CDE8BE', '#4F8A3F', 'lifeskills']
   ];
   const ownedPets = () => ['puppy', 'kitten', 'fishtank'].filter((id) => state.owned.includes(id));
   // Little ones get fewer choices in Fun (no room shop); grown-ups can still open it from the Pet corner

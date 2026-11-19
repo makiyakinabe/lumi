@@ -401,6 +401,27 @@ The instruments look like the real thing, with soft shading: a drum kit with chr
 
 Why rhythm: school drumming programmes for autistic pupils have reported better timing and dexterity, and better concentration and following of instructions, after ten weeks of short sessions. Steady, predictable beats are also calming for many children.
 
+## Art studio (js/art.js)
+
+Fun › **Art**. Drawing and colouring build hand control and give children who speak few words a way to show what they feel.
+
+- **Colour in**: six pages drawn in Lumi's style (Lumi, an MRT train, a bowl of noodles, a flower, a fish tank, a house under a rainbow). Pick a crayon, tap a part to fill it, with a soft 3D shade. With **Colour dots** on, each part shows a dot of a colour it could be, and the guide hand points at the matching crayon and then the dot. Any colour is fine; nothing is ever wrong. Undo, start again, Save.
+- **Paint**: a sheet of paper for a finger. Brush (three sizes), rainbow brush, glitter, five stamps (star, heart, flower, paw, Lumi) in any colour, eraser, undo, start again. **Idea** suggests something to paint ("Paint how you feel today").
+- **My art**: saved pictures hang in wooden frames (up to 12). Tap one to see it big; Lumi says what she likes about it.
+- Up to 3 stars a day for finished pages and saved paintings.
+
+## Lumi's garden (js/garden.js)
+
+Fun › **Garden**. Gardening practises following steps in order and waiting for something to grow, and touching and smelling plants is gentle sensory play.
+
+- Four wooden planters in two rows. Tap an empty one and pick a seed: tomato, strawberry, carrot or sunflower.
+- Planting is the same four picture steps every time, shown like a timetable: **Dig** (spade), **Seed** (seed packet), **Cover** (pat the soil three times), **Water** (watering can). A sprout pops up.
+- Plants grow while their soil is wet (dark). Dry soil turns light and cracked, the plant droops and a water drop shows it is thirsty. Weeds pop up (tap to pull them into the green bin), a snail may climb the leaves (tap it and it goes gently to the grass), and a bee visits the flowers (tap it: bees help flowers turn into fruit).
+- Tap a plant to touch and smell it: Lumi says how the leaves feel and smell.
+- Pick ripe tomatoes and strawberries one by one, pull the carrot with three tugs, collect the sunflower's seeds. Everything goes in the basket, which keeps count.
+- Plants grow one step while the child is away for a few hours, then wait, thirsty. Plants never die.
+- Tools work by tapping (tap a tool, then a planter) or by dragging the tool onto a planter.
+
 ## "Go!" games (js/games-fun.js)
 
 A fifth shelf in Games. Each game is built on a kind of play that research and practice guides say children, and autistic children especially, choose most: things that answer at once when touched, things that roll, spin and drop, a moment of waiting before something happens, catching and collecting, lining things up, and trains.
@@ -877,6 +898,8 @@ web/
   js/intro.js       Lumi's title page and story, with two choices (css/intro.css)
   js/story-paths.js "You choose!" forks for every story
   js/music.js       the Music corner: six instruments, Keep the beat, Copy me (css/music.css)
+  js/art.js         the Art studio: Colour in, Paint, My art (css/art.css)
+  js/garden.js      Lumi's garden: plant, look after and pick (css/garden.css)
   js/games-fun.js   five "Go!" games (css/games-fun.css)
   js/rhythm-kitchen.js  Rhythm kitchen, the sixth (css/rhythm-kitchen.css)
   js/games-adventure.js Lumi's run, Lumi's kart, Star path (css/games-adventure.css)

@@ -1,0 +1,69 @@
+/* garden.css: Lumi's garden (js/garden.js) */
+.gd-screen { background: #EAF5E2; }
+.gd-body { gap: 14px; min-height: 0; }
+.gd-msg { display: flex; align-items: center; min-width: 0; height: 60px; padding: 0 18px; border-radius: 20px; background: #fff; box-shadow: 0 4px 0 rgba(59, 47, 47, 0.08); font-size: 21px; font-weight: 800; color: var(--ink); }
+.gd-msg > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gd-scene { position: relative; min-height: 0; padding: 0; background: linear-gradient(180deg, #A9D8F5, #BFE3F7 60%, #E8F5FB); }
+.gd-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.gd-svg [data-a] { cursor: pointer; }
+/* the planting steps, like a little picture timetable */
+.gd-steps { display: flex; gap: 8px; width: 100%; }
+.gd-step { flex: 1; display: flex; align-items: center; gap: 6px; height: 50px; padding: 0 10px; border-radius: 16px; background: #F3F7EE; color: var(--muted); font-size: 18px; font-weight: 900; opacity: .7; }
+.gd-step b { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: #DDE8D2; color: #4F8A3F; font-size: 17px; }
+.gd-step.now { background: #FFF4D6; color: var(--ink); opacity: 1; box-shadow: inset 0 0 0 3px #F6D24A; }
+.gd-step.now b { background: #F6D24A; color: var(--ink); }
+.gd-step.done { opacity: 1; color: #4F8A3F; } .gd-step.done b { background: #4F8A3F; color: #fff; }
+/* tools and basket */
+.gd-side { flex: none; width: 150px; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.gd-tool { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 22px; background: #fff; border: 4px solid #fff; box-shadow: 0 5px 0 rgba(59, 47, 47, 0.1); touch-action: none; transition: transform .12s ease; }
+.gd-tool svg { width: 72%; max-width: 76px; height: auto; max-height: 70%; filter: drop-shadow(0 4px 3px rgba(59, 47, 47, .2)); }
+.gd-tool b { font-size: 16px; font-weight: 900; color: var(--ink); line-height: 1.05; text-align: center; }
+.gd-tool.on { border-color: #4F8A3F; background: #EEF7E6; transform: translateY(-3px); box-shadow: 0 8px 0 rgba(79, 138, 63, .3); }
+.gd-tool.on svg { animation: gdWiggle 1s ease-in-out infinite; }
+.gd-basket { flex: none; padding: 8px; border-radius: 22px; background: linear-gradient(180deg, #F3D9A8, #E2BB7C); box-shadow: inset 0 3px 0 rgba(255,255,255,.4), 0 5px 0 #C99A5E; }
+.gd-basket-art { display: flex; align-items: center; justify-content: center; gap: 6px; color: #7A4E2C; font-size: 16px; font-weight: 900; }
+.gd-bs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 4px; }
+.gd-b { display: flex; align-items: center; gap: 2px; justify-content: center; height: 40px; border-radius: 12px; background: rgba(255,255,255,.55); font-size: 18px; font-weight: 900; color: var(--ink); }
+.gd-b.none { opacity: .45; }
+.gd-ghost { position: fixed; z-index: 99; width: 90px; height: 90px; margin: -45px 0 0 -45px; pointer-events: none; filter: drop-shadow(0 10px 8px rgba(59,47,47,.3)); }
+.gd-ghost svg { width: 100%; height: 100%; }
+/* the seed picker */
+.gd-picker { position: absolute; inset: 0; margin: auto; height: max-content; width: min(92%, 720px); padding: 20px 20px 24px; border-radius: 30px; background: #FFFDF8; box-shadow: 0 20px 40px rgba(59,47,47,.25); text-align: center; animation: inPop .25s ease both; }
+.gd-picker-title { display: block; font-size: 28px; font-weight: 900; margin-bottom: 14px; }
+.gd-packets { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.gd-packet { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 26px 6px 14px; border-radius: 10px 10px 16px 16px; background: linear-gradient(180deg, #fff 0 40%, color-mix(in srgb, var(--c) 28%, #fff)); border: 3px solid #3B2F2F; box-shadow: 0 7px 0 rgba(59,47,47,.18); }
+.gd-packet-top { position: absolute; left: -3px; right: -3px; top: -3px; height: 18px; border-radius: 10px 10px 0 0; background: repeating-linear-gradient(90deg, var(--c) 0 10px, #fff 10px 14px); border: 3px solid #3B2F2F; }
+.gd-packet-pic svg { width: 76px; height: 76px; }
+.gd-packet b { font-size: 21px; font-weight: 900; }
+.gd-packet:active { transform: translateY(4px); box-shadow: none; }
+.gd-close { position: absolute; right: 14px; top: 14px; width: 52px; height: 52px; }
+/* life in the garden */
+.gd-sunrays { animation: gdSpin 30s linear infinite; transform-box: fill-box; transform-origin: center; }
+.gd-cloud { animation: gdDrift 60s linear infinite; }
+.gd-cloud.slow { animation-duration: 90s; }
+.gd-plant { transform-box: view-box; }
+.gd-droop > * { transform-box: fill-box; transform-origin: 50% 100%; transform: rotate(6deg) scaleY(.93); filter: saturate(.6); }
+.gd-thirsty, .gd-ready { animation: gdBob 1.4s ease-in-out infinite; }
+.gd-weed, .gd-snail > * { animation: gdBob 2s ease-in-out infinite; }
+.gd-bee-fly { animation: gdBuzz 2.4s ease-in-out infinite; }
+.gd-butterfly { animation: gdFlutter 14s ease-in-out infinite; }
+.gd-fruit:hover { filter: brightness(1.05); }
+.gd-digging { animation: gdDig .4s ease-in-out 3; }
+.gd-pour { animation: inPop .2s ease both; }
+.gd-drop { animation: gdDrop .55s linear infinite; }
+.gd-fall { animation: gdFall .6s ease-in both; }
+.gd-pat { animation: gdPat .3s ease; }
+.gd-spark { animation: gdSpark .9s ease-out both; transform-box: fill-box; transform-origin: center; }
+.gd-smell { animation: gdSmell 1.2s ease-out both; }
+@keyframes gdSpin { to { transform: rotate(360deg); } }
+@keyframes gdDrift { 0% { transform: translateX(-120px); } 50% { transform: translateX(160px); } 100% { transform: translateX(-120px); } }
+@keyframes gdBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes gdBuzz { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(18px, -8px); } 50% { transform: translate(-6px, -16px); } 75% { transform: translate(-20px, -4px); } }
+@keyframes gdFlutter { 0%, 100% { transform: translate(0, 0); } 30% { transform: translate(-200px, 40px); } 60% { transform: translate(180px, -30px); } }
+@keyframes gdDig { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(30px) rotate(-14deg); } }
+@keyframes gdDrop { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(120px); opacity: 0; } }
+@keyframes gdFall { 0% { transform: translateY(0); } 100% { transform: translateY(58px); } }
+@keyframes gdPat { 0% { transform: translateY(-20px); } 60% { transform: translateY(6px); } 100% { transform: translateY(0); } }
+@keyframes gdSpark { 0% { opacity: 0; transform: scale(.2); } 30% { opacity: 1; } 100% { opacity: 0; transform: scale(1.3); } }
+@keyframes gdSmell { 0% { opacity: 0; transform: translateY(10px); } 30% { opacity: .9; } 100% { opacity: 0; transform: translateY(-30px); } }
+@keyframes gdWiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-8deg); } 75% { transform: rotate(8deg); } }

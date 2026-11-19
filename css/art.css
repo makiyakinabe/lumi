@@ -1,0 +1,66 @@
+/* art.css: the Art studio (js/art.js) */
+.ar-screen { background: #FDF0E6; }
+.ar-body { gap: 14px; min-height: 0; }
+.ar-main { gap: 12px; min-width: 0; min-height: 0; }
+.ar-count { font-style: normal; min-width: 30px; height: 30px; padding: 0 8px; border-radius: 15px; background: #F28DB2; color: #fff; font-size: 17px; display: grid; place-items: center; }
+/* the bar above the paper */
+.ar-bar { flex: none; display: flex; align-items: center; gap: 12px; height: 100px; padding: 0 14px 0 6px; border-radius: 28px; background: #fff; box-shadow: 0 4px 0 rgba(59, 47, 47, 0.08); }
+.ar-lumi { flex: none; display: flex; }
+.ar-lumi.hop { animation: muBop 0.25s ease; }
+.ar-msg { font-size: 22px; font-weight: 800; color: var(--muted); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ar-btn { flex: none; width: 62px; height: 62px; border-radius: 20px; background: #F6EEE6; color: var(--ink); display: grid; place-items: center; box-shadow: 0 4px 0 #E3D3C2; }
+.ar-btn:disabled { opacity: .4; }
+.ar-btn:active, .ar-save:active, .ar-chip:active { transform: translateY(3px); box-shadow: none; }
+.ar-save { flex: none; display: flex; align-items: center; gap: 8px; height: 62px; padding: 0 22px; border-radius: 20px; background: var(--teal); color: #fff; font-size: 22px; font-weight: 900; box-shadow: 0 5px 0 var(--teal-dark); }
+.ar-save svg { width: 30px; height: 30px; }
+.ar-save.glow { animation: arGlow 1.4s ease-in-out infinite; }
+.ar-chip { flex: none; display: flex; align-items: center; gap: 8px; height: 62px; padding: 0 16px; border-radius: 20px; background: #FFF4D6; color: #8A6512; font-size: 19px; font-weight: 900; box-shadow: 0 4px 0 #EED9A0; }
+.ar-chip.on { background: #F6D24A; color: #3B2F2F; box-shadow: 0 4px 0 #C99A1E; }
+.ar-dotic { width: 22px; height: 22px; border-radius: 50%; background: conic-gradient(#EF6F5E 0 25%, #F6D24A 0 50%, #7CC46A 0 75%, #5E9BE0 0); border: 2px solid #3B2F2F; }
+/* the paper: a sheet resting on the table */
+.ar-paper { display: flex; align-items: center; justify-content: center; padding: 12px; background: #F4E3D2; min-height: 0; }
+.ar-page { width: 100%; height: 100%; display: block; filter: drop-shadow(0 6px 8px rgba(59, 47, 47, 0.18)); }
+.ar-page .ar-part { cursor: pointer; transition: fill 0.15s ease; }
+.ar-page .ar-part.pop { animation: arPop 0.3s ease; transform-box: fill-box; transform-origin: center; }
+.ar-dot circle:last-child { animation: arDotPulse 1.8s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.ar-paper.paint canvas { display: block; border-radius: 10px; background: #fff; box-shadow: 0 8px 14px rgba(59, 47, 47, 0.18), 0 0 0 1px rgba(59, 47, 47, 0.06); touch-action: none; cursor: crosshair; }
+/* the left side: pages or tools */
+.ar-side { flex: none; width: 150px; display: flex; flex-direction: column; gap: 8px; min-height: 0; overflow-y: auto; }
+.ar-thumb { flex: 1; min-height: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 6px; border-radius: 18px; background: #fff; border: 4px solid #fff; box-shadow: 0 4px 0 rgba(59, 47, 47, 0.08); }
+.ar-thumb.on { border-color: #E07A5F; background: #FFF1EA; }
+.ar-mini { width: 100%; height: auto; max-height: calc(100% - 22px); flex: 1; min-height: 0; border-radius: 8px; }
+.ar-thumb b { font-size: 15px; font-weight: 900; color: var(--ink); line-height: 1; }
+.ar-tool { flex: 1; min-height: 56px; display: flex; align-items: center; gap: 8px; padding: 0 10px; border-radius: 18px; background: #fff; border: 4px solid #fff; box-shadow: 0 4px 0 rgba(59, 47, 47, 0.08); }
+.ar-tool b { font-size: 17px; font-weight: 900; color: var(--ink); }
+.ar-tool.on { border-color: #E07A5F; background: #FFF1EA; }
+.ar-sizes { flex: none; display: flex; gap: 6px; height: 56px; }
+.ar-sizes button { flex: 1; border-radius: 14px; background: #fff; display: grid; place-items: center; }
+.ar-sizes button i { border-radius: 50%; background: #3B2F2F; }
+.ar-sizes .on { background: #E07A5F; } .ar-sizes .on i { background: #fff; }
+.ar-stamps { display: flex; gap: 8px; }
+.ar-stamps button { width: 62px; height: 62px; border-radius: 18px; background: #F6EEE6; display: grid; place-items: center; }
+.ar-stamps button.on { background: #FFE3D8; box-shadow: inset 0 0 0 4px #E07A5F; }
+/* crayons: round wax tips, paper wrappers, a soft shine */
+.ar-crayons { flex: none; width: 132px; display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: minmax(0, 1fr); gap: 8px 10px; padding: 10px 8px; border-radius: 24px; background: #fff; box-shadow: 0 4px 0 rgba(59, 47, 47, 0.08); min-height: 0; }
+.ar-crayon { position: relative; border-radius: 12px 12px 8px 8px; transition: transform 0.12s ease; min-height: 0; }
+.ar-crayon i { position: absolute; left: 14%; right: 14%; top: 22%; bottom: 0; border-radius: 4px 4px 8px 8px; border: 2px solid rgba(59, 47, 47, .55); background: linear-gradient(90deg, rgba(0,0,0,.14), rgba(255,255,255,.35) 35%, rgba(255,255,255,0) 55%, rgba(0,0,0,.12)), linear-gradient(180deg, transparent 0 30%, rgba(255,255,255,.75) 30% 36%, transparent 36% 64%, rgba(255,255,255,.75) 64% 70%, transparent 70%), var(--c); }
+.ar-crayon::before { content: ''; position: absolute; left: 26%; right: 26%; top: 0; height: 26%; border-radius: 50% 50% 3px 3px; border: 2px solid rgba(59, 47, 47, .55); border-bottom: 0; background: linear-gradient(90deg, rgba(0,0,0,.1), rgba(255,255,255,.45) 40%, rgba(0,0,0,.08)), var(--c); }
+.ar-crayon.on { transform: translateY(-6px) scale(1.12); }
+.ar-crayon.on::after { content: ''; position: absolute; left: 50%; bottom: -9px; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; background: #3B2F2F; }
+/* My art: a wall of framed pictures */
+.ar-wall { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: minmax(0, 1fr); gap: 22px; padding: 18px 10px; min-height: 0; overflow-y: auto; border-radius: 28px; background: repeating-linear-gradient(90deg, #FBEFE2 0 60px, #F7E7D6 60px 120px); }
+.ar-frame { position: relative; padding: 12px; border-radius: 8px; background: linear-gradient(135deg, #C99568, #A8744A 50%, #8A5A34); box-shadow: inset 0 0 0 3px #6B4425, inset 0 2px 0 rgba(255,255,255,.35), 0 10px 14px rgba(59,47,47,.22); transform: rotate(var(--tilt, 0deg)); display: flex; }
+.ar-frame img { width: 100%; height: 100%; object-fit: cover; border-radius: 3px; box-shadow: 0 0 0 4px #FFFDF8, inset 0 0 6px rgba(0,0,0,.2); background: #fff; }
+.ar-frame::before { content: ''; position: absolute; top: -16px; left: 50%; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff, #9AA6B2); box-shadow: 0 2px 2px rgba(0,0,0,.25); }
+.ar-view { gap: 12px; min-height: 0; }
+.ar-bigframe { display: flex; align-items: center; justify-content: center; min-height: 0; padding: 20px; border-radius: 28px; background: repeating-linear-gradient(90deg, #FBEFE2 0 60px, #F7E7D6 60px 120px); }
+.ar-frame.big { height: 100%; aspect-ratio: 4 / 3; max-width: 100%; padding: 18px; transform: none; }
+.ar-empty { align-items: center; justify-content: center; gap: 12px; text-align: center; }
+.ar-empty b { font-size: 30px; font-weight: 900; }
+.ar-empty .muted { font-size: 20px; }
+@keyframes arPop { 0% { transform: scale(1); } 40% { transform: scale(1.05); } 100% { transform: scale(1); } }
+@keyframes arDotPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.25); } }
+@keyframes arGlow { 0%, 100% { box-shadow: 0 5px 0 var(--teal-dark), 0 0 0 0 rgba(244, 211, 94, .9); } 50% { box-shadow: 0 5px 0 var(--teal-dark), 0 0 0 10px rgba(244, 211, 94, 0); } }
+.ar-msg { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; font-size: 20px; line-height: 1.15; }
+.ar-wall { grid-auto-rows: max-content; align-content: start; }
+.ar-wall .ar-frame { aspect-ratio: 4 / 3; }
