@@ -1,4 +1,4 @@
-/* calmplus.css: Smell and blow, Count the stars, the narrator picker, more calm music */
+/* calmplus.css: Count the stars, the narrator picker, more calm music */
 
 /* the music list now holds more tracks: it scrolls if it has to, new tunes get a small dot */
 .calm-screen .music-list { max-height: 100%; overflow-y: auto; scrollbar-width: none; gap: 6px; }
@@ -8,30 +8,6 @@
 .calm-tool-ic { display: flex; align-items: center; justify-content: center; line-height: 0; }
 .calm-tool-ic.star-ic { color: #F4B63F; }
 .tool.on .calm-tool-ic.star-ic { color: #FFE38A; }
-
-/* Lumi breathes with the child: grows a little on the breath in (4 s), shrinks on the breath out (6 s) */
-.calm-lumi.lumi-breathes { transform-origin: 50% 90%; transition: transform 6s ease-in-out; }
-.calm-lumi.lumi-breathes.in { transform: scale(1.07); transition-duration: 4s; }
-
-/* ---------- Smell and blow */
-.fb-box { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-.fb-pair { display: flex; gap: 26px; }
-.fb-item { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 200px; height: 236px; border-radius: 40px; background: rgba(255, 255, 255, .78); border: 4px solid transparent; transition: border-color .6s, background .6s, opacity .6s; opacity: .55; }
-.fb-item svg { position: relative; z-index: 1; overflow: visible; }
-.fb-cap { position: relative; z-index: 1; font-size: 22px; font-weight: 900; color: var(--muted); }
-.fb-ring { position: absolute; left: 50%; top: 44%; width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 255, 255, .0) 40%, rgba(240, 140, 176, .28) 70%, rgba(240, 140, 176, 0) 72%); transform: scale(.7); opacity: 0; transition: transform 6s ease-in-out, opacity 1s; }
-.fb-item.candle .fb-ring { background: radial-gradient(circle, rgba(255, 255, 255, 0) 40%, rgba(244, 182, 63, .3) 70%, rgba(244, 182, 63, 0) 72%); }
-.fb-box.in .fb-item.flower, .fb-box.out .fb-item.candle { opacity: 1; background: #fff; border-color: #EBDDF5; }
-.fb-box.in .fb-item.flower .fb-ring { opacity: 1; transform: scale(1.25); transition-duration: 4s, 1s; }
-.fb-box.out .fb-item.candle .fb-ring { opacity: 1; transform: scale(.75); transition-duration: 6s, 1s; }
-.fb-petals { transform-origin: 60px 54px; transform: scale(.82); transition: transform 4s ease-in-out; }
-.fb-box.in .fb-petals { transform: scale(1.06); }
-.fb-flame { transform-origin: 60px 42px; transition: transform 6s ease-in-out, opacity 6s ease-in; }
-.fb-box.out .fb-flame { transform: rotate(-24deg) scale(.55, .7); opacity: .25; }
-.fb-smoke { opacity: 0; transition: opacity 2s; }
-.fb-box.out .fb-smoke { opacity: .8; transition-delay: 3.5s; }
-.fb-box.done .fb-item { opacity: 1; }
-.fb-word { font-size: 40px; font-weight: 900; color: #2B4566; min-height: 50px; text-align: center; }
 
 /* ---------- Count the stars */
 .st-box { display: flex; flex-direction: column; align-items: center; gap: 6px; }

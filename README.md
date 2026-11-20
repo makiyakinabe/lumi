@@ -574,7 +574,7 @@ The room shop now has 20 things: a clock, teddy bear, fairy lights, balloons, to
 
 Lumi fills the whole screen on any device held sideways: phones, iPads (any size), Android tablets, laptops and big monitors, with no black bars. It is designed on a 1194 × 834 landscape "stage"; `fit()` in `js/app.js` keeps that height (or width) and stretches the other side to match the screen's shape, so the flexible screens simply grow. The story and lesson pictures are scaled to use the space too (`fitScene()` in `js/stories.js`): on a wide screen such as a phone or a 16:9 laptop the picture fills the height and the words move into a column beside it. The notch and home bar are kept clear, and the strip around them takes the colour of the current screen. Held upright, a phone shows "Turn me sideways" (the buttons would be too small). A tablet held upright, or fixed upright on a wheelchair or stand, shows the whole app centred, with the screen's colour above and below; so does a desktop window narrower than it is tall.
 
-## Calm corner: breathing, stars, narrators, music
+## Calm corner: stars, narrators, music
 
 What helps children with autism and other special needs calm down:
 - slow breathing with a longer breath out;
@@ -586,8 +586,7 @@ What helps children with autism and other special needs calm down:
 
 The calm corner already had Balloon, Squeeze, Count and Bells. It now also has:
 
-- **Smell and blow** (`js/calmplus.js`): breathe with Lumi. "Smell the flower" (in for 4 seconds), then "blow out the candle" (out for 6 seconds), 4 times. The petals open, the flame bends and goes out, and Lumi breathes in and out too. It follows the one-minute "smell the flower, blow out the candle" video that lowered 7-year-olds' heart rates in a Stanford field study.
-- **Count the stars**: a night sky. One star comes out at a time; tap it and Lumi says the number with a soft note. If the child only watches, the star lights up by itself, so there's no wrong way. Ten stars join into a heart. *10 → 1* counts down instead (counting slowly down from 10 is a calming strategy used in schools).
+- **Count the stars** (`js/calmplus.js`): a night sky. One star comes out at a time; tap it and Lumi says the number with a soft note. If the child only watches, the star lights up by itself, so there's no wrong way. Ten stars join into a heart. *10 → 1* counts down instead (counting slowly down from 10 is a calming strategy used in schools).
 - **Who reads to me?** (`js/narrator.js`; Calm corner › Voice, or Pause › Choose a voice): the child picks the narrator they like:
   - 12 narrators: Lumi, a girl, a boy, a grown-up woman, a grown-up man, Grandma, Grandpa, a teacher, Storyteller Owl, Big Bear, Little Star and a friendly robot.
   - Tapping one says hello in that voice. "How it sounds" (gentle, calm and slow, cheerful, slow and clear, quiet) works with any narrator.
@@ -986,7 +985,7 @@ web/
   js/toolkit.js     Out and about, Support Passport, ready routines (css/toolkit.css)
   js/access.js      switch access (one or two switches, scanning)
   js/fittext.js     makes words a little smaller when they would not fit their button or box
-  js/calmplus.js    Smell and blow, Count the stars (calm corner) (css/calmplus.css)
+  js/calmplus.js    Count the stars (calm corner) (css/calmplus.css)
   js/narrator.js    Who reads to me? narrator picker, voices on this device
   js/games-fun.js   five "Go!" games (css/games-fun.css)
   js/rhythm-kitchen.js  Rhythm kitchen, the sixth (css/rhythm-kitchen.css)
