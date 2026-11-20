@@ -155,6 +155,7 @@
   const dateKey = (d) => { const x = d || new Date(); return `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, '0')}-${String(x.getDate()).padStart(2, '0')}`; };
   // opts.quiet: count it for the grown-ups' numbers, but don't list it in "recent activity"
   function track(kind, detail, opts) {
+    if (A.onTrack) { try { A.onTrack(kind, detail); } catch (e) { /* a listener must never break tracking */ } }
     const k = dateKey();
     const day = state.log[k] || (state.log[k] = {});
     if (kind === 'feelings') {
@@ -331,7 +332,7 @@
       o.type = 'sine';
       o.frequency.value = freq;
       g.gain.setValueAtTime(0.0001, t);
-      g.gain.linearRampToValueAtTime(vol || 0.15, t + 0.03);
+      g.gain.linearRampToValueAtTime((vol || 0.15) * (A.outingQuiet ? 0.45 : 1), t + 0.03);
       g.gain.exponentialRampToValueAtTime(0.0001, t + (dur || 0.6));
       o.connect(g);
       g.connect(audioCtx.destination);
@@ -983,7 +984,7 @@
         ${state.profile.show.chat !== false ? `<button class="ch-open" data-a="nav" data-to="chat" aria-label="Chat with Lumi"><span class="ch-open-face">${L.svg({ look: lookWith({ spark: 'none' }), mood: 'happy', size: 44 })}</span><span>Chat</span><span class="ch-open-dots"><i></i><i></i><i></i></span></button>` : ''}
         ${(() => { const sz = (agePack() || {}).lumiSize || 350; return `<button class="lumi-pos tap-lumi bob" data-a="lumiPlay" data-mood="happy" aria-label="Play with Lumi" style="left:50%;margin-left:-${sz / 2}px;bottom:4%">${L.svg({ look: lookWith(), mood: 'happy', wave: true, size: sz })}</button>`; })()}
       </div>
-      <button class="primary big" data-a="startDay" style="height:112px;flex:none">${ic('play', 54)}<span>${resume ? 'Go on' : 'Go'}</span></button>
+      <div class="row gap12" style="height:112px;flex:none"><button class="primary big grow" data-a="startDay" style="height:112px">${ic('play', 54)}<span>${resume ? 'Go on' : 'Go'}</span></button>${SCREENS.outkit && state.profile.show.out !== false ? `<button class="home-out" data-a="nav" data-to="outkit" aria-label="Going out">${ic('busLine', 46)}<span>Going out</span></button>` : ''}</div>
     </div>
     <div class="home-grid four grow">${tiles}</div>
   </div>

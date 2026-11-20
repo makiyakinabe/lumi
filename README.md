@@ -574,6 +574,36 @@ The room shop now has 20 things: a clock, teddy bear, fairy lights, balloons, to
 
 Lumi fills the whole screen on any device held sideways: phones, iPads (any size), Android tablets, laptops and big monitors, with no black bars. It is designed on a 1194 × 834 landscape "stage"; `fit()` in `js/app.js` keeps that height (or width) and stretches the other side to match the screen's shape, so the flexible screens simply grow. The story and lesson pictures are scaled to use the space too (`fitScene()` in `js/stories.js`): on a wide screen such as a phone or a 16:9 laptop the picture fills the height and the words move into a column beside it. The notch and home bar are kept clear, and the strip around them takes the colour of the current screen. Held upright, a phone shows "Turn me sideways" (the buttons would be too small). A tablet held upright, or fixed upright on a wheelchair or stand, shows the whole app centred, with the screen's colour above and below; so does a desktop window narrower than it is tall.
 
+## Everyday use (from the AAC playtest review)
+
+- **Going out**: a big button next to Go on the home screen opens Out and about in one tap.
+  - It now has 12 needs: food, drink, more, finished, toilet, too loud, a break, help, stop, wait with me, what's next and I'm lost. Talk and My card are in its top bar.
+  - Each need shows a big card the grown-up can read, and Lumi says it.
+  - While Out and about is open, the screen stays still and Lumi's chimes are soft. Grown-ups › Sensory can turn this off.
+- **One tap for quiet**: the Pause menu has *Turn sound off*. It switches off Lumi's voice, chimes and music together, and the same button turns them back on.
+- **Tomorrow**: My day has a *Tomorrow* button. It shows tomorrow's plan in pictures and anything coming up, with a Read button, so the child can get ready the night before.
+- **Asking is noted, not scored**: Grown-ups › Progress › *What helped this week* now shows *Asked for what they needed*, for example a break (4), help (2), stop (1). It counts asking for a break, help, stop, too loud, the toilet, food or a drink, from anywhere in Lumi.
+- **A steady talk board**: Grown-ups › Sensory › *Talk board folders* hides folders the child doesn't use. Core always stays first, in the same place.
+- **A gentle buzz when tapping**: an option for Android tablets that can vibrate. It's off at first.
+- **Helping your child talk**: four short tips on Grown-ups › Support:
+  - show, don't ask;
+  - offer two choices;
+  - wait;
+  - answer every try.
+- **Already in Lumi**, as the review suggested:
+  - offline use;
+  - the Grown-ups gate (hold, then a password);
+  - a Break button on every screen;
+  - tap instead of drag;
+  - upright tablets;
+  - real photos and names;
+  - familiar recorded voices;
+  - the dentist and other Coming up stories with your own photos;
+  - Now & Next;
+  - no scores or "wrong" answers;
+  - the routine builder and ready routines;
+  - privacy (everything stays on the device).
+
 ## Guidance: first time, or when the child asks
 
 Lumi doesn't keep pointing. The guide hand, the glow and "Tap here" only come in two cases:
@@ -1004,6 +1034,7 @@ web/
   js/fittext.js     makes words a little smaller when they would not fit their button or box
   js/calmplus.js    Count the stars (calm corner) (css/calmplus.css)
   js/narrator.js    Who reads to me? narrator picker, voices on this device
+  js/everyday.js    Tomorrow on My day, asking counted in Progress, gentle buzz, hiding talk folders
   js/games-fun.js   five "Go!" games (css/games-fun.css)
   js/rhythm-kitchen.js  Rhythm kitchen, the sixth (css/rhythm-kitchen.css)
   js/games-adventure.js Lumi's run, Lumi's kart, Star path (css/games-adventure.css)

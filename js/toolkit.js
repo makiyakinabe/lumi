@@ -22,11 +22,20 @@
   const l2 = (t) => (A.l2Html ? A.l2Html(t) : '');
 
   // ================================================================ 1. Out and about
+  // the needs that come up most when out (a hawker centre, a clinic, the MRT), all one tap away;
+  // Talk and My card sit in the top bar
   const OUT = [
-    ['toilet', 'Toilet', 'toilet', '#DCEEF7'], ['loud', 'Too loud', 'volume', '#FDE6CF'], ['wait', 'Wait with me', 'hourglass', '#F1ECFB'], ['next', "What's next", 'clock', '#EEF7E6'],
-    ['lost', "I'm lost", 'pin', '#FBE1EA'], ['break', 'A break', 'kBreak', '#EEE8F9'], ['talk', 'Talk', 'kTalk', '#DCEFED'], ['me', 'My card', 'cards', '#FFF4C7']
+    ['food', 'Food', 'eat', '#FFF1D6'], ['drink', 'Drink', 'drink', '#DCEEF7'], ['more', 'More', 'wMore', '#E7F3E1'], ['finished', 'Finished', 'wDone', '#EEF7E6'],
+    ['toilet', 'Toilet', 'toilet', '#DCEEF7'], ['loud', 'Too loud', 'volume', '#FDE6CF'], ['break', 'A break', 'kBreak', '#EEE8F9'], ['help', 'Help', 'help', '#FBE1EA'],
+    ['stop', 'Stop', 'stop', '#FCE3DE'], ['wait', 'Wait with me', 'hourglass', '#F1ECFB'], ['next', "What's next", 'clock', '#EEF7E6'], ['lost', "I'm lost", 'pin', '#FBE1EA']
   ];
   const OUT_CARDS = {
+    food: { big: 'I want food, please', sub: 'I am hungry', icon: 'eat', bg: '#FFF1D6' },
+    drink: { big: 'I want a drink, please', sub: 'I am thirsty', icon: 'drink', bg: '#DCEEF7' },
+    more: { big: 'More, please', sub: '', icon: 'wMore', bg: '#E7F3E1' },
+    finished: { big: 'I am finished', sub: 'All done', icon: 'wDone', bg: '#EEF7E6' },
+    help: { big: 'Help me, please', sub: '', icon: 'help', bg: '#FBE1EA' },
+    stop: { big: 'Stop, please', sub: '', icon: 'stop', bg: '#FCE3DE' },
     toilet: { big: 'I need the toilet', sub: 'Where is the toilet, please?', icon: 'toilet', bg: '#DCEEF7' },
     loud: { big: 'It is too loud', sub: 'I need somewhere quiet', icon: 'volume', bg: '#FDE6CF' },
     lost: { big: 'I am lost. Please help me.', sub: '', icon: 'pin', bg: '#FBE1EA' }
@@ -62,7 +71,8 @@
     return `
 <section class="screen ok-screen" aria-label="Out and about">
   ${A.srTitle('Out and about')}
-  <div class="row gap12" style="height:60px;flex:none">${A.backBtn()}${A.speakBtn(A.VOICE.outkit())}<span class="game-chip" style="background:#E3F1FA;color:#3E6E9A">${ic('busLine', 32)}<span>Out and about</span></span><span class="grow"></span>${A.starChip(true)}</div>
+  <div class="row gap12" style="height:60px;flex:none">${A.backBtn()}${A.speakBtn(A.VOICE.outkit())}<span class="game-chip" style="background:#E3F1FA;color:#3E6E9A">${ic('busLine', 32)}<span>Out and about</span></span><span class="grow"></span>
+    <button class="soft-btn ok-top" data-a="okPick" data-v="talk">${ic('kTalk', 26)}<span>Talk</span></button><button class="soft-btn ok-top" data-a="okPick" data-v="me">${ic('cards', 26)}<span>My card</span></button>${A.starChip(true)}</div>
   ${ok.wait ? `<div class="panel grow ok-panel">${waitHtml(ok.wait)}</div>` : `<div class="ok-grid grow">${tiles}</div>`}
   ${ok.card ? cardHtml(ok.card) : ''}
 </section>`;
@@ -82,10 +92,10 @@
   Object.assign(A.ACTIONS, {
     okPick: (d) => {
       const k = d.v;
-      if (OUT_CARDS[k]) { S.ok.card = k; render(); const c = OUT_CARDS[k]; say(k === 'lost' && SP().me.adult ? `${c.big} Please call ${SP().me.adult}.` : c.big); tone(659, 0.3, 0.05); if (A.supportLog) A.supportLog('out', OUT.find((o) => o[0] === k)[1]); return 'keep'; }
+      if (OUT_CARDS[k]) { S.ok.card = k; render(); const c = OUT_CARDS[k]; if (A.logAsk) A.logAsk(OUT.find((o) => o[0] === k)[1]); say(k === 'lost' && SP().me.adult ? `${c.big} Please call ${SP().me.adult}.` : c.big); tone(659, 0.3, 0.05); if (A.supportLog) A.supportLog('out', OUT.find((o) => o[0] === k)[1]); return 'keep'; }
       if (k === 'wait') { S.ok.wait = {}; render(); say('How long do we wait?'); return 'keep'; }
       if (k === 'next') { go('nownext'); return 'keep'; }
-      if (k === 'break') { if (A.supportLog) A.supportLog('out', 'A break'); A.ACTIONS.takeBreak(); return 'keep'; }
+      if (k === 'break') { if (A.supportLog) A.supportLog('out', 'A break'); A.ACTIONS.takeBreak(); return 'keep'; } // the break itself is counted as asking
       if (k === 'talk') { S.aacFolder = 'here'; S.aacHere = 'out'; go('talk'); return 'keep'; }
       if (k === 'me') { S.spView = SP().me.show ? 'me' : 'cards'; go('mycard'); return 'keep'; }
       return 'keep';
@@ -96,6 +106,18 @@
     okWaitOff: () => { const w = S.ok.wait; if (w && w.mins === 0 && w.t) track('waits', 'out and about'); clearInterval(okTimer); S.ok.wait = null; render(); return 'keep'; }
   });
   A.ENTER.outkit = () => { S.ok = {}; };
+  // Outing calm: while Out and about is open, movement is kept still and Lumi's chimes are soft,
+  // so the screen stays calm in a busy place (Grown-ups can switch this off in Sensory).
+  let calmAdded = false;
+  const prevAfterOut = A.afterRender;
+  A.afterRender = () => {
+    if (prevAfterOut) prevAfterOut();
+    const root = A.stage;
+    const want = S.screen === 'outkit' && state.settings.outCalm !== false;
+    if (want && !root.classList.contains('reduce-motion')) { root.classList.add('reduce-motion'); calmAdded = true; }
+    if (!want && calmAdded) { root.classList.remove('reduce-motion'); calmAdded = false; }
+    A.outingQuiet = want;
+  };
 
   // ================================================================ 2. Support Passport
   const PP_SECS = [['talk', 'How I communicate'], ['how', 'How to help me'], ['helps', 'What helps me'], ['hard', 'Things I find hard'], ['say', 'Things I might say'], ['contact', 'My grown-up (name and phone)']];

@@ -2,8 +2,8 @@
 
 /* ---------- Out and about */
 .ok-screen { gap: 16px; background: #EEF5FA; }
-.ok-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 16px; min-height: 0; }
-.ok-tile { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; border-radius: 34px; background: var(--bg, #fff); border: 5px solid #fff; box-shadow: 0 7px 0 rgba(59, 47, 47, .1); font-size: 26px; font-weight: 900; color: var(--ink); text-align: center; line-height: 1.1; padding: 10px; }
+.ok-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 14px; min-height: 0; }
+.ok-tile { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; border-radius: 30px; background: var(--bg, #fff); border: 5px solid #fff; box-shadow: 0 7px 0 rgba(59, 47, 47, .1); font-size: 26px; font-weight: 900; color: var(--ink); text-align: center; line-height: 1.1; padding: 10px; }
 .ok-tile svg { color: var(--ink); }
 .ok-tile:active { transform: translateY(5px); box-shadow: none; }
 .ok-tile .l2, .su-card .l2, .su-phrase .l2, .nr-opt .l2 { display: block; font-size: .72em; font-weight: 700; color: var(--muted); margin-top: 2px; }
@@ -71,3 +71,29 @@
 .cu-mine .fo-for { background: #FBE1EA; color: #A8457A; }
 .cu-starters { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 4px 0 8px; }
 .cu-starters .su-pick { min-height: 38px; padding: 4px 12px; font-size: 15px; }
+
+.ok-tile svg { width: 72px; height: 72px; }
+.ok-top { height: 56px; padding: 0 16px; font-size: 18px; border-width: 2px; }
+.home-out { flex: none; width: 150px; height: 112px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border-radius: var(--r-md, 24px); background: #E3F1FA; border: 3px solid #A9CBE6; color: #3E6E9A; font-size: 19px; font-weight: 900; }
+
+/* Pause: one tap for quiet */
+.p-sound { height: 52px; padding: 0 18px; font-size: 18px; border-width: 2px; margin: 4px auto 0; }
+
+/* Grown-ups › Support: helping your child talk */
+.su-tiplist { margin: 4px 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; font-size: 15px; line-height: 1.35; }
+
+/* Tomorrow (My day) */
+.tm-open { height: 56px; padding: 0 16px; font-size: 18px; border-width: 2px; }
+.tm-box { position: absolute; inset: 70px 40px 24px; z-index: 40; display: flex; flex-direction: column; gap: 14px; padding: 20px 24px; border-radius: 32px; background: #FFFDF8; box-shadow: 0 20px 40px rgba(59, 47, 47, .22); }
+.tm-head { display: flex; align-items: center; gap: 14px; }
+.tm-head b { display: block; font-size: 32px; font-weight: 900; }
+.tm-head span { color: var(--muted); font-weight: 800; font-size: 18px; }
+.tm-close { display: flex; align-items: center; gap: 8px; height: 64px; padding: 0 26px; font-size: 22px; }
+.tm-up { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 18px; background: #FFF4D6; font-size: 18px; font-weight: 700; }
+.tm-up .soft-btn { height: 48px; padding: 0 14px; font-size: 16px; border-width: 2px; }
+.tm-steps { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); grid-auto-rows: 170px; gap: 12px; overflow-y: auto; }
+.tm-step { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border-radius: 22px; text-align: center; padding: 8px; }
+.tm-step b { font-size: 17px; font-weight: 900; line-height: 1.15; }
+.tm-step span:last-child { font-size: 15px; font-weight: 800; color: var(--muted); }
+.tm-art img { width: 64px; height: 64px; border-radius: 14px; object-fit: cover; }
+.tm-none { color: var(--muted); font-weight: 800; font-size: 20px; }

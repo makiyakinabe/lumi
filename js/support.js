@@ -280,6 +280,13 @@
       <p class="g-note">Choose how Lumi warns before a change, and turn countdowns off if they are stressful.</p>
       <button class="g-btn outline top-gap" data-a="spPreview">${ic('eye', 18)}<span>See My card as your child does</span></button>
       ${A.SCREENS.cgPassport ? `<button class="g-btn top-gap" data-a="nav" data-to="cgPassport">${ic('cards', 18)}<span>Support Passport</span></button><p class="g-note">A one-page About me to print or share.</p>` : ''}
+      <h3 class="g-sub-h top-gap">Helping your child talk</h3>
+      <ul class="su-tiplist">
+        <li><b>Show, don't ask.</b> Tap the words on the talk board as you say them.</li>
+        <li><b>Offer two choices.</b> "Rice or noodles?" Point to each.</li>
+        <li><b>Wait.</b> Count to 10 in your head before helping.</li>
+        <li><b>Answer every try.</b> A point, a sound or one word is talking too.</li>
+      </ul>
     </div>
   </div>
 </section>`;
@@ -335,6 +342,8 @@
     if (after.length) lines.push(`After a break they chose: ${after.map(([k, n]) => `${k} (${n})`).join(', ')}.`);
     if (calm.length) lines.push(`Calm supports they picked: ${calm.map(([k]) => esc(k)).join(', ')}.`);
     if (cards.length) lines.push(`Cards they showed: ${cards.map(([k]) => esc(k)).join(', ')}.`);
+    const asks = by(count('ask'));
+    if (asks.length) lines.push(`Asked for what they needed: ${asks.slice(0, 5).map(([k, n]) => `${esc(k.toLowerCase())} (${n})`).join(', ')}.`);
     return `<div class="su-week"><h3 class="g-sub-h">${ic('heart', 18)} What helped this week</h3><ul>${lines.map((l) => `<li>${l}</li>`).join('')}</ul><p class="g-note">These are things Lumi noticed, not a test. Your own notes matter more.</p></div>`;
   };
 

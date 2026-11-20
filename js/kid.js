@@ -92,6 +92,7 @@
         ${canRestart ? `<button class="pause-btn restart" data-a="pRestart">${ic('restart', 44)}<span>Start again</span></button>` : ''}
         <button class="pause-btn exit" data-a="pExit">${ic(exitTo === 'menu' ? 'exit' : 'home', 44)}<span>${exitTo === 'menu' ? 'Exit' : exitTo === 'together' ? 'Together' : 'Home'}</span></button>
       </div>
+      <button class="soft-btn p-sound" data-a="pSound" aria-pressed="${!(state.settings.voice || state.settings.sounds)}">${ic(state.settings.voice || state.settings.sounds ? 'mute' : 'speaker', 26)}<span>${state.settings.voice || state.settings.sounds ? 'Turn sound off' : 'Turn sound on'}</span></button>
       ${voiceRow()}
     </div>`;
   }
@@ -123,6 +124,15 @@
 
   Object.assign(A.ACTIONS, {
     pause: () => { pause(); return 'keep'; },
+    // one tap for quiet: Lumi's voice, chimes and music all off (and back on again)
+    pSound: () => {
+      const st = state.settings;
+      if (st.voice || st.sounds) { st.soundBefore = { voice: st.voice, sounds: st.sounds }; st.voice = false; st.sounds = false; try { window.speechSynthesis.cancel(); } catch (e) { /* no speech */ } if (window.LumiAudio && window.LumiAudio.playing) window.LumiAudio.stop(); }
+      else { const b = st.soundBefore || { voice: true, sounds: true }; st.voice = b.voice !== false; st.sounds = b.sounds !== false; if (!st.voice && !st.sounds) { st.voice = true; st.sounds = true; } }
+      A.save(); drawPause();
+      if (st.voice) A.say('Sound is on.');
+      return 'keep';
+    },
     pResume: () => {
       unpause(true);
       A.afterRender();

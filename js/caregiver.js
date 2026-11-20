@@ -201,6 +201,7 @@
       ${toggle(st.childVoice, 'bToggle', 'childVoice', 'Child can choose the voice')}
       <button class="fv-entry" data-a="nav" data-to="cgVoice">${ic('heart', 26)}<span class="grow"><b>Your own voice for Lumi</b><span>${A.familiarCount ? (() => { const c = A.familiarCount(); return c.have ? `${c.have} of ${c.total} lines recorded` : 'Record lines your child knows'; })() : ''}</span></span>${ic('chev', 22)}</button>
       ${toggle(st.speakWords, 'bToggle', 'speakWords', 'Talk board says each word')}
+      <div class="g-field"><span>Talk board folders (tap to hide ones your child does not use)</span><div class="su-chips">${[['here', 'Here']].concat(D.WORD_FOLDERS.filter((f) => f.id !== 'core').map((f) => [f.id, f.name])).map(([id, name]) => { const on = !(st.hideFolders || []).includes(id); return `<button class="su-pick ${on ? 'on' : ''}" data-a="cgFolder" data-v="${id}" aria-pressed="${on}">${esc(name)}</button>`; }).join('')}</div></div>
       ${A.langSettingsHtml ? A.langSettingsHtml() : ''}
       <div class="g-field"><span>Chat with Lumi: use the microphone</span>${seg([['off', 'Off'], ['on', 'On']], st.chatMic === true ? 'on' : 'off', 'cgChatMic')}</div>
       <p class="g-note">More voices: iPad Settings › Accessibility › Spoken Content › Voices. Android: Settings › Text-to-speech.</p>`;
@@ -228,6 +229,8 @@
       ${A.switchSettingsHtml ? A.switchSettingsHtml() : ''}
       <h2 class="g-h top-gap">Sound</h2>
       ${toggle(st.sounds, 'bToggle', 'sounds', 'Sounds and chimes')}
+      ${navigator.vibrate ? toggle(st.buzz, 'bToggle', 'buzz', 'A gentle buzz when tapping') : ''}
+      ${toggle(st.outCalm !== false, 'cgOutCalm', 'outCalm', 'Out and about: still screen, soft chimes')}
       ${toggle(st.voice, 'bToggle', 'voice', "Lumi's voice")}
       <div class="g-field"><span>Voice pace</span><div class="row gap8">${seg([[0.7, 'Slow'], [0.85, 'Calm'], [1, 'Normal'], [1.15, 'Quick']], st.voiceRate, 'cgRate')}<button class="g-btn small outline" data-a="cgTestVoice">${ic('speaker', 16)}<span>Test</span></button></div></div>
       <div class="g-field"><span>Music volume</span>${seg([[0.3, 'Quiet'], [0.6, 'Medium'], [0.9, 'Loud']], st.musicVolume, 'cgVol')}</div>

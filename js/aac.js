@@ -28,8 +28,10 @@
   const FOLDER_COLOURS = { here: '#2F7E79', out: '#4A78A8', core: '#2F7E79', feel: '#7E64C8', quick: '#C98A1E', food: '#E0913E', play: '#4F8A3F', places: '#4A78A8', people: '#C99A10', my: '#C2577A', abc: '#6B5A4E' };
 
   function folders() {
-    const list = D.WORD_FOLDERS.filter((f) => !f.minAge || state.profile.age === f.minAge || A.level() === 3);
-    list.splice(1, 0, { id: 'here', name: 'Here', icon: 'pin' });
+    // grown-ups can hide folders the child does not use (Core always stays, in the same place)
+    const hidden = state.settings.hideFolders || [];
+    const list = D.WORD_FOLDERS.filter((f) => (!f.minAge || state.profile.age === f.minAge || A.level() === 3) && (f.id === 'core' || !hidden.includes(f.id)));
+    if (!hidden.includes('here')) list.splice(1, 0, { id: 'here', name: 'Here', icon: 'pin' });
     if (A.level() === 3 || state.profile.age === 'teen') list.push({ id: 'abc', name: 'Type', icon: 'text' });
     return list;
   }
