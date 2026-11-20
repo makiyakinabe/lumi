@@ -2652,3 +2652,6 @@ svg.pic.person { overflow: hidden; }
 .bar .time-chip span, .bar .primary span, .sg-together span, .sg-skip span, .pat-cell .qmark { white-space: nowrap; }
 .bar .sg-label { min-width: 0; text-wrap: balance; }
 .pat-cell .qmark { font-size: 52px; }
+
+/* Hint, beside "Hear it" on every screen that can guide (the hand only comes by itself the first time) */
+.hint-mini { flex: none; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--star-tint); color: #9A6A10; border: 2px solid var(--q); }

@@ -367,7 +367,7 @@
       el.classList.add('wiggle-once');
       say(g.wrong > 1 ? `Look. The ${it[1].toLowerCase()} goes here.` : 'Hmm, try another one.');
       A.applyGuide();
-      if (g.wrong > 1) { A.hintNow(); return 'keep'; }
+      if (g.wrong > 1) { A.hintNow(true); return 'keep'; }
     }
   };
 

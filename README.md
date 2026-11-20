@@ -574,6 +574,23 @@ The room shop now has 20 things: a clock, teddy bear, fairy lights, balloons, to
 
 Lumi fills the whole screen on any device held sideways: phones, iPads (any size), Android tablets, laptops and big monitors, with no black bars. It is designed on a 1194 × 834 landscape "stage"; `fit()` in `js/app.js` keeps that height (or width) and stretches the other side to match the screen's shape, so the flexible screens simply grow. The story and lesson pictures are scaled to use the space too (`fitScene()` in `js/stories.js`): on a wide screen such as a phone or a 16:9 laptop the picture fills the height and the words move into a column beside it. The notch and home bar are kept clear, and the strip around them takes the colour of the current screen. Held upright, a phone shows "Turn me sideways" (the buttons would be too small). A tablet held upright, or fixed upright on a wheelchair or stand, shows the whole app centred, with the screen's colour above and below; so does a desktop window narrower than it is tall.
 
+## Guidance: first time, or when the child asks
+
+Lumi doesn't keep pointing. The guide hand, the glow and "Tap here" only come in two cases:
+- the **first time** a child meets something: a screen, a step in a game, or a page in a story or lesson;
+- when the child taps **Hint**, the yellow bulb next to "Hear it". It's now on every screen that can guide.
+
+After that, the child is free to look, choose and take their time. In lessons, Lumi also shows ("Watch me") each step only the first time; "Show me" is always there.
+
+After a wrong try, Lumi still says a gentle word ("Tap a face first"), but the hand doesn't come unless the child asks.
+
+Grown-ups › Sensory › *When Lumi shows what to tap* has three choices:
+- *First time + Hint* (the default);
+- *Every time* (after a pause, as before);
+- *Only on Hint*.
+
+*Show the first-time help again* resets it, for example for a new child.
+
 ## Calm corner: stars, narrators, music
 
 What helps children with autism and other special needs calm down:

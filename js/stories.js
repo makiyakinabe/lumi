@@ -838,6 +838,8 @@
     const s = storyNow();
     const step = stepNow();
     if (!s.learn || state.settings.watchFirst === false || !val(step.task, st) || step.noDemo) return;
+    // Lumi shows a step only the first time; after that the child does it their way ("Show me" is always there)
+    if (A.guideMode() !== 'always' && !A.guideOnce('demo:' + s.id + '#' + st.i)) return;
     const words = (val(step.text, st) || '').length + (val(step.task, st) || '').length;
     SX.later(st, () => {
       if (st.done || S.paused) return;
@@ -902,7 +904,7 @@
     stNext: () => {
       const st = S.sx;
       const step = stepNow();
-      if (!st.done && val(step.task, st)) { say(val(step.task, st)); A.hintNow(); return 'keep'; }
+      if (!st.done && val(step.task, st)) { say(val(step.task, st)); A.hintNow(true); return 'keep'; }
       const s = storyNow();
       const nx = nextIdx(s, st, st.i);
       if (nx >= 0) { openStep(nx); return undefined; }

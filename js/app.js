@@ -653,8 +653,27 @@
     handEl.style.top = ((r.top - st.top + r.height * 0.55) / s) + 'px';
     handEl.hidden = false;
   }
+  // ---- How much Lumi guides (Grown-ups › Sensory › Guide hand). By default the hand and the glow only
+  // come the first time a child meets something (a screen, a step in a game, a page in a story), and any
+  // time they tap Hint. After that the child is free to look, choose and take their time.
+  //   first: first time + Hint (default)   always: every time, after a pause   off: only when Hint is tapped
+  const guideMode = () => (state.settings.guide === false ? 'off' : state.settings.guideMode || 'first');
+  A.guideMode = guideMode;
+  function guideKey(g) {
+    let ctx = S.screen;
+    if (S.screen === 'routine' && S.day && S.day.plan && S.day.plan[S.day.i]) { const st = S.day.plan[S.day.i]; ctx += ':' + (st.custom ? 'c' + st.custom : st.id); }
+    if (S.screen === 'story' && S.sx) ctx += ':' + S.sx.id + '#' + S.sx.i;
+    // the same kind of thing counts once ("tick item 1", "tick item 2" are one lesson)
+    const sel = String(g.key || g.sel).replace(/\[data-(k|n|i|id|idx|plot|slot|t)="[^"]*"\]/g, '').replace(/\d+/g, '#');
+    return ctx + '|' + sel;
+  }
+  const seenGuide = () => state.guideSeen || (state.guideSeen = {});
+  // true the first time a key is met (and remembers it)
+  A.guideOnce = (key) => { if (seenGuide()[key]) return false; seenGuide()[key] = 1; save(); return true; };
+  let armedKey = null;
   function showHint(g) {
     if (!g || S.paused || !document.body.contains(g.el)) return;
+    if (g.key0 && !seenGuide()[g.key0]) { seenGuide()[g.key0] = 1; save(); }
     placeHand(g.el);
     if (S.lastHintFor !== S.screen + g.sel) { S.lastHintFor = S.screen + g.sel; track('hints', S.screen, { quiet: true }); }
     if (S.interacted) say(g.say);
@@ -663,15 +682,27 @@
     clearTimeout(guideTimer);
     hideHand();
     stage.querySelectorAll('.guide-glow').forEach((e) => e.classList.remove('guide-glow'));
-    if (!state.settings.guide || S.paused || S.celebrating) return;
+    const mode = guideMode();
+    if (mode === 'off' || S.paused || S.celebrating) return;
     const g = guideTarget();
-    if (!g) return;
+    if (!g) { if (armedKey) { seenGuide()[armedKey] = 1; save(); } armedKey = null; return; }
+    if (mode === 'first') {
+      const key = guideKey(g);
+      // the child moved on by themselves before the hand came: they did not need it
+      if (armedKey && armedKey !== key) { seenGuide()[armedKey] = 1; save(); }
+      if (seenGuide()[key]) { armedKey = null; return; }
+      armedKey = key;
+      g.key0 = key;
+    }
     if (!g.quiet) g.el.classList.add('guide-glow');
     guideTimer = setTimeout(() => showHint(g), g.delay || state.settings.guideDelay * 1000);
   }
-  function hintNow() {
+  // auto: called after a wrong try. Lumi's words help; the hand only comes if guidance is set to "every time".
+  function hintNow(auto) {
+    if (auto === true && guideMode() !== 'always') return;
     const g = guideTarget();
-    if (g) { g.el.classList.add('guide-glow'); showHint(g); }
+    if (g) { g.el.classList.add('guide-glow'); showHint(g); return; }
+    if (auto !== true && VOICE[S.screen]) { try { const v = VOICE[S.screen](); if (v) say(v); } catch (e) { /* nothing to say */ } }
   }
 
   // ================================================================ SCREENS
@@ -1956,10 +1987,28 @@
     screenEl.innerHTML = SCREENS[S.screen]();
     // redrawing the same screen (e.g. the next stage of a game) should not fade the whole screen in again
     if (same && screenEl.firstElementChild) screenEl.firstElementChild.classList.add('no-fade');
+    addHintButton();
     if (AFTER[S.screen]) AFTER[S.screen]();
     if (A.afterRender) A.afterRender();
     fitSvgText(screenEl);
     applyGuide();
+  }
+  // Every child screen that can guide gets a small Hint button beside "Hear it", so help is always one tap
+  // away now that Lumi no longer shows the hand by itself (screens with their own Hint or "Show me" keep theirs).
+  function addHintButton() {
+    const scr = screenEl.firstElementChild;
+    if (!scr || scr.classList.contains('grownup') || !GUIDE[S.screen]) return;
+    if (scr.querySelector('[data-a="hint"], .sx-help, [data-a="stShow"]')) return;
+    const hear = scr.querySelector('.speak-btn');
+    if (!hear) return;
+    const b = document.createElement('button');
+    b.className = 'hint-mini';
+    b.dataset.a = 'hint';
+    b.setAttribute('aria-label', 'Hint: show me what to tap');
+    const sz = Math.max(40, Math.min(60, hear.offsetWidth || 52));
+    b.style.width = b.style.height = `${sz}px`;
+    b.innerHTML = ic('kHint', Math.round(sz * 0.62));
+    hear.insertAdjacentElement('afterend', b);
   }
 
   // Words drawn inside pictures (a BUS STOP sign, a shop name, a screen) must sit inside their sign with room to
@@ -2106,9 +2155,12 @@
     lumiPlay: () => lumiPlay(),
     say: (d) => say(d.text),
     back: () => goBack(),
+    cgGuide: (d) => { state.settings.guideMode = d.v; state.settings.guide = d.v !== 'off'; save(); render(); },
+    cgGuideReset: () => { state.guideSeen = {}; save(); render(); showToast('<span>Lumi will show things again the first time</span>', 'toast-g'); },
     hint: () => {
       if (S.screen === 'feelings') S.feelHint = true;
       if (S.screen === 'feelings') render();
+      track('hints', 'asked', { quiet: true });
       hintNow();
       return 'keep';
     },
@@ -2161,7 +2213,7 @@
         if (!S.feelHint) track('tries', 'feelings', { quiet: true });
         S.feelHint = true;
         render();
-        hintNow();
+        hintNow(true);
         say(`Hmm. I think Lumi feels ${D.FEELINGS[expected].label.toLowerCase()}. Look at Lumi's eyebrows.`);
         return 'keep';
       }
@@ -2170,7 +2222,7 @@
     feelUnsure: () => { track('feelings', 'unsure'); S.feelPick = null; say("That's okay. You don't have to know. Let's breathe together."); resetCalm(); go('calm'); },
     feelSkip: () => { S.feelPick = null; goBack(); },
     feelNext: () => {
-      if (!S.feelPick) { say('Tap a face first.'); hintNow(); return 'keep'; }
+      if (!S.feelPick) { say('Tap a face first.'); hintNow(true); return 'keep'; }
       S.talk = ['ifeel', S.feelPick];
       S.replyShown = false;
       S.said = false;
@@ -2193,7 +2245,7 @@
     checkDone: () => {
       const c = S.day && S.day.check;
       if (!c) return;
-      if (c.ticked.includes(false)) { say('Tap each one first.'); hintNow(); return 'keep'; }
+      if (c.ticked.includes(false)) { say('Tap each one first.'); hintNow(true); return 'keep'; }
       c.done = true;
       state.stats.checklists += 1;
       track('checklists', stepInfo(S.day.plan[S.day.i]).label);

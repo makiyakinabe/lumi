@@ -194,7 +194,7 @@
       }
     },
     talkNext: () => {
-      if (!S.replyShown) { say('Tap the speaker to say it.'); hintNow(); return 'keep'; }
+      if (!S.replyShown) { say('Tap the speaker to say it.'); hintNow(true); return 'keep'; }
       A.resetCalm();
       go('calm');
     },

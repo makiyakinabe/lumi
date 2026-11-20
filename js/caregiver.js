@@ -237,8 +237,10 @@
         ${S.mineName ? `<button class="g-btn small outline" data-a="music" data-v="mine">${ic(window.LumiAudio && window.LumiAudio.playing === 'mine' ? 'pauseFill' : 'playPause', 14)}<span>Play</span></button><button class="g-link" data-a="cgMineDel">Remove</button>` : ''}</div>`)}
       ${more('play', 'Play and breaks', 'Watch first, breaks, movement', playBits)}
       <h2 class="g-h top-gap">Guide hand</h2>
-      ${toggle(st.guide, 'bToggle', 'guide', 'Show what to press next')}
-      <div class="g-field"><span>Show it after</span>${seg([[3, '3 seconds'], [6, '6 seconds'], [10, '10 seconds']], st.guideDelay, 'bDelay')}</div>
+      <div class="g-field"><span>When Lumi shows what to tap</span>${seg([['first', 'First time + Hint'], ['always', 'Every time'], ['off', 'Only on Hint']], A.guideMode ? A.guideMode() : 'first', 'cgGuide')}</div>
+      <p class="g-note">${(A.guideMode ? A.guideMode() : 'first') === 'first' ? 'The hand comes the first time your child meets something new. After that, only when they tap Hint, so they can choose freely and take their time.' : (A.guideMode && A.guideMode() === 'off') ? 'The hand only comes when your child taps Hint.' : 'The hand comes every time your child waits. More help, less freedom.'}</p>
+      ${(A.guideMode ? A.guideMode() : 'first') !== 'off' ? `<div class="g-field"><span>Show it after</span>${seg([[3, '3 seconds'], [6, '6 seconds'], [10, '10 seconds']], st.guideDelay, 'bDelay')}</div>` : ''}
+      ${Object.keys(state.guideSeen || {}).length ? `<button class="g-link" data-a="cgGuideReset">Show the first-time help again</button>` : ''}
     </div>
     <div class="g-panel scroll" style="width:430px">
       <h2 class="g-h">Reminders</h2>
