@@ -105,3 +105,20 @@
 .ar-stamps { flex: 1 1 auto; min-width: 0; overflow-x: auto; scrollbar-width: none; gap: 6px; padding: 2px; }
 .ar-stamps button { flex: none; width: 54px; height: 54px; }
 .ar-stamps button svg { width: 30px; height: 30px; }
+
+/* picture groups (Animals, Places, Transport, Toys, Home things, Food) */
+.ar-cat-btn { flex: none; display: flex; align-items: center; gap: 8px; min-height: 64px; padding: 8px 10px; border-radius: 18px; background: #FFF1EA; border: 3px solid #F3C9B6; color: #B4553C; text-align: left; }
+.ar-cat-btn > span { display: flex; flex-direction: column; min-width: 0; }
+.ar-cat-btn b { font-size: 17px; font-weight: 900; color: var(--ink); line-height: 1.1; }
+.ar-cat-btn small { font-size: 13px; font-weight: 800; line-height: 1.1; }
+.ar-side .ar-thumb { max-height: 180px; }
+.ar-pick { position: absolute; inset: 76px 16px 16px; z-index: 30; display: flex; flex-direction: column; gap: 12px; padding: 16px 20px 20px; border-radius: 30px; background: #FFFDF8; box-shadow: 0 20px 40px rgba(59, 47, 47, .25); animation: inPop .2s ease both; }
+.ar-pick-head { display: flex; align-items: center; }
+.ar-pick-head b { font-size: 28px; font-weight: 900; }
+.ar-tabs { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; flex: none; }
+.ar-tab { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px; border-radius: 18px; background: #fff; border: 3px solid #EEE6DA; font-size: 16px; font-weight: 900; color: var(--ink); line-height: 1.1; text-align: center; }
+.ar-tab.on { border-color: #E07A5F; background: #FFF1EA; }
+.ar-tabpic { width: 100%; height: auto; aspect-ratio: 4 / 3; border-radius: 10px; }
+.ar-pick-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.ar-pick-grid .ar-thumb { min-height: 0; max-height: none; }
+.ar-pick-grid .ar-thumb b { font-size: 20px; margin-top: 4px; }

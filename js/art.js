@@ -2,8 +2,8 @@
   art.js
   The Art studio (Fun › Art). Three tabs:
 
-  Colour in   Six colouring pages drawn in Lumi's style (Lumi, an MRT train, a bowl of noodles, a flower,
-              a fish tank, a house under a rainbow). Pick a crayon, tap a part to fill it. With "Colour dots"
+  Colour in   Colouring pages drawn in Lumi's style, in groups: Lumi, Animals, Places, Transport, Toys,
+              Home things and Food (the extra pages are in art-pages.js). Pick a crayon, tap a part to fill it. With "Colour dots"
               on, each part shows a small dot of the colour it could be, so the child can match colours;
               any colour is still fine, nothing is ever wrong. Undo, start again, and save to My art.
   Paint       A big sheet of paper and a finger: three brush sizes, a rainbow brush, a glitter brush,
@@ -214,9 +214,26 @@
     };
     return `<div class="ar-case" role="dialog" aria-label="Pencil case"><div class="ar-case-head"><b>Pencil case</b><span class="muted">${s.buy && !ownsMat(s.buy) ? (state.stars >= MAT[s.buy].price ? 'Tap again to buy it.' : `You need ${MAT[s.buy].price - state.stars} more stars.`) : 'Pick something to colour with.'}</span><button class="ar-btn" data-a="arCaseClose" aria-label="Close">${ic('x', 28)}</button></div><div class="ar-mats">${MATS.map(card).join('')}</div></div>`;
   }
+  const catOf = (id) => (A.ART_CATS ? A.ART_CATS.find((c) => c.pages.includes(id)) || A.ART_CATS[0] : null);
+  // "More pictures": a tab for each group, and big pictures to choose from
+  function picker(thumb) {
+    const s = SA();
+    if (!s.pick || !A.ART_CATS) return '';
+    const cat = A.ART_CATS.find((c) => c.id === s.pickCat) || catOf(s.page);
+    const tabs = A.ART_CATS.map((c) => { const first = PAGES.find((p) => p.id === c.pages[0]); return `<button class="ar-tab ${c.id === cat.id ? 'on' : ''}" data-a="arCatTab" data-v="${c.id}" aria-pressed="${c.id === cat.id}">${first ? pageSvg(first, { thumb: true, cls: 'ar-tabpic' }) : ''}<span>${esc(c.name)}</span></button>`; }).join('');
+    const pics = cat.pages.map((id) => PAGES.find((p) => p.id === id)).filter(Boolean).map((p) => thumb(p, 'arPickPage')).join('');
+    return `<div class="ar-pick" role="dialog" aria-label="Choose a picture"><div class="ar-pick-head"><b>Choose a picture</b><span class="grow"></span><button class="round-btn" data-a="arCatsOff" aria-label="Close">${ic('x', 30)}</button></div>
+      <div class="ar-tabs" role="group" aria-label="Groups">${tabs}</div><div class="ar-pick-grid">${pics}</div></div>`;
+  }
   function colourTab() {
     const s = SA(), a = AR(), pg = pageNow();
-    const left = `<div class="ar-side" role="group" aria-label="Pages">${PAGES.map((p) => `<button class="ar-thumb ${p.id === pg.id ? 'on' : ''}" data-a="arPage" data-v="${p.id}" aria-pressed="${p.id === pg.id}">${pageSvg(p, { thumb: true, cls: 'ar-mini' })}<b>${esc(p.name)}</b></button>`).join('')}</div>`;
+    const thumb = (p, act) => `<button class="ar-thumb ${p.id === pg.id ? 'on' : ''}" data-a="${act || 'arPage'}" data-v="${p.id}" aria-pressed="${p.id === pg.id}">${pageSvg(p, { thumb: true, cls: 'ar-mini' })}<b>${esc(p.name)}</b></button>`;
+    // pictures come in groups (Animals, Places, Transport, Toys, Home things, Food): the side shows the
+    // group of the picture being coloured; "More pictures" opens every group
+    const cat = catOf(pg.id);
+    const left = cat
+      ? `<div class="ar-side" role="group" aria-label="${esc(cat.name)} pictures"><button class="ar-cat-btn" data-a="arCats" aria-label="${esc(cat.name)}. More pictures">${ic('palette', 26)}<span><b>${esc(cat.name)}</b><small>More pictures</small></span></button>${cat.pages.map((id) => PAGES.find((p) => p.id === id)).filter(Boolean).map((p) => thumb(p)).join('')}</div>`
+      : `<div class="ar-side" role="group" aria-label="Pages">${PAGES.map((p) => thumb(p)).join('')}</div>`;
     const doneAll = !nextPart();
     const bar = `<div class="ar-bar">
       <span class="ar-lumi" id="arLumi">${L.svg({ look: A.lookWith(), mood: doneAll ? 'excited' : 'happy', size: 84 })}</span>
@@ -227,7 +244,7 @@
       <button class="ar-btn" data-a="arClear" aria-label="Start again">${ic('restart', 30)}</button>
       <button class="ar-save ${doneAll ? 'glow' : ''}" data-a="arSave">${ic('check', 28)}<span>Save</span></button>
     </div>`;
-    return `<div class="row grow ar-body">${left}<div class="col grow ar-main">${bar}<div class="panel ar-paper grow" id="arPaper">${pageSvg(pg, { dots: a.dots })}${pencilCase()}</div></div>${crayons()}</div>`;
+    return `<div class="row grow ar-body">${left}<div class="col grow ar-main">${bar}<div class="panel ar-paper grow" id="arPaper">${pageSvg(pg, { dots: a.dots })}${pencilCase()}</div></div>${crayons()}</div>${picker(thumb)}`;
   }
   const TOOLS = [['brush', 'Brush'], ['rainbow', 'Rainbow'], ['glitter', 'Glitter'], ['stamp', 'Stamps'], ['eraser', 'Eraser']];
   const STAMPS = ['star', 'heart', 'flower', 'paw', 'lumi'];
@@ -449,6 +466,10 @@
   Object.assign(A.ACTIONS, {
     arTab: (d) => { const s = SA(); if (s.tab === 'paint' && cx) S.arPaint = cx.getImageData(0, 0, 1200, 900); s.tab = d.v; s.view = null; s.hist = []; render(); say(A.VOICE.art()); },
     arPage: (d) => { const s = SA(); s.page = d.v; s.hist = []; render(); say(pageNow().name + '.'); },
+    arCats: () => { const s = SA(); s.pick = true; s.pickCat = (catOf(s.page) || {}).id; render(); say('Choose a picture.'); },
+    arCatTab: (d) => { const s = SA(); s.pickCat = d.v; render(); const c = A.ART_CATS.find((x) => x.id === d.v); if (c) say(c.name + '.'); },
+    arPickPage: (d) => { const s = SA(); s.page = d.v; s.hist = []; s.pick = false; render(); say(pageNow().name + '.'); },
+    arCatsOff: () => { SA().pick = false; render(); },
     arColor: (d) => {
       SA().color = Number(d.c);
       stageEl().querySelectorAll('.ar-crayon').forEach((b) => { const on = b.dataset.c === d.c; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });

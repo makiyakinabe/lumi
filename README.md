@@ -574,6 +574,25 @@ The room shop now has 20 things: a clock, teddy bear, fairy lights, balloons, to
 
 Lumi fills the whole screen on any device held sideways: phones, iPads (any size), Android tablets, laptops and big monitors, with no black bars. It is designed on a 1194 × 834 landscape "stage"; `fit()` in `js/app.js` keeps that height (or width) and stretches the other side to match the screen's shape, so the flexible screens simply grow. The story and lesson pictures are scaled to use the space too (`fitScene()` in `js/stories.js`): on a wide screen such as a phone or a 16:9 laptop the picture fills the height and the words move into a column beside it. The notch and home bar are kept clear, and the strip around them takes the colour of the current screen. Held upright, a phone shows "Turn me sideways" (the buttons would be too small). A tablet held upright, or fixed upright on a wheelchair or stand, shows the whole app centred, with the screen's colour above and below; so does a desktop window narrower than it is tall.
 
+## Colouring pictures in groups
+
+Art › Colour in now has 18 pictures in seven groups:
+
+| Group | Pictures |
+|---|---|
+| Lumi | Lumi, Flower |
+| Animals | Fish tank, Cat, Butterfly |
+| Places | Rainbow house, Playground, Beach |
+| Transport | MRT train, Bus, Aeroplane |
+| Toys | Teddy bear, Blocks and ball, Kite |
+| Home things | Teapot and cup, Washing machine |
+| Food | Noodles, Ice cream |
+
+- **The side** shows only the group of the picture being coloured, so there are never too many choices on screen.
+- **More pictures** opens a tab for every group, with big pictures to choose from.
+- **Every picture** works with Colour dots, the pencil case materials, Save and My art, like the first six.
+- **The new pictures** are in `js/art-pages.js`.
+
 ## Everyday use (from the AAC playtest review)
 
 - **Going out**: a big button next to Go on the home screen opens Out and about in one tap.
@@ -1035,6 +1054,7 @@ web/
   js/calmplus.js    Count the stars (calm corner) (css/calmplus.css)
   js/narrator.js    Who reads to me? narrator picker, voices on this device
   js/everyday.js    Tomorrow on My day, asking counted in Progress, gentle buzz, hiding talk folders
+  js/art-pages.js   12 more colouring pictures and the picture groups
   js/games-fun.js   five "Go!" games (css/games-fun.css)
   js/rhythm-kitchen.js  Rhythm kitchen, the sixth (css/rhythm-kitchen.css)
   js/games-adventure.js Lumi's run, Lumi's kart, Star path (css/games-adventure.css)
