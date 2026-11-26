@@ -398,6 +398,12 @@ Games › With Lumi › **Hawker uncle** (Primary). The child is the uncle first
    - To take away: put it in the box (or cup), close the lid, add a spoon and a chilli packet (or a straw), then put it in the bag and tie it.
 6. **Pay and say thank you**, then swap jobs.
 
+**The pictures:**
+- Kopitiam plates with the green rim, and steel bowls. The rice pot has a wooden paddle, and there is a kopi pot with a long spout.
+- Shiny steel spoons and forks lie on a paper napkin, and the straw is striped and bendy.
+- The chilli packet has zigzag ends. Takeaway boxes close with a red rubber band, drinks get a sealed cup, and it all goes in a "THANK YOU" bag that gets tied.
+- The tool under the finger matches the job: a ladle, a spatula, a butter knife, an ice shaver, a spoon or a hand.
+
 Every job works with a finger (rub round and round, slide along the dotted lines) or with taps, so switch and keyboard users can play too. Easy has fewer jobs; Hard has two dishes and coins. When Lumi is the uncle, Lumi does each job slowly so the child can watch.
 
 ## Out and about, Support Passport, ready routines, switch access

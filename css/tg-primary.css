@@ -253,3 +253,16 @@
 .tg-hawker .hk-traybox.n1 .hk-onTray { width: 220px; height: 154px; }
 .tg-hawker .hk-rubbox { width: 270px; height: 270px; }
 .tg-hawker .hk-view { width: 270px; height: 189px; }
+
+/* ---------- Hawker uncle: the finer pictures */
+.tg-hawker .hk-tool { width: 76px; height: 76px; margin: -38px 0 0 -38px; border: 0; border-radius: 0; background: none; box-shadow: none; line-height: 0; filter: drop-shadow(0 4px 4px rgba(59, 47, 47, 0.3)); }
+.tg-hawker .hk-pick-art { width: 86px; height: 70px; }
+/* the spoon, fork, straw and chilli packet lie on a paper napkin */
+.tg-hawker .hk-exrow { width: auto; margin-top: 4px; padding: 4px 10px; gap: 4px; border-radius: 10px; background: #FFFDF8; box-shadow: 0 2px 0 rgba(90, 60, 40, 0.12), inset 0 0 0 2px #F1E6D6; }
+.tg-hawker .hk-ex { width: 60px; height: 60px; }
+.tg-hawker .hk-traybox { background: repeating-linear-gradient(90deg, #E9C9A3 0 22px, #E3C199 22px 24px); }
+/* everything fits inside the bag: boxes side by side, the spoon and straw beside them */
+.tg-hawker .hk-bag .hk-bagin { flex-wrap: nowrap; gap: 2px; }
+.tg-hawker .hk-bag .hk-box { width: 86px; height: 76px; }
+.tg-hawker .hk-bag .hk-exrow { flex-direction: column; width: auto; margin: 0; padding: 2px; }
+.tg-hawker .hk-bag .hk-ex { width: 36px; height: 36px; }
