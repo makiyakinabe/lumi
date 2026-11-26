@@ -53,6 +53,9 @@
 
 /* drums */
 .mu-kit { position: relative; width: 100%; height: 100%; }
+/* the drum kit keeps its shape on every screen (wide phones too), so the drums never pile up or fall off the bottom */
+.mu-stage:has(> .mu-kit) { container-type: size; display: flex; align-items: center; justify-content: center; }
+.mu-stage > .mu-kit { width: min(100cqw, 100cqh * 1.62); height: auto; aspect-ratio: 1.62; flex: none; }
 .mu-drum { position: absolute; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, #fff 0 46%, var(--c) 47% 100%); border: 7px solid var(--d); box-shadow: 0 8px 0 var(--d); display: flex; align-items: center; justify-content: center; }
 .mu-drum b { font-size: 26px; }
 .mu-drum.cym { background: radial-gradient(circle, var(--d) 0 8%, var(--c) 9% 100%); box-shadow: 0 5px 0 var(--d); }

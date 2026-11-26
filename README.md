@@ -375,6 +375,31 @@ It focuses on routines, communication and emotional regulation, with three modes
 
 It is plain HTML, CSS and JavaScript. There is nothing to install and no build step.
 
+## Hawker uncle: a real food stall (js/tg-primary.js)
+
+Games › With Lumi › **Hawker uncle** (Primary). The child is the uncle first, then the customer, then the uncle again.
+
+1. **Order:** the customer picks from the menu (two dishes on Hard).
+2. **Eat here or take away?** The uncle asks by tapping the question; the customer answers ("Take away" is "dabao").
+3. **Anything else?** (Medium and Hard) The customer can ask for one thing to be left out, like "No chilli", or say "That's all". The ticket shows it, and the uncle gets a kind reminder if they reach for it.
+4. **Cook it the way a stall really does**, one job at a time (dots show how many jobs are left):
+
+| Dish | Jobs |
+|---|---|
+| Chicken rice | scoop the rice from the pot, chop the chicken, slice the cucumber, put chicken, cucumber and chilli on the plate |
+| Fried noodles | wash the vegetables, cut them, fry the noodles in the wok, add fishcake, egg and spring onion |
+| Roti prata | spread the dough, cook it on the hot pan, cut it, add a bowl of curry |
+| Kaya toast | toast the bread on the grill, spread the kaya, cut it, add the soft eggs and soy sauce |
+| Ice kachang | shave the ice, add red and green syrup, sweet corn and red beans |
+| Milo | scoop the powder, pour the hot water, stir, add ice |
+
+5. **Pack the order.**
+   - To eat here: put it on the tray, then add a spoon and fork (or a straw).
+   - To take away: put it in the box (or cup), close the lid, add a spoon and a chilli packet (or a straw), then put it in the bag and tie it.
+6. **Pay and say thank you**, then swap jobs.
+
+Every job works with a finger (rub round and round, slide along the dotted lines) or with taps, so switch and keyboard users can play too. Easy has fewer jobs; Hard has two dishes and coins. When Lumi is the uncle, Lumi does each job slowly so the child can watch.
+
 ## Out and about, Support Passport, ready routines, switch access
 
 The rest of the product review.
@@ -539,7 +564,7 @@ These are done with the hands, not by pressing "next":
 | Tell the time | Turn the clock's hands with a finger to the time of something in Lumi's day | o'clock, short hand only | half past, both hands | quarter past and quarter to, words only |
 | Zip and button | Pull the zip up, drag buttons into their holes, push the buckle together, pull the laces tight | zip and 2 buttons | 3 buttons and a buckle | 4 buttons from the top down, plus laces |
 
-Walking too early in Cross the road, the wrong coin, or a button in the wrong hole gets a short spoken reason and another go. The chopping and stirring are shared with **Hawker uncle** through `A.KITCHEN`: after the customer orders, the uncle (the child, their partner, or Lumi) makes the dish the way it is really made: chop the chicken for chicken rice, chop the carrot then fry the noodles in the wok, cook the prata on a hot pan, cut the kaya toast, shave the ice for ice kachang, stir the Milo. In Lumi's kitchen the dry noodles are picked from the fridge and the bowl Lumi gets holds the same noodles and vegetables that were chopped and fried.
+Walking too early in Cross the road, the wrong coin, or a button in the wrong hole gets a short spoken reason and another go. The chopping board is shared with **Hawker uncle** through `A.KITCHEN` (see *Hawker uncle: a real food stall* above). In Lumi's kitchen the dry noodles are picked from the fridge and the bowl Lumi gets holds the same noodles and vegetables that were chopped and fried.
 
 ### The other games (js/play.js, js/games-more.js)
 
@@ -684,6 +709,11 @@ These checks keep words readable on any screen, at any text size and in any home
   - a lonely bit on the last line.
 
   It ran on 4:3 iPads, 1194 × 834, 16:10 and 16:9 laptops, phones held sideways (iPhone, Android) and an ultra-wide monitor. It covered all three age groups, text sizes up to Extra large, and Chinese, Malay and Tamil.
+- **Buttons never sit on top of each other.** A second script taps its way through every screen and checks that no two buttons overlap, that nothing falls off the screen, and that every game opens.
+  - **The top row makes room for Break and Pause.** If the Back, Say and Hint buttons and the tabs need more room, the tabs get a little narrower first. If that is still not enough, they move to a row of their own.
+  - **The drum kit keeps its shape** on wide phones, so the drums never pile up or fall off the bottom.
+  - **I spy spreads things out**, so a finger never touches two at once.
+  - **Reminders on the talk boards** pop up at the bottom, so they never cover the message or the Clear button.
 
 ## Home language (Chinese, Malay, Tamil)
 
@@ -826,7 +856,7 @@ off in Grown-ups > Activities > Games. Easy, Medium and Challenge change the num
 | Age group | Games |
 |---|---|
 | Little ones | More, please! (ask for more on a tiny talk strip), Copy me, Peekaboo Lumi, Breathe together (both hold to grow the balloon), Feed the animals |
-| Primary | Hawker uncle (order, cook, serve, pay, say thank you), I spy (things stand on the ground and match the place: no sun or bus in the kitchen), Music echo, Lumi says, Hide Lumi (yes/no questions), Build it together |
+| Primary | Hawker uncle (order, eat here or take away, cook, pack, pay, say thank you), I spy (things stand on the ground and match the place: no sun or bus in the kitchen), Music echo, Lumi says, Hide Lumi (yes/no questions), Build it together |
 | Teens | Plan our outing, Would you rather?, Our silly story, Shop and pay, How would you feel?, Phone practice |
 
 Code: `js/teamgames.js` (the shared frame and helpers), `js/tg-little.js`, `js/tg-primary.js`, `js/tg-teen.js`

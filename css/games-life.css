@@ -261,3 +261,8 @@
 /* the shop: things stand on both shelves, never all on one */
 .sp-shelf { grid-template-rows: 1fr 1fr; }
 .sp-shelf.n4 { grid-template-columns: repeat(2, 1fr); }
+/* the toast on the chopping board shares its class name with the pop-up message (.toast), which fades away:
+   keep the bread on the board */
+.ck-seg.toast { animation: none; padding: 0; display: block; border-style: solid; border-width: 4px 0; border-radius: 0; }
+.ck-seg.toast.first { border-left-width: 4px; border-radius: 14px 0 0 14px; }
+.ck-seg.toast.last { border-right-width: 4px; border-radius: 0 14px 14px 0; }

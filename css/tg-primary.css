@@ -172,3 +172,84 @@
 .tg-hawker .hk-board .hk-dish { height: 106px; }
 .tg-hawker .hk-board .hk-art { width: 86px; height: 62px; }
 .tg-hawker .hk-board-title { margin-bottom: 4px; font-size: 20px; }
+
+/* ---------- Hawker uncle: order, cook, pack (a real stall) */
+.tg-hawker .hk-row.cooking { gap: 10px; padding-top: 60px; }
+.tg-hawker .hk-row.cooking .hk-person { width: 124px; }
+.tg-hawker .hk-row.cooking .hk-bubble { width: 170px; }
+.tg-hawker .hk-kitchen { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.tg-hawker .hk-ticket2 { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px; background: #FFFDF2; border: 3px dashed #E3C98E; padding: 6px 14px; border-radius: 16px; font-size: 18px; font-weight: 800; color: var(--ink); max-width: 100%; }
+.tg-hawker .hk-tk-top { display: flex; align-items: center; gap: 8px; color: #8A6A3A; }
+.tg-hawker .hk-tag { display: flex; align-items: center; gap: 4px; padding: 2px 10px 2px 6px; border-radius: 12px; font-size: 16px; color: #fff; background: #3D74B5; }
+.tg-hawker .hk-tag.away { background: #C0507A; }
+.tg-hawker .hk-tagic { width: 22px; height: 22px; line-height: 0; display: block; background: #fff; border-radius: 6px; }
+.tg-hawker .hk-tk-list { display: flex; gap: 8px; }
+.tg-hawker .hk-tk-line { display: flex; align-items: center; gap: 6px; padding: 2px 8px; border-radius: 10px; }
+.tg-hawker .hk-tk-line.on { background: #FCE6D6; }
+.tg-hawker .hk-tk-pic { width: 84px; height: 66px; line-height: 0; display: block; }
+.tg-hawker .hk-tk-no { display: flex; align-items: center; gap: 4px; color: #B83A2E; background: #FDE3DE; padding: 2px 10px; border-radius: 12px; font-size: 16px; }
+.tg-hawker .hk-job { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.tg-hawker .hk-job b { font-size: 26px; font-weight: 900; color: #B4572E; line-height: 1.1; }
+.tg-hawker .hk-prog { display: flex; gap: 6px; }
+.tg-hawker .hk-prog i { width: 14px; height: 14px; border-radius: 50%; background: #EEDFCF; }
+.tg-hawker .hk-prog i.on { background: #F2A65A; box-shadow: 0 0 0 3px #FCE1C4; }
+.tg-hawker .hk-prog i.done { background: #6BB36B; }
+.tg-hawker .hk-station { display: flex; align-items: center; justify-content: center; gap: 16px; }
+.tg-hawker .hk-arrow2 { color: #D9B48E; line-height: 0; flex: none; }
+.tg-hawker .hk-view { width: 250px; height: 175px; line-height: 0; display: block; flex: none; }
+/* rubbing: wash, fry, spread, toast, shave, stir */
+.tg-hawker .hk-rubbox { position: relative; width: 250px; height: 250px; flex: none; border-radius: 50%; touch-action: none; cursor: grab; }
+.tg-hawker .hk-rubbox[data-look="sink"], .tg-hawker .hk-rubbox[data-look="grill"], .tg-hawker .hk-rubbox[data-look="spread"] { border-radius: 26px; }
+.tg-hawker .hk-rubart { position: absolute; inset: 0; line-height: 0; display: block; pointer-events: none; }
+.tg-hawker .hk-tool { position: absolute; left: 66%; top: 34%; width: 54px; height: 54px; margin: -27px 0 0 -27px; border-radius: 50%; background: rgba(255, 255, 255, 0.55); border: 4px solid #fff; box-shadow: 0 3px 8px rgba(59, 47, 47, 0.25); pointer-events: none; }
+.tg-hawker .hk-rubbox.lumi { cursor: default; }
+.tg-hawker .hk-side { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.tg-hawker .hk-side .ev-meter { width: 220px; }
+.tg-hawker .hk-hint { display: flex; align-items: center; gap: 6px; font-size: 16px; font-weight: 800; color: var(--muted); }
+/* tapping: the rice pot, the Milo tin, the kettle, the bag */
+.tg-hawker .hk-src { flex: none; width: 196px; height: 216px; border-radius: 28px; background: #fff; border: 4px solid #F3D9BC; box-shadow: 0 6px 0 rgba(90, 60, 40, 0.12); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+.tg-hawker .hk-src:active { transform: translateY(4px); box-shadow: none; }
+.tg-hawker .hk-src-art { width: 128px; height: 128px; line-height: 0; display: block; }
+.tg-hawker .hk-src-name { font-size: 20px; font-weight: 800; color: var(--ink); }
+.tg-hawker .hk-dots { display: flex; gap: 6px; }
+.tg-hawker .hk-dots i { width: 16px; height: 16px; border-radius: 50%; background: #EEDFCF; }
+.tg-hawker .hk-dots i.on { background: #F2A65A; }
+/* picking: toppings, the tray, boxes, lids, spoon and fork */
+.tg-hawker .hk-picks { display: grid; grid-template-columns: repeat(2, 118px); gap: 10px; flex: none; }
+.tg-hawker .hk-picks.n1 { grid-template-columns: 150px; }
+.tg-hawker .hk-picks.n3 { grid-template-columns: repeat(3, 108px); }
+.tg-hawker .hk-pick { position: relative; height: 112px; border-radius: 20px; background: #fff; border: 4px solid #F3D9BC; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 4px; box-shadow: 0 5px 0 rgba(90, 60, 40, 0.1); }
+.tg-hawker .hk-pick:active { transform: translateY(3px); box-shadow: none; }
+.tg-hawker .hk-pick-art { width: 80px; height: 64px; line-height: 0; display: block; }
+.tg-hawker .hk-pick-name { font-size: 15px; font-weight: 800; color: var(--ink); line-height: 1.1; text-align: center; }
+.tg-hawker .hk-pick.done { opacity: 0.5; border-color: #CFE8C4; box-shadow: none; }
+.tg-hawker .hk-pick-ok { position: absolute; top: 4px; right: 4px; width: 28px; height: 28px; border-radius: 50%; background: #6BB36B; color: #fff; display: flex; align-items: center; justify-content: center; }
+.tg-hawker .hk-pick.no { border-color: #F2B8AE; background: #FFF6F4; }
+.tg-hawker .hk-pick-no { position: absolute; top: 4px; right: 4px; width: 30px; height: 30px; border-radius: 50%; background: #D9534F; color: #fff; display: flex; align-items: center; justify-content: center; }
+.tg-hawker .hk-traybox { flex: none; width: 290px; min-height: 180px; border-radius: 26px; background: #E9C9A3; border: 6px solid #C99A6B; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 2px; padding: 8px; }
+.tg-hawker .hk-onTray { width: 128px; height: 90px; line-height: 0; display: block; }
+.tg-hawker .hk-exrow { display: flex; gap: 2px; width: 100%; justify-content: center; }
+.tg-hawker .hk-exrow:empty { display: none; }
+.tg-hawker .hk-ex { width: 44px; height: 44px; line-height: 0; display: block; }
+.tg-hawker .hk-empty { font-size: 18px; font-weight: 800; color: rgba(90, 60, 40, 0.45); }
+.tg-hawker .hk-packarea { flex: none; width: 290px; min-height: 180px; border-radius: 26px; background: #F7EFE2; border: 4px dashed #E2CDA8; display: flex; align-items: center; justify-content: center; padding: 8px; }
+.tg-hawker .hk-bagin { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px; }
+.tg-hawker .hk-box { width: 118px; height: 100px; line-height: 0; display: block; }
+.tg-hawker .hk-bag { position: relative; flex: none; width: 290px; height: 230px; display: flex; align-items: center; justify-content: center; padding: 74px 34px 18px; }
+.tg-hawker .hk-bag-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.tg-hawker .hk-bag.tied .hk-bagin { opacity: 0.85; }
+/* eat here or take away, anything else */
+.tg-hawker .hk-choose { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; }
+.tg-hawker .hk-opt { width: 180px; height: 156px; border-radius: 26px; background: #fff; border: 4px solid #F3D9BC; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 21px; font-weight: 800; color: var(--ink); box-shadow: 0 6px 0 rgba(90, 60, 40, 0.12); }
+.tg-hawker .hk-opt:active { transform: translateY(4px); box-shadow: none; }
+.tg-hawker .hk-opt small { font-size: 15px; color: var(--muted); }
+.tg-hawker .hk-optic, .tg-hawker .hk-opt-art { position: relative; width: 64px; height: 64px; line-height: 0; display: block; }
+.tg-hawker .hk-opt-art i { position: absolute; right: -8px; top: -6px; width: 34px; height: 34px; border-radius: 50%; background: #D9534F; color: #fff; display: flex; align-items: center; justify-content: center; }
+.tg-hawker .hk-opt-art i svg { width: 22px; height: 22px; }
+.tg-hawker .hk-endrow { display: flex; align-items: center; justify-content: center; gap: 22px; }
+.tg-hawker .hk-chop .ck-board { width: 560px; }
+.tg-hawker .hk-ask { display: flex; align-items: center; gap: 12px; height: 96px; padding: 0 28px; border-radius: 30px; background: #fff; border: 4px solid #F2A65A; font-size: 24px; font-weight: 800; color: var(--ink); box-shadow: 0 6px 0 rgba(90, 60, 40, 0.12); }
+.tg-hawker .hk-ask:active { transform: translateY(4px); box-shadow: none; }
+.tg-hawker .hk-traybox.n1 .hk-onTray { width: 220px; height: 154px; }
+.tg-hawker .hk-rubbox { width: 270px; height: 270px; }
+.tg-hawker .hk-view { width: 270px; height: 189px; }

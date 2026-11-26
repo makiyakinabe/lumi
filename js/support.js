@@ -362,7 +362,9 @@
     const orig = A.ACTIONS[name];
     if (!orig) return;
     A.ACTIONS[name] = (d, el) => {
-      if (SP().tips !== false && !S.spTipDone) { S.spTipFor = name; S.spTipV = d.v; render(); say('Before you start, a few tips for the grown-up.'); return 'keep'; }
+      // the tips are for the grown-up playing too, so they show on the Together screen only.
+      // From Games › With Lumi the child plays with Lumi: the game opens straight away.
+      if (SP().tips !== false && !S.spTipDone && S.screen === 'together') { S.spTipFor = name; S.spTipV = d.v; render(); say('Before you start, a few tips for the grown-up.'); return 'keep'; }
       return orig(d, el);
     };
   });

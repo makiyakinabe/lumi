@@ -2746,6 +2746,8 @@
       <button class="rem-btn" data-rem="say" aria-label="Hear it">${ic('speaker', 22)}</button>
       <button class="rem-btn" data-rem="close" aria-label="Close">${ic('x', 20)}</button>`;
     remEl.dataset.voice = voice || text;
+    // on the talk boards the top row is the message and its buttons, so the reminder shows at the bottom there
+    remEl.classList.toggle('rem-low', S.screen === 'talk' || S.screen === 'outkit');
     remEl.hidden = false;
     remEl.classList.remove('rem-in');
     void remEl.offsetWidth;

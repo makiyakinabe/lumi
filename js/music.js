@@ -85,9 +85,9 @@
       draw: () => `<div class="mu-kit">
         ${pad('ting', null, 'mu-drum cym', '--c:#F6E08C;--d:#C99A1E;left:1%;top:5%;width:20%', '<span class="dr-stand"></span><span class="dr-cym"><b>Ting</b></span>', 'Cymbal')}
         ${pad('hat', null, 'mu-drum cym', '--c:#F6E08C;--d:#C99A1E;right:1%;top:5%;width:20%', '<span class="dr-stand"></span><span class="dr-cym"><b>Tss</b></span>', 'Hi-hat')}
-        ${pad('tom', null, 'mu-drum', '--c:#BFD8EE;--d:#4A78A8;left:39%;top:3%;width:22%', '<span class="dr-shell"></span><span class="dr-head"><b>Tom</b></span>', 'Tom drum')}
+        ${pad('tom', null, 'mu-drum', '--c:#BFD8EE;--d:#4A78A8;left:38%;top:2%;width:20%', '<span class="dr-shell"></span><span class="dr-head"><b>Tom</b></span>', 'Tom drum')}
         ${pad('snare', null, 'mu-drum', '--c:#CFE3C4;--d:#4F8A3F;left:17%;top:42%;width:27%', '<span class="dr-shell"></span><span class="dr-head"><b>Tap</b></span>', 'Snare drum')}
-        ${pad('kick', null, 'mu-drum', '--c:#F6D2C8;--d:#C0674A;right:15%;top:34%;width:32%', '<span class="dr-shell"></span><span class="dr-head"><b>Boom</b></span>', 'Bass drum')}
+        ${pad('kick', null, 'mu-drum', '--c:#F6D2C8;--d:#C0674A;right:13%;top:38%;width:30%', '<span class="dr-shell"></span><span class="dr-head"><b>Boom</b></span>', 'Bass drum')}
       </div>` },
     { id: 'xylo', name: 'Xylophone', main: ['xylo', 0],
       art: '<rect x="6" y="8" width="7" height="32" rx="3" fill="#EF8A7A"/><rect x="15.5" y="11" width="7" height="26" rx="3" fill="#F4D35E"/><rect x="25" y="14" width="7" height="20" rx="3" fill="#9CCB7A"/><rect x="34.5" y="17" width="7" height="14" rx="3" fill="#8EB8E5"/>',

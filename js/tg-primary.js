@@ -1,7 +1,7 @@
 /*
   tg-primary.js: two-player games for Primary (7-12). See teamgames.js for the frame and helpers.
   Every game is played with Lumi (solo, Lumi takes its own turns) or with a grown-up (Together).
-  - Hawker uncle       pretend food stall: order, serve, pay, say thank you, then swap roles
+  - Hawker uncle       a real food stall: order, cook (scoop, wash, cut, fry, top), pack to eat here or take away, pay, thank you
   - I spy              a busy picture: one gives a clue, the other finds it
   - Music echo         one plays a short drum beat, the other copies it
   - Lumi says          picture instruction cards: one leads, the other does it for real
@@ -23,6 +23,12 @@
   const lc = (s) => s.charAt(0).toLowerCase() + s.slice(1);
 
   // ================================================================ 1. Hawker uncle
+  // A real hawker stall. The customer picks from the menu, says "eat here" or "take away" (and from Medium,
+  // a request like "no chilli"). The uncle makes it the way it is really made at a stall, one job at a time:
+  // scoop the rice, wash and cut the vegetables, chop the chicken, fry the noodles, add the toppings. Then the
+  // order is packed: on a tray with a spoon and fork to eat here, or in a box with a lid, a spoon and a tied
+  // bag to take away. Then the customer pays and says thank you, and the two swap jobs.
+  // The child is the uncle first. Every job works with a finger (rub, slice) or with taps (switch users too).
   const FPLATE = '<ellipse cx="50" cy="68" rx="42" ry="6" fill="#6B4A3A" opacity=".16"/><ellipse cx="48" cy="57" rx="42" ry="14" fill="#C7D9E6"/><ellipse cx="48" cy="54" rx="42" ry="14" fill="#E4EEF5"/><ellipse cx="48" cy="54" rx="31" ry="9.5" fill="#fff"/>';
   const PRATA = `${FPLATE}<ellipse cx="38" cy="50" rx="24" ry="9" fill="#D9963F"/><ellipse cx="38" cy="48.4" rx="22" ry="7.6" fill="#F2BE68"/><path d="M22 48c6-3 14-4 22-2M28 52c8 2 14 1 20-2" stroke="#D9963F" stroke-width="1.6" fill="none" stroke-linecap="round"/>
     <ellipse cx="50" cy="44" rx="20" ry="7.6" fill="#D9963F"/><ellipse cx="50" cy="42.6" rx="18" ry="6.4" fill="#F7CB7A"/><path d="M38 41c5-2 12-2 18 0" stroke="#FFE3A6" stroke-width="2" fill="none" stroke-linecap="round"/>
@@ -34,123 +40,426 @@
     <path d="M34 30h32l-3 41c-.2 2-1.8 3.4-3.8 3.4H40.8c-2 0-3.6-1.4-3.8-3.4z" fill="#8A5A3C"/><ellipse cx="50" cy="30" rx="16" ry="3" fill="#A87050"/><ellipse cx="50" cy="16" rx="18" ry="3.2" fill="#F6FBFE"/><path d="M38 36l1.4 32" stroke="#fff" stroke-width="3" opacity=".5" stroke-linecap="round"/>`;
   const DISHES = [
     { id: 'chickenrice', name: 'Chicken rice', price: 4, art: () => food('chicken') },
-    { id: 'noodles', name: 'Noodles', price: 4, art: () => food('noodles') },
+    { id: 'noodles', name: 'Fried noodles', price: 4, art: () => food('noodles') },
     { id: 'prata', name: 'Roti prata', price: 2, art: () => sv('0 0 100 80', PRATA) },
     { id: 'kaya', name: 'Kaya toast', price: 3, art: () => food('toastPlate') },
     { id: 'kachang', name: 'Ice kachang', price: 3, art: () => sv('0 0 100 80', KACHANG) },
     { id: 'milo', name: 'Milo', price: 2, art: () => sv('0 0 100 80', MILO) }
   ];
   const dish = (id) => DISHES.find((d) => d.id === id);
-  // how each dish is really made at a stall: the uncle does these steps (chop = slice along lines; rub = round and round)
-  const COOK = {
-    chickenrice: [{ k: 'chop', item: 'chicken', title: 'Chop the chicken', say: 'Chop the chicken into slices.' }],
-    noodles: [{ k: 'chop', item: 'carrot', title: 'Chop the carrot', say: 'Chop the carrot.' }, { k: 'stir', look: 'wok', title: 'Fry the noodles', say: 'Fry the noodles in the wok. Round and round.' }],
-    prata: [{ k: 'stir', look: 'pan', title: 'Cook the prata', say: 'Cook the prata on the hot pan. Round and round until it is golden.' }],
-    kaya: [{ k: 'chop', item: 'toast', title: 'Cut the toast', say: 'Cut the kaya toast into pieces.' }],
-    kachang: [{ k: 'stir', look: 'ice', title: 'Shave the ice', say: 'Shave the ice into the bowl. Round and round.' }],
-    milo: [{ k: 'stir', look: 'cup', title: 'Stir the Milo', say: 'Stir the Milo. Round and round.' }]
+  const DRINK = { milo: true, kachang: true }; // packed in a cup to take away
+  // requests a customer can make (from Medium): leave one thing out
+  const NO = { chickenrice: 'chilli', noodles: 'onion', kaya: 'soy', kachang: 'beans', milo: 'ice' };
+
+  // ---------------------------------------------------------------- the things on the counter (60 x 60 pictures)
+  const S60 = (body) => sv('0 0 60 60', body);
+  const saucer = '<ellipse cx="30" cy="44" rx="25" ry="9" fill="#C7D9E6"/><ellipse cx="30" cy="42" rx="25" ry="9" fill="#EEF4F8"/>';
+  const bowl60 = (c) => `<path d="M8 30h44c-1 14-10 22-22 22S9 44 8 30z" fill="${c}"/><ellipse cx="30" cy="30" rx="22" ry="6" fill="#F7F1E6"/>`;
+  const bottle60 = (c) => `<rect x="22" y="6" width="16" height="8" rx="2" fill="#E9E1D4"/><path d="M20 16h20l3 8v26a5 5 0 0 1-5 5H22a5 5 0 0 1-5-5V24z" fill="${c}"/><rect x="21" y="30" width="18" height="12" rx="2" fill="#fff" opacity=".85"/>`;
+  const ITEMS = {
+    chicken: { name: 'Chicken', art: S60(`${saucer}${[0, 1, 2].map((i) => `<path d="M${14 + i * 10} 40l9-14 7 3-8 14z" fill="#FBEFD9" stroke="#D9A86A" stroke-width="2" stroke-linejoin="round"/><path d="M${23 + i * 10} 26l7 3" stroke="#E3A85C" stroke-width="4" stroke-linecap="round"/>`).join('')}`) },
+    cucumber: { name: 'Cucumber', art: S60(`${saucer}${[[18, 38], [30, 41], [42, 38]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="8" fill="#E6F4D4" stroke="#4F8A3F" stroke-width="3"/><circle cx="${x}" cy="${y}" r="2.4" fill="#B9DA94"/>`).join('')}`) },
+    chilli: { name: 'Chilli', art: S60(`${saucer}<ellipse cx="30" cy="40" rx="14" ry="5" fill="#E2412F"/><circle cx="26" cy="39" r="1.4" fill="#FFD9A8"/><circle cx="33" cy="41" r="1.2" fill="#FFD9A8"/>`) },
+    fishcake: { name: 'Fishcake', art: S60(`${saucer}${[[18, 38], [30, 41], [42, 38]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="8" ry="6" fill="#FFFDF8" stroke="#F08AA0" stroke-width="3"/>`).join('')}`) },
+    egg: { name: 'Fried egg', art: S60(`${saucer}<path d="M14 40c2-8 10-12 18-10s14 2 14 8-10 10-18 9-16-1-14-7z" fill="#fff" stroke="#E9E1D4" stroke-width="1.5"/><circle cx="30" cy="37" r="6" fill="#FFB928"/>`) },
+    onion: { name: 'Spring onion', art: S60(`${saucer}${[[20, 38], [28, 42], [36, 37], [42, 42], [25, 34], [34, 44]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3.2" fill="none" stroke="#5E9E45" stroke-width="2.4"/>`).join('')}`) },
+    curry: { name: 'Curry', art: S60(`${bowl60('#C9A86A')}<ellipse cx="30" cy="30" rx="18" ry="4.6" fill="#D9822B"/><circle cx="25" cy="29" r="2.4" fill="#F6D58C"/><circle cx="35" cy="31" r="2" fill="#F6D58C"/>`) },
+    eggs: { name: 'Soft eggs', art: S60(`${saucer}<ellipse cx="22" cy="38" rx="9" ry="6" fill="#FFF8EC" stroke="#E9DCC4" stroke-width="1.5"/><ellipse cx="22" cy="37" rx="4.5" ry="3" fill="#FFC24A"/><ellipse cx="38" cy="40" rx="9" ry="6" fill="#FFF8EC" stroke="#E9DCC4" stroke-width="1.5"/><ellipse cx="38" cy="39" rx="4.5" ry="3" fill="#FFC24A"/>`) },
+    soy: { name: 'Soy sauce', art: S60(bottle60('#4A3326')) },
+    red: { name: 'Red syrup', art: S60(bottle60('#E2415E')) },
+    green: { name: 'Green syrup', art: S60(bottle60('#5DB85A')) },
+    corn: { name: 'Sweet corn', art: S60(`${bowl60('#9CC5E0')}${[[22, 28], [28, 31], [34, 28], [40, 30], [26, 26], [32, 25]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3" fill="#FFD23F" stroke="#D9A21E" stroke-width="1"/>`).join('')}`) },
+    beans: { name: 'Red beans', art: S60(`${bowl60('#D7C3A6')}${[[22, 28], [28, 31], [34, 28], [40, 30], [26, 26], [32, 25]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="3.4" ry="2.6" fill="#8E2F2A"/>`).join('')}`) },
+    ice: { name: 'Ice', art: S60(`${bowl60('#BFD8EE')}${[[20, 24], [30, 22], [39, 25]].map(([x, y]) => `<rect x="${x - 5}" y="${y - 5}" width="10" height="10" rx="2.4" fill="#E8F4FC" stroke="#9CC5E0" stroke-width="2"/>`).join('')}`) },
+    spoon: { name: 'Spoon', art: S60('<ellipse cx="20" cy="18" rx="9" ry="12" fill="#DDE3E9" stroke="#8A94A0" stroke-width="2.5" transform="rotate(-35 20 18)"/><path d="M25 26 48 52" stroke="#8A94A0" stroke-width="5" stroke-linecap="round"/>') },
+    fork: { name: 'Fork', art: S60('<path d="M14 6v14M20 6v14M26 6v14M12 18c0 7 4 10 8 10s8-3 8-10" stroke="#8A94A0" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M20 28 46 54" stroke="#8A94A0" stroke-width="5" stroke-linecap="round"/>') },
+    straw: { name: 'Straw', art: S60('<path d="M22 54 38 6" stroke="#E07A5F" stroke-width="7" stroke-linecap="round"/><path d="M24 48l4-12M31 27l4-12" stroke="#fff" stroke-width="3" stroke-linecap="round"/>') },
+    packet: { name: 'Chilli packet', art: S60('<path d="M14 14h32l-2 32H16z" fill="#F7EDE1" stroke="#D9C9B4" stroke-width="2"/><path d="M18 28h24l-1 14H19z" fill="#E2412F"/><path d="M14 14h32" stroke="#D9C9B4" stroke-width="4"/>') }
   };
+  const itemName = (k) => (ITEMS[k] ? ITEMS[k].name : k);
+
+  // ---------------------------------------------------------------- each dish, drawn as it is being made
+  // has = { layer: true or 0..1 } (200 x 140)
+  const PLATE = '<ellipse cx="100" cy="116" rx="84" ry="18" fill="#6B4A3A" opacity=".12"/><ellipse cx="100" cy="106" rx="88" ry="28" fill="#C7D9E6"/><ellipse cx="100" cy="101" rx="88" ry="28" fill="#EEF4F8"/><ellipse cx="100" cy="101" rx="64" ry="19" fill="#fff"/>';
+  const BOWL = (a, b) => `<ellipse cx="100" cy="130" rx="58" ry="7" fill="#6B4A3A" opacity=".14"/><path d="M22 72h156c-4 36-36 58-78 58S26 108 22 72z" fill="${a}"/><path d="M32 96c14 20 38 28 68 28s54-8 68-28c-10 24-34 34-68 34S42 120 32 96z" fill="${b}" opacity=".6"/><ellipse cx="100" cy="72" rx="78" ry="16" fill="#F7F1E6"/>`;
+  const sauceDish = (cx, cy, c) => `<ellipse cx="${cx}" cy="${cy + 3}" rx="20" ry="7" fill="#C7D9E6"/><ellipse cx="${cx}" cy="${cy}" rx="20" ry="7" fill="#EEF4F8"/><ellipse cx="${cx}" cy="${cy - 1}" rx="13" ry="4.2" fill="${c}"/>`;
+  const amt = (v) => (v === true ? 1 : Math.max(0, Math.min(1, Number(v) || 0)));
+  function dishSvg(id, has) {
+    const h = has || {};
+    let b = '';
+    if (id === 'chickenrice') {
+      b = PLATE;
+      const a = amt(h.rice);
+      if (a > 0) {
+        const s = 0.35 + a * 0.65;
+        b += `<path d="M${84 - 46 * s} 104q${6 * s} ${-40 * s} ${46 * s} ${-42 * s}q${40 * s} ${2 * s} ${46 * s} ${42 * s}z" fill="#FFFDF5" stroke="#E6DDC8" stroke-width="2.5"/>`;
+        b += [[70, 92], [82, 84], [94, 92], [76, 98], [100, 98], [88, 96]].filter((_, i) => i < 2 + a * 4).map(([x, y]) => `<path d="M${x} ${y}h5" stroke="#E6DDC8" stroke-width="2" stroke-linecap="round"/>`).join('');
+      }
+      if (h.cucumber) b += [[36, 104], [50, 110], [64, 112]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="10" ry="6" fill="#E6F4D4" stroke="#4F8A3F" stroke-width="3"/>`).join('');
+      if (h.chicken) b += [0, 1, 2, 3].map((i) => `<path d="M${110 + i * 13} 108l10-30 10 3-8 30z" fill="#FBEFD9" stroke="#D9A86A" stroke-width="2" stroke-linejoin="round"/><path d="M${120 + i * 13} 78l10 3" stroke="#E3A85C" stroke-width="5" stroke-linecap="round"/>`).join('');
+      if (h.chilli) b += sauceDish(170, 64, '#E2412F');
+    } else if (id === 'noodles') {
+      b = BOWL('#E8775E', '#B84A35');
+      if (h.noodles) {
+        b += [0, 1, 2, 3, 4].map((i) => `<path d="M${40 + (i % 2) * 6} ${64 + i * 4}q10 -8 20 0t20 0t20 0t20 0t20 0t20 0" fill="none" stroke="${i % 2 ? '#C98F3A' : '#DDA64E'}" stroke-width="5" stroke-linecap="round"/>`).join('');
+        b += [[56, 66], [84, 62], [112, 70], [138, 64], [70, 74], [126, 76]].map(([x, y]) => `<rect x="${x}" y="${y}" width="11" height="8" rx="3" fill="#7FB069" stroke="#4F8A3F" stroke-width="1.6"/>`).join('');
+      }
+      if (h.fishcake) b += [[60, 70], [76, 64], [92, 72]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="9" ry="5" fill="#FFFDF8" stroke="#F08AA0" stroke-width="2.4"/>`).join('');
+      if (h.egg) b += '<path d="M112 66c2-9 12-13 22-11s16 3 15 10-12 10-21 9-17-1-16-8z" fill="#fff" stroke="#E9E1D4" stroke-width="1.5"/><circle cx="130" cy="63" r="6.5" fill="#FFB928"/>';
+      if (h.onion) b += [[54, 60], [100, 58], [118, 76], [146, 70], [84, 76], [70, 58]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3" fill="none" stroke="#5E9E45" stroke-width="2.2"/>`).join('');
+    } else if (id === 'prata') {
+      b = PLATE;
+      const d = amt(h.dough);
+      if (h.cooked) {
+        b += '<ellipse cx="92" cy="98" rx="56" ry="17" fill="#D9963F"/><ellipse cx="92" cy="95" rx="53" ry="15" fill="#F2BE68"/><path d="M56 94c14-6 34-8 56-4M66 100c16 4 34 3 50-3" stroke="#D9963F" stroke-width="2.4" fill="none" stroke-linecap="round"/>';
+        if (h.cut) b += '<path d="M70 82 76 110M108 81 104 111" stroke="#B8772E" stroke-width="3" stroke-linecap="round"/>';
+      } else if (d > 0) b += `<ellipse cx="92" cy="96" rx="${20 + d * 34}" ry="${8 + d * 7}" fill="#F6E7C8" stroke="#E3CFA0" stroke-width="2.5"/>`;
+      if (h.curry) b += '<path d="M152 62h36c-1 12-8 18-18 18s-17-6-18-18z" fill="#7CC0B6"/><ellipse cx="170" cy="62" rx="18" ry="5" fill="#D9822B"/><circle cx="165" cy="61" r="2.4" fill="#F6D58C"/><circle cx="175" cy="63" r="2" fill="#F6D58C"/>';
+    } else if (id === 'kaya') {
+      b = PLATE;
+      const t = amt(h.toast);
+      const k = amt(h.kaya);
+      [[44, 76], [100, 80]].forEach(([x, y], i) => {
+        b += `<rect x="${x}" y="${y}" width="50" height="28" rx="7" fill="#F6E2B8" stroke="#C99A5A" stroke-width="2.5"/>`;
+        if (t > 0) b += `<rect x="${x}" y="${y}" width="50" height="28" rx="7" fill="#C98A3E" opacity="${(t * 0.7).toFixed(2)}"/>${[0, 1, 2].map((j) => `<path d="M${x + 10 + j * 14} ${y + 4}v20" stroke="#8E5A22" stroke-width="2.4" opacity="${(t * 0.6).toFixed(2)}"/>`).join('')}`;
+        if (k > 0) b += `<rect x="${x + 4}" y="${y + 11}" width="${42 * k}" height="7" rx="3" fill="#7FB069"/><rect x="${x + 4}" y="${y + 18}" width="${42 * k}" height="3" rx="1.5" fill="#FFF3C4"/>`;
+        if (h.cut) b += `<path d="M${x + 25} ${y - 2}v32" stroke="#fff" stroke-width="3"/>`;
+        void i;
+      });
+      if (h.eggs) b += `${sauceDish(170, 66, '#FFF8EC')}<ellipse cx="164" cy="64" rx="5" ry="3.2" fill="#FFC24A"/><ellipse cx="176" cy="65" rx="5" ry="3.2" fill="#FFC24A"/>`;
+      if (h.soy) b += '<path d="M158 66c4-2 8 1 12-1s8 2 12 0" stroke="#4A3326" stroke-width="2.6" fill="none" stroke-linecap="round"/>';
+    } else if (id === 'kachang') {
+      b = BOWL('#B9A6E0', '#8E78C9');
+      const a = amt(h.ice);
+      if (a > 0) {
+        const s = 0.3 + a * 0.7;
+        const L = 100 - 70 * s, R = 100 + 70 * s, T = 76 - 70 * s;
+        b += `<path d="M${L} 76C${L + 4 * s} ${76 - 52 * s} ${100 - 40 * s} ${T} 100 ${T}S${R - 4 * s} ${76 - 52 * s} ${R} 76Q100 90 ${L} 76z" fill="#FBF9FE" stroke="#DCD4EC" stroke-width="2.5"/><path d="M${100 - 40 * s} ${76 - 30 * s}q${20 * s} ${-26 * s} ${46 * s} ${-30 * s}" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".9"/>`;
+      }
+      if (h.red) b += '<path d="M56 50c14-10 28-4 44-12s28 2 44 0" stroke="#F26B8A" stroke-width="9" fill="none" stroke-linecap="round"/>';
+      if (h.green) b += '<path d="M44 64c16-6 30 0 50-5s34 1 60-1" stroke="#7CC26A" stroke-width="8" fill="none" stroke-linecap="round"/>';
+      if (h.corn) b += [[80, 34], [92, 28], [112, 32], [124, 40], [70, 44]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="4.6" fill="#FFD23F" stroke="#D9A21E" stroke-width="1.4"/>`).join('');
+      if (h.beans) b += [[100, 22], [88, 40], [116, 46], [130, 30], [74, 54]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="5" ry="3.6" fill="#8E2F2A"/>`).join('');
+    } else if (id === 'milo') {
+      // a glass mug: powder, then hot water, then stirred, then ice
+      const p = amt(h.powder), w = amt(h.water), st = amt(h.stir);
+      b = '<ellipse cx="100" cy="132" rx="40" ry="6" fill="#6B4A3A" opacity=".14"/><path d="M152 60c16 0 22 10 22 22s-8 22-24 22" stroke="#DCE6EE" stroke-width="9" fill="none"/>';
+      const lvl = Math.max(p * 0.12, w * 0.8);
+      if (lvl > 0) {
+        const top = 126 - lvl * 92;
+        const half = (y) => 34 - 6 * ((126 - y) / 92);
+        const col = w > 0 ? (st >= 1 ? '#8A5A3C' : `rgb(${Math.round(176 - 38 * st)},${Math.round(130 - 40 * st)},${Math.round(92 - 32 * st)})`) : '#5E3A22';
+        b += `<path d="M${100 - half(top)} ${top}H${100 + half(top)}L${100 + 28} 124q0 4-4 4H${76}q-4 0-4-4z" fill="${col}"/>`;
+        if (w > 0 && st < 1) b += [[88, top + 6], [108, top + 14], [96, top + 22]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="${4 - st * 3}" fill="#5E3A22" opacity="${(1 - st).toFixed(2)}"/>`).join('');
+        if (st >= 1) b += `<ellipse cx="100" cy="${top + 1}" rx="${half(top) - 2}" ry="4" fill="#B88A64"/>`;
+      }
+      if (h.ice) b += [[86, 44], [102, 40], [114, 48]].map(([x, y]) => `<rect x="${x - 7}" y="${y - 7}" width="14" height="14" rx="3" fill="#E8F4FC" stroke="#9CC5E0" stroke-width="2" opacity=".95"/>`).join('');
+      b += '<path d="M60 30h80l-10 96q-1 6-7 6H77q-6 0-7-6z" fill="#EEF6FA" opacity=".35" stroke="#BCD0DE" stroke-width="4" stroke-linejoin="round"/><path d="M70 40l8 80" stroke="#fff" stroke-width="5" opacity=".6" stroke-linecap="round"/>';
+    }
+    return `<svg viewBox="0 0 200 140" width="100%" height="100%" aria-hidden="true">${b}</svg>`;
+  }
+  // a finished dish in its takeaway box (or cup), lid on or off
+  function packSvg(id, lid) {
+    const drink = DRINK[id];
+    if (drink) {
+      return `<svg viewBox="0 0 120 140" width="100%" height="100%" aria-hidden="true"><ellipse cx="60" cy="132" rx="34" ry="5" fill="#6B4A3A" opacity=".14"/>
+        <path d="M22 40h76l-8 88q-1 6-7 6H37q-6 0-7-6z" fill="${id === 'milo' ? '#8A5A3C' : '#F7F4FB'}" stroke="#BCD0DE" stroke-width="4" stroke-linejoin="round"/>
+        ${id === 'kachang' ? '<path d="M30 62c12-6 24 0 30-4s18 2 30-1" stroke="#F26B8A" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M30 80c12-4 26 2 34-2s16 0 26-2" stroke="#7CC26A" stroke-width="6" fill="none" stroke-linecap="round"/>' : ''}
+        <path d="M32 54l6 70" stroke="#fff" stroke-width="5" opacity=".5" stroke-linecap="round"/>
+        ${lid ? '<path d="M18 40c0-16 18-24 42-24s42 8 42 24z" fill="#F2F7FA" stroke="#BCD0DE" stroke-width="4" opacity=".95"/><rect x="16" y="36" width="88" height="8" rx="4" fill="#DCE6EE"/>' : ''}</svg>`;
+    }
+    const peek = DISHES.findIndex((d) => d.id === id);
+    const fills = ['#FFFDF5', '#DDA64E', '#F2BE68', '#E9B46A', '#F7F4FB', '#8A5A3C'];
+    return `<svg viewBox="0 0 140 120" width="100%" height="100%" aria-hidden="true"><ellipse cx="70" cy="112" rx="58" ry="6" fill="#6B4A3A" opacity=".14"/>
+      <path d="M12 46h116l-8 58q-1 6-7 6H27q-6 0-7-6z" fill="#F3E6CF" stroke="#C9A878" stroke-width="4" stroke-linejoin="round"/>
+      ${lid ? '<path d="M8 46l10-22h104l10 22z" fill="#F7EEDD" stroke="#C9A878" stroke-width="4" stroke-linejoin="round"/><path d="M40 34h60" stroke="#E2CDA8" stroke-width="4" stroke-linecap="round"/>'
+        : `<ellipse cx="70" cy="48" rx="54" ry="10" fill="${fills[peek] || '#FFFDF5'}"/>${id === 'chickenrice' ? '<path d="M82 44l8-10 8 3-6 10z" fill="#FBEFD9" stroke="#D9A86A" stroke-width="2"/>' : ''}${id === 'noodles' ? '<path d="M30 46q8-6 16 0t16 0t16 0t16 0t16 0" stroke="#C98F3A" stroke-width="4" fill="none"/>' : ''}`}</svg>`;
+  }
+  const BAG = (tied, inside) => `<div class="hk-bag ${tied ? 'tied' : ''}">${inside}<svg class="hk-bag-svg" viewBox="0 0 220 200" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M30 60h160l10 124q1 10-9 10H29q-10 0-9-10z" fill="rgba(255,255,255,.55)" stroke="#E7A3B4" stroke-width="5" stroke-linejoin="round"/>
+      ${tied ? '<path d="M70 60c0-30 20-40 40-26 20-14 40-4 40 26" fill="none" stroke="#E7A3B4" stroke-width="10" stroke-linecap="round"/><circle cx="110" cy="34" r="12" fill="#F4C6D2" stroke="#E7A3B4" stroke-width="4"/>'
+        : '<path d="M60 60c0-40 30-54 50-54s50 14 50 54" fill="none" stroke="#E7A3B4" stroke-width="8"/>'}</svg></div>`;
+  const POT = S60('<ellipse cx="30" cy="54" rx="24" ry="4" fill="#6B4A3A" opacity=".15"/><path d="M6 24h48v24a6 6 0 0 1-6 6H12a6 6 0 0 1-6-6z" fill="#C9D1D9" stroke="#8A94A0" stroke-width="2.5"/><ellipse cx="30" cy="24" rx="24" ry="7" fill="#FFFDF5" stroke="#8A94A0" stroke-width="2.5"/><path d="M2 30h6M52 30h6" stroke="#8A94A0" stroke-width="4" stroke-linecap="round"/><path d="M36 22 50 4" stroke="#B5814C" stroke-width="4" stroke-linecap="round"/><ellipse cx="34" cy="23" rx="7" ry="3" fill="#E9E1D4" stroke="#8A94A0" stroke-width="2"/>');
+  const TIN = S60('<rect x="14" y="10" width="32" height="44" rx="5" fill="#2E8B3E" stroke="#1F5E2A" stroke-width="2.5"/><rect x="14" y="8" width="32" height="7" rx="3" fill="#C9D1D9" stroke="#8A94A0" stroke-width="2"/><rect x="18" y="24" width="24" height="14" rx="3" fill="#fff"/><path d="M22 31h16" stroke="#2E8B3E" stroke-width="4" stroke-linecap="round"/>');
+  const KETTLE = S60('<path d="M14 26h32l2 24a4 4 0 0 1-4 4H16a4 4 0 0 1-4-4z" fill="#DDE3E9" stroke="#8A94A0" stroke-width="2.5"/><path d="M46 32l10-6" stroke="#8A94A0" stroke-width="4" stroke-linecap="round"/><path d="M18 26c0-10 6-14 12-14s12 4 12 14" fill="none" stroke="#8A94A0" stroke-width="3"/><path d="M24 8c-2 4 2 6 0 10M32 6c-2 4 2 6 0 10" stroke="#C9D1D9" stroke-width="2" fill="none" stroke-linecap="round"/>');
+  const BAGSRC = S60('<path d="M10 22h40l4 32H6z" fill="#FBE4EA" stroke="#E7A3B4" stroke-width="2.5" stroke-linejoin="round"/><path d="M20 22c0-12 4-16 10-16s10 4 10 16" fill="none" stroke="#E7A3B4" stroke-width="3"/>');
+  const SRC = { rice: ['Rice pot', POT], tin: ['Milo tin', TIN], kettle: ['Hot water', KETTLE], bag: ['Bag', BAGSRC] };
+
+  // the work you rub with a finger: wash in the sink, fry in the wok, spread the dough, toast, spread kaya, shave ice, stir
+  function rubSvg(look, p) {
+    const q = Math.max(0, Math.min(1, p));
+    const spin = Math.round(q * 540);
+    const leaves = (op) => [[-40, -14, -20], [-6, -26, 10], [26, -6, 40], [-24, 18, -60], [16, 22, 70]].map(([x, y, r]) => `<g transform="translate(${130 + x} ${126 + y}) rotate(${r})"><path d="M0 0c-6-16 0-34 10-40 10 6 16 24 10 40z" fill="#7FB069" stroke="#4F8A3F" stroke-width="2.4"/><path d="M10 -36v34" stroke="#CFE3B4" stroke-width="3"/></g>`).join('') + (op ? `<g opacity="${op}">${[[-30, -10], [20, -20], [6, 22], [-10, 6], [34, 14]].map(([x, y]) => `<circle cx="${130 + x}" cy="${126 + y}" r="7" fill="#8A6A4A" opacity=".55"/>`).join('')}</g>` : '');
+    if (look === 'sink') {
+      return `<svg viewBox="0 0 260 260" width="100%" height="100%" aria-hidden="true"><rect x="20" y="70" width="220" height="170" rx="26" fill="#C9D1D9" stroke="#8A94A0" stroke-width="5"/><rect x="38" y="88" width="184" height="134" rx="18" fill="#9FC7E4"/>
+        <path d="M130 14v40" stroke="#8A94A0" stroke-width="12" stroke-linecap="round"/><path d="M130 50h30" stroke="#8A94A0" stroke-width="10" stroke-linecap="round"/><path d="M130 58v30" stroke="#BFE3F7" stroke-width="10" stroke-linecap="round" opacity=".9"/>
+        ${leaves((1 - q).toFixed(2))}${[0, 1, 2, 3, 4, 5].map((i) => `<circle cx="${60 + i * 28}" cy="${110 + (i % 2) * 70}" r="${5 + (i % 3) * 3}" fill="#fff" opacity="${(q * 0.9).toFixed(2)}"/>`).join('')}</svg>`;
+    }
+    if (look === 'dough') {
+      return `<svg viewBox="0 0 260 260" width="100%" height="100%" aria-hidden="true"><circle cx="130" cy="130" r="122" fill="#C9D1D9" stroke="#8A94A0" stroke-width="6"/><circle cx="130" cy="130" r="108" fill="#DDE3E9"/>
+        <ellipse cx="130" cy="130" rx="${34 + q * 66}" ry="${30 + q * 62}" fill="#F6E7C8" stroke="#E3CFA0" stroke-width="4"/><path d="M${110 - q * 40} 128q${20 + q * 40} -14 ${40 + q * 80} 0" stroke="#E9D6A8" stroke-width="4" fill="none" stroke-linecap="round"/></svg>`;
+    }
+    if (look === 'grill' || look === 'spread') {
+      const toast = look === 'grill' ? q : 1;
+      const kaya = look === 'spread' ? q : 0;
+      return `<svg viewBox="0 0 260 260" width="100%" height="100%" aria-hidden="true">${look === 'grill' ? '<rect x="10" y="40" width="240" height="180" rx="20" fill="#4A525E"/>' + [0, 1, 2, 3, 4, 5, 6].map((i) => `<path d="M30 ${62 + i * 22}h200" stroke="#2F3640" stroke-width="6"/>`).join('') : '<ellipse cx="130" cy="150" rx="120" ry="80" fill="#EEF4F8" stroke="#C7D9E6" stroke-width="5"/>'}
+        ${[[40, 80], [140, 80]].map(([x, y]) => `<rect x="${x}" y="${y}" width="84" height="100" rx="14" fill="#F6E2B8" stroke="#C99A5A" stroke-width="4"/><rect x="${x}" y="${y}" width="84" height="100" rx="14" fill="#C98A3E" opacity="${(toast * 0.72).toFixed(2)}"/>
+          ${[0, 1, 2].map((j) => `<path d="M${x + 16 + j * 26} ${y + 10}v80" stroke="#7A4A1E" stroke-width="4" opacity="${(toast * 0.55).toFixed(2)}"/>`).join('')}
+          ${kaya ? `<rect x="${x + 8}" y="${y + 10}" width="${68 * kaya}" height="80" rx="10" fill="#7FB069" opacity=".9"/><rect x="${x + 8}" y="${y + 40}" width="${68 * kaya}" height="14" rx="5" fill="#FFF3C4"/>` : ''}`).join('')}</svg>`;
+    }
+    if (look === 'ice') {
+      return `<svg viewBox="0 0 260 260" width="100%" height="100%" aria-hidden="true"><circle cx="130" cy="130" r="122" fill="#B9A6E0" stroke="#8E78C9" stroke-width="6"/><circle cx="130" cy="130" r="100" fill="#F4F8FB"/>
+        <circle cx="130" cy="130" r="${20 + q * 74}" fill="#fff" stroke="#E3ECF3" stroke-width="4"/>${[0, 1, 2, 3, 4, 5, 6, 7].map((i) => `<circle cx="${130 + Math.cos(i + spin / 60) * (20 + q * 60)}" cy="${130 + Math.sin(i + spin / 60) * (20 + q * 60)}" r="4" fill="#DDEBF5"/>`).join('')}</svg>`;
+    }
+    if (look === 'cup') {
+      const col = `rgb(${Math.round(176 - 38 * q)},${Math.round(130 - 40 * q)},${Math.round(92 - 32 * q)})`;
+      return `<svg viewBox="0 0 260 260" width="100%" height="100%" aria-hidden="true"><circle cx="130" cy="130" r="122" fill="#DCE3E8" stroke="#B9C4CE" stroke-width="6"/><circle cx="130" cy="130" r="104" fill="#fff"/><circle cx="130" cy="130" r="94" fill="${col}"/>
+        <g transform="rotate(${spin} 130 130)">${[[-40, -20], [30, -40], [10, 40], [-30, 36], [46, 20]].map(([x, y]) => `<circle cx="${130 + x}" cy="${130 + y}" r="${9 - q * 8}" fill="#5E3A22" opacity="${(1 - q).toFixed(2)}"/>`).join('')}<path d="M130 60q40 10 50 60" stroke="#B88A64" stroke-width="6" fill="none" opacity="${(q * 0.8).toFixed(2)}" stroke-linecap="round"/></g></svg>`;
+    }
+    // the wok (fried noodles) and the hot pan (prata)
+    const pan = look === 'pan';
+    return `<svg viewBox="0 0 260 260" width="100%" height="100%" aria-hidden="true"><circle cx="130" cy="130" r="122" fill="#4A525E" stroke="#2F3640" stroke-width="6"/><circle cx="130" cy="130" r="${pan ? 108 : 96}" fill="${pan ? '#555D69' : '#6E7783'}"/>
+      <g transform="rotate(${spin} 130 130)">${pan ? `<circle cx="130" cy="130" r="82" fill="#F6E7C8" stroke="#E3CFA0" stroke-width="5"/><circle cx="130" cy="130" r="82" fill="#E0A04B" opacity="${(q * 0.85).toFixed(2)}"/><path d="M80 120q50-24 100 4M90 150q40 16 80-6" stroke="#C9853A" stroke-width="4" fill="none" opacity="${q.toFixed(2)}"/>`
+        : `${[0, 1, 2, 3, 4, 5].map((i) => `<path d="M${64 + (i % 2) * 8} ${96 + i * 14}q16 -12 32 0t32 0t32 0t32 0" fill="none" stroke="${q > 0.5 ? '#C98F3A' : '#E9C766'}" stroke-width="7" stroke-linecap="round"/>`).join('')}${[[90, 100], [150, 110], [120, 160], [170, 150], [96, 170], [140, 84]].map(([x, y]) => `<rect x="${x}" y="${y}" width="16" height="12" rx="4" fill="#7FB069" stroke="#4F8A3F" stroke-width="2"/>`).join('')}`}</g>
+      ${[0, 1, 2].map((i) => `<path d="M${100 + i * 30} 40c-8 -10 8 -16 0 -28" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity="${(0.2 + q * 0.6).toFixed(2)}"/>`).join('')}</svg>`;
+  }
+  const RUB_TOOL = { sink: 'hand', wok: 'ladle', pan: 'flipper', dough: 'hand', grill: 'flipper', spread: 'knife', ice: 'shaver', cup: 'spoon' };
+
+  // ---------------------------------------------------------------- how each dish is really made
+  // k: taps (tap the pot), rub (rub with a finger, or tap), chop (slice the dotted lines), pick (tap each thing)
+  function recipe(id, lv, no) {
+    const tops = (all) => ({ items: all, need: all.filter((x) => x !== no) });
+    const R = {
+      chickenrice: [
+        { k: 'taps', src: 'rice', n: lv === 1 ? 2 : 3, layer: 'rice', title: 'Scoop the rice', say: 'Scoop rice onto the plate. Tap the rice pot.' },
+        { k: 'chop', item: 'chicken', title: 'Chop the chicken', say: 'Chop the chicken into slices. Slide along the dotted lines.' },
+        lv >= 2 && { k: 'chop', item: 'cucumber', title: 'Slice the cucumber', say: 'Slice the cucumber.' },
+        Object.assign({ k: 'pick', kind: 'top', title: 'Put it on the plate', say: 'Put the chicken on the rice. Then the cucumber and the chilli.' }, tops(lv >= 2 ? ['chicken', 'cucumber', 'chilli'] : ['chicken', 'chilli']))
+      ],
+      noodles: [
+        lv >= 2 && { k: 'rub', look: 'sink', title: 'Wash the vegetables', say: 'Wash the vegetables. Rub them in the water.' },
+        { k: 'chop', item: 'choysum', title: 'Cut the vegetables', say: 'Cut the vegetables.' },
+        { k: 'rub', look: 'wok', layer: 'noodles', title: 'Fry the noodles', say: 'Fry the noodles in the wok. Round and round.' },
+        Object.assign({ k: 'pick', kind: 'top', title: 'Add the toppings', say: 'Add the toppings on the noodles.' }, tops(lv >= 2 ? ['fishcake', 'egg', 'onion'] : ['fishcake', 'onion']))
+      ],
+      prata: [
+        { k: 'rub', look: 'dough', layer: 'dough', title: 'Spread the dough', say: 'Spread the dough out thin. Round and round.' },
+        { k: 'rub', look: 'pan', layer: 'cooked', title: 'Cook the prata', say: 'Cook the prata on the hot pan until it is golden.' },
+        lv >= 2 && { k: 'chop', item: 'prata', layer: 'cut', title: 'Cut the prata', say: 'Cut the prata into pieces.' },
+        Object.assign({ k: 'pick', kind: 'top', title: 'Add the curry', say: 'Add a bowl of curry.' }, tops(['curry']))
+      ],
+      kaya: [
+        { k: 'rub', look: 'grill', layer: 'toast', title: 'Toast the bread', say: 'Toast the bread on the grill. Rub until it is golden.' },
+        { k: 'rub', look: 'spread', layer: 'kaya', title: 'Spread the kaya', say: 'Spread the kaya and butter.' },
+        { k: 'chop', item: 'toast', layer: 'cut', title: 'Cut the toast', say: 'Cut the kaya toast.' },
+        lv >= 2 && Object.assign({ k: 'pick', kind: 'top', title: 'Add the eggs', say: 'Add the soft eggs.' }, tops(['eggs', 'soy']))
+      ],
+      kachang: [
+        { k: 'rub', look: 'ice', layer: 'ice', title: 'Shave the ice', say: 'Shave the ice into the bowl. Round and round.' },
+        Object.assign({ k: 'pick', kind: 'top', title: 'Add the toppings', say: 'Add the syrup and the toppings.' }, tops(lv >= 2 ? ['red', 'green', 'corn', 'beans'] : ['red', 'green', 'corn']))
+      ],
+      milo: [
+        { k: 'taps', src: 'tin', n: lv === 1 ? 2 : 3, layer: 'powder', title: 'Scoop the Milo', say: 'Scoop the Milo powder into the cup. Tap the tin.' },
+        { k: 'taps', src: 'kettle', n: 2, layer: 'water', title: 'Pour the hot water', say: 'Pour the hot water. Tap the kettle.' },
+        { k: 'rub', look: 'cup', layer: 'stir', title: 'Stir the Milo', say: 'Stir the Milo. Round and round.' },
+        lv >= 2 && Object.assign({ k: 'pick', kind: 'top', title: 'Add ice', say: 'Add ice to make it cold.' }, tops(['ice']))
+      ]
+    };
+    // a job with nothing left to do ("no ice" for a Milo whose only topping is ice) is skipped
+    return (R[id] || []).filter((s) => s && !(s.k === 'pick' && !s.need.length)).map((s) => Object.assign({ dish: id }, s));
+  }
+  // then the order is packed: to eat here, or to take away
+  function packing(g) {
+    const lv = T.level();
+    const drinks = g.order.filter((id) => DRINK[id]), foods = g.order.filter((id) => !DRINK[id]);
+    const extras = [].concat(foods.length ? ['spoon', 'fork'] : [], drinks.length ? ['straw'] : []);
+    if (g.where === 'here') {
+      return [
+        { k: 'pick', kind: 'tray', items: g.order.slice(), need: g.order.slice(), title: 'Put it on the tray', say: 'Put the food on the tray.' },
+        lv >= 2 && { k: 'pick', kind: 'extras', items: extras, need: extras, title: foods.length ? 'Add a spoon and fork' : 'Add a straw', say: foods.length ? 'Add a spoon and a fork.' : 'Add a straw.' }
+      ].filter(Boolean);
+    }
+    const away = [].concat(foods.length ? ['spoon'] : [], g.order.includes('chickenrice') && g.no !== 'chilli' ? ['packet'] : [], drinks.length ? ['straw'] : []);
+    return [
+      { k: 'pick', kind: 'box', items: g.order.slice(), need: g.order.slice(), title: drinks.length && !foods.length ? 'Pour it into the cup' : 'Pack the food', say: drinks.length && !foods.length ? 'Pour it into the takeaway cup.' : 'Pack the food into the takeaway box.' },
+      lv >= 2 && { k: 'pick', kind: 'lid', items: g.order.slice(), need: g.order.slice(), title: 'Close the lid', say: 'Close the lid.' },
+      lv >= 2 && { k: 'pick', kind: 'extras', items: away, need: away, title: away.length > 1 ? 'Add a spoon and sauce' : `Add a ${itemName(away[0]).toLowerCase()}`, say: 'Add what they need.' },
+      { k: 'taps', src: 'bag', n: lv === 1 ? 1 : 2, title: lv === 1 ? 'Put it in the bag' : 'Bag it and tie it', say: lv === 1 ? 'Put it in the bag.' : 'Put it in the bag. Then tie the bag.' }
+    ].filter(Boolean);
+  }
+  if (A.KITCHEN) Object.assign(A.KITCHEN.VEG, {
+    cucumber: { name: 'cucumber', c: '#CFE8B0', d: '#4F8A3F' },
+    choysum: { name: 'vegetables', c: '#9CCB6B', d: '#4F8A3F' },
+    prata: { name: 'prata', c: '#F2BE68', d: '#C9853A' }
+  });
   const cookStep = (g) => (g.cook && g.cook.steps[g.cook.si]) || null;
   const CARD_ART = sv('0 0 48 48', `<rect x="4" y="10" width="40" height="28" rx="5" fill="#9B87D9" ${K}/><rect x="4" y="16" width="40" height="5" fill="#3B2F2F"/><rect x="9" y="27" width="12" height="6" rx="1.6" fill="#FFD23F"/><path d="M28 30h10" stroke="#fff" stroke-width="2" stroke-linecap="round"/>`);
   const READER_ART = sv('0 0 48 48', `<rect x="10" y="4" width="28" height="40" rx="6" fill="#5B6B7A" ${K}/><rect x="14" y="9" width="20" height="12" rx="2" fill="#BFE6C8"/><path d="M20 30q4-4 8 0M18 34q6-6 12 0" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/>`);
   const coinArt = (v) => sv('0 0 48 48', `<circle cx="24" cy="24" r="19" fill="${v === 2 ? '#E8C25A' : '#D8DEE5'}" ${K}/><circle cx="24" cy="24" r="14" fill="none" stroke="${v === 2 ? '#C79A2E' : '#A9B3BE'}" stroke-width="2"/><text x="24" y="31" text-anchor="middle" font-size="19" font-weight="800" fill="#3B2F2F" font-family="Nunito, ui-rounded, sans-serif">$${v}</text>`);
-  const customer = (g) => (g.round % 2 === 0 ? 'child' : 'other');
+  // the child is the uncle first (that is the fun part), then the customer, and so on
+  const customer = (g) => (g.round % 2 === 0 ? 'other' : 'child');
   const uncle = (g) => otherOf(customer(g));
   const hkTotal = (g) => g.order.reduce((s, id) => s + dish(id).price, 0);
   const hkPaid = (g) => g.coins.reduce((s, v) => s + v, 0);
+  const orderLine = (g) => (g.order.length === 1 ? `One ${lc(dish(g.order[0]).name)}, please!` : `One ${lc(dish(g.order[0]).name)} and one ${lc(dish(g.order[1]).name)}, please!`);
+  const noLine = (id) => `No ${itemName(NO[id]).toLowerCase()}, please.`;
+  const canAsk = (g) => T.level() >= 2 && g.order.some((id) => NO[id] && recipe(id, T.level(), null).some((s) => s.k === 'pick' && s.items.includes(NO[id])));
   function hkRound(g) {
     g.phase = 'order';
     g.order = [];
-    g.served = [];
     g.coins = [];
     g.bubble = null;
+    g.where = null;
+    g.no = null;
+    g.cook = null;
+    g.made = {};
+    g.pack = { tray: [], box: [], lid: [], extras: [], bag: 0 };
     g.need = T.level() === 3 ? 2 : 1;
     T.setTurn(g, customer(g));
-  }
-  function hkCounter(g) {
-    // the ordered dishes plus a few others, shuffled once for this round
-    const n = { 1: 3, 2: 4, 3: 6 }[T.level()] || 4;
-    const others = T.shuffle(DISHES.map((d) => d.id).filter((id) => !g.order.includes(id))).slice(0, Math.max(0, n - g.order.length));
-    g.counter = T.shuffle(g.order.concat(others));
   }
   function hkOrder(g, id) {
     if (g.order.includes(id) || g.phase !== 'order') return;
     g.order.push(id);
     T.tone(600 + g.order.length * 80, 0.15, 0.06);
     if (g.order.length < g.need) { T.render(); T.say(dish(id).name + '. And one more?'); return; }
-    const line = g.order.length === 1 ? `One ${lc(dish(g.order[0]).name)}, please!` : `One ${lc(dish(g.order[0]).name)} and one ${lc(dish(g.order[1]).name)}, please!`;
-    g.bubble = { who: customer(g), text: line };
-    hkCounter(g);
-    // the uncle cooks first (chop, then stir), then finds the order on the counter
-    const K = A.KITCHEN;
-    g.phase = K ? 'cook' : 'serve';
-    // each dish ordered brings its own steps (two dishes on Hard: both are made)
-    const steps = [].concat(...g.order.map((id) => COOK[id] || []));
-    g.cook = { steps, si: 0, step: steps[0] ? steps[0].k : 'done', cut: [], p: 0, n: { 1: 2, 2: 3, 3: 4 }[T.level()] || 3 };
+    g.bubble = { who: customer(g), text: orderLine(g) };
+    g.phase = 'where';
     T.render();
-    T.say(line);
-    T.later(() => { if (T.cur() === g) T.setTurn(g, uncle(g), g.phase === 'cook' && steps[0] ? `Time to cook! ${steps[0].say}` : undefined); }, 1700);
-  }
-  function hkCooked(g) {
-    if (g.phase !== 'cook') return;
-    g.cook.step = 'done';
-    T.cheer();
+    T.say(orderLine(g));
+    // a hawker always asks: Lumi asks by itself; a child or grown-up uncle taps the question
     T.later(() => {
-      if (T.cur() !== g) return;
-      g.phase = 'serve';
-      g.bubble = { who: uncle(g), text: 'All cooked!' };
-      T.render();
-      T.say('All cooked! Now find the order on the counter.');
-      if (T.solo() && uncle(g) !== 'child') T.later(() => { if (T.cur() === g) T.setTurn(g, uncle(g)); }, 900);
-    }, 900);
+      if (T.cur() !== g || g.phase !== 'where') return;
+      if (g.solo && uncle(g) === 'other') hkAsk(g, 'where');
+      else T.setTurn(g, uncle(g), 'Ask the customer: eat here or take away?');
+    }, 1500);
   }
-  // the next step, or the food is ready
-  function hkNext(g) {
-    const c = g.cook;
-    c.si += 1; c.cut = []; c.p = 0;
-    const st = cookStep(g);
-    if (!st) { hkCooked(g); return; }
-    c.step = st.k;
+  const ASK = { where: 'Eat here or take away?', extra: 'Anything else?' };
+  function hkAsk(g, which) {
+    if (g.phase !== which || (g.bubble && g.bubble.who === uncle(g))) return;
+    g.bubble = { who: uncle(g), text: ASK[which] };
+    T.tone(660, 0.12, 0.05);
+    T.setTurn(g, customer(g), ASK[which]);
+  }
+  function hkWhere(g, v) {
+    if (g.phase !== 'where' || !g.bubble || g.bubble.who !== uncle(g)) return;
+    g.where = v;
+    g.bubble = { who: customer(g), text: v === 'here' ? 'Eat here.' : 'Take away, please.' };
+    T.tone(700, 0.15, 0.06);
     T.render();
-    T.say(st.say);
-  }
-  function hkCut(g, i) {
-    const c = g.cook;
-    if (g.phase !== 'cook' || c.step !== 'chop' || c.cut.includes(i)) return;
-    c.cut.push(i);
-    T.tone(300 + c.cut.length * 40, 0.08, 0.1);
-    if (c.cut.length >= c.n) { c.step = 'wait'; T.later(() => { if (T.cur() !== g || g.phase !== 'cook') return; hkNext(g); }, 700); }
-  }
-  function hkStir(g, dp) {
-    const c = g.cook;
-    if (g.phase !== 'cook' || c.step !== 'stir') return;
-    c.p = Math.min(1, c.p + dp);
-    if (c.p >= 1) { c.step = 'wait'; T.later(() => { if (T.cur() !== g || g.phase !== 'cook') return; hkNext(g); }, 500); }
-  }
-  // the hot pan, the ice shaver and the cup: the same "round and round" as the wok, each drawn as itself
-  function rubHtml(look, p) {
-    const K = A.KITCHEN;
-    if (look === 'wok') return K.wokHtml(['carrot'], p);
-    const spin = `transform:rotate(${Math.round(p * 540)}deg)`;
-    if (look === 'pan') return `<div class="ck-wok hk-rub pan" style="--p:${p}"><div class="ck-wok-in" style="${spin}"><span class="hk-prata"><i></i></span></div><span class="ck-steam s1"></span><span class="ck-steam s2"></span><span class="ck-ladle hk-flipper" aria-hidden="true"></span></div>`;
-    if (look === 'ice') return `<div class="ck-wok hk-rub ice" style="--p:${p}"><div class="ck-wok-in"><span class="hk-ice" style="transform:scale(${(0.25 + p * 0.75).toFixed(2)})"><i class="r"></i><i class="g"></i></span></div><span class="ck-ladle hk-shaver" aria-hidden="true"></span></div>`;
-    return `<div class="ck-wok hk-rub cup" style="--p:${p}"><div class="ck-wok-in" style="${spin}"><span class="hk-milo"><i></i><i></i><i></i><i></i></span></div><span class="ck-steam s1"></span><span class="ck-steam s2"></span><span class="ck-ladle hk-spoon" aria-hidden="true"></span></div>`;
-  }
-  function hkServe(g, id, el) {
-    if (g.phase !== 'serve') return;
-    if (!g.order.includes(id) || g.served.includes(id)) {
-      T.nope(el);
-      T.say(`That's ${lc(dish(id).name)}. Look for the ${lc(dish(g.order.find((x) => !g.served.includes(x))).name)}.`);
+    T.say(g.bubble.text);
+    if (canAsk(g)) {
+      g.phase = 'extra';
+      T.later(() => {
+        if (T.cur() !== g || g.phase !== 'extra') return;
+        if (g.solo && uncle(g) === 'other') hkAsk(g, 'extra');
+        else T.setTurn(g, uncle(g), 'Ask the customer: anything else?');
+      }, 1300);
       return;
     }
-    g.served.push(id);
+    T.later(() => { if (T.cur() === g) startCook(g); }, 1300);
+  }
+  function hkExtra(g, v) {
+    if (g.phase !== 'extra' || !g.bubble || g.bubble.who !== uncle(g)) return;
+    const id = g.order.find((x) => NO[x] === v);
+    g.no = id ? v : null;
+    g.bubble = { who: customer(g), text: id ? noLine(id) : "That's all, thank you." };
+    g.phase = 'cookwait';
+    T.render();
+    T.say(g.bubble.text);
+    T.later(() => { if (T.cur() === g) startCook(g); }, 1400);
+  }
+  function startCook(g) {
+    const lv = T.level();
+    const steps = [].concat(...g.order.map((id) => recipe(id, lv, g.no)), packing(g));
+    g.cook = { steps, si: 0, p: 0, taps: 0, cut: [], picked: [], n: { 1: 2, 2: 3, 3: 4 }[lv] || 3, busy: false };
+    g.made = {};
+    g.order.forEach((id) => { g.made[id] = {}; });
+    g.phase = 'cook';
+    g.bubble = { who: uncle(g), text: g.where === 'here' ? 'OK! Coming up.' : 'OK! Take away.' };
+    T.setTurn(g, uncle(g), `Time to cook! ${steps[0].say}`);
+  }
+  // one job is done: show it, then the next job
+  function stepDone(g) {
+    const c = g.cook;
+    const st = cookStep(g);
+    if (!st || c.busy) return;
+    c.busy = true;
+    if (st.layer && st.k === 'chop') g.made[st.dish][st.layer] = true;
     T.cheer();
-    if (g.served.length < g.order.length) { T.render(); return; }
-    g.bubble = { who: uncle(g), text: T.level() === 3 ? `Here you go! That's $${hkTotal(g)}.` : 'Here you go!' };
+    T.render();
+    T.later(() => {
+      if (T.cur() !== g || g.phase !== 'cook') return;
+      c.si += 1; c.p = 0; c.taps = 0; c.cut = []; c.picked = []; c.busy = false;
+      const nx = cookStep(g);
+      if (!nx) { hkReady(g); return; }
+      T.render();
+      T.say(nx.say);
+      if (g.solo && g.turn === 'other') lumiWork(g);
+    }, 900);
+  }
+  function hkReady(g) {
     g.phase = 'pay';
+    g.bubble = { who: uncle(g), text: T.level() === 3 ? `Here you go! That's $${hkTotal(g)}.` : 'Here you go!' };
     T.render();
     T.say(g.bubble.text);
     T.later(() => { if (T.cur() === g) T.setTurn(g, customer(g)); }, 1500);
+  }
+  function hkTap(g) {
+    const c = g.cook, st = cookStep(g);
+    if (g.phase !== 'cook' || !st || st.k !== 'taps' || c.busy || c.taps >= st.n) return;
+    c.taps += 1;
+    if (st.layer) g.made[st.dish][st.layer] = c.taps / st.n;
+    if (st.src === 'bag') g.pack.bag = c.taps;
+    T.tone(500 + c.taps * 90, 0.12, 0.06);
+    if (c.taps >= st.n) { stepDone(g); return; }
+    T.render();
+    if (st.src === 'bag') T.say('Now tie the bag.');
+  }
+  function hkRub(g, dp) {
+    const c = g.cook, st = cookStep(g);
+    if (g.phase !== 'cook' || !st || st.k !== 'rub' || c.busy) return false;
+    c.p = Math.min(1, c.p + dp);
+    if (st.layer) g.made[st.dish][st.layer] = c.p;
+    if (c.p >= 1) { if (st.layer) g.made[st.dish][st.layer] = true; stepDone(g); return true; }
+    return false;
+  }
+  function hkCut(g, i) {
+    const c = g.cook, st = cookStep(g);
+    if (g.phase !== 'cook' || !st || st.k !== 'chop' || c.busy || c.cut.includes(i)) return;
+    c.cut.push(i);
+    T.tone(300 + c.cut.length * 40, 0.08, 0.1);
+    if (c.cut.length >= c.n) stepDone(g);
+  }
+  function hkPick(g, item, el) {
+    const c = g.cook, st = cookStep(g);
+    if (g.phase !== 'cook' || !st || st.k !== 'pick' || c.busy || c.picked.includes(item)) return;
+    if (!st.need.includes(item)) {
+      // the customer asked for it to be left out
+      T.nope(el);
+      T.say(`The customer said: no ${itemName(item).toLowerCase()}.`);
+      return;
+    }
+    c.picked.push(item);
+    if (st.kind === 'top') g.made[st.dish][item] = true;
+    else g.pack[st.kind].push(item);
+    T.tone(620 + c.picked.length * 70, 0.12, 0.06);
+    if (st.need.every((x) => c.picked.includes(x))) { stepDone(g); return; }
+    T.render();
+  }
+  // Lumi does each job in turn when Lumi is the uncle
+  function lumiWork(g) {
+    const n = (g.workN = (g.workN || 0) + 1);
+    const work = () => {
+      if (T.cur() !== g || g.phase !== 'cook' || g.workN !== n || g.turn !== 'other') return;
+      const c = g.cook, st = cookStep(g);
+      if (!st || c.busy) return; // stepDone starts the next job
+      if (st.k === 'chop') { const i = [...Array(c.n).keys()].find((k) => !c.cut.includes(k)); if (i != null) hkCut(g, i); if (!c.busy) T.render(); }
+      else if (st.k === 'rub') { if (!hkRub(g, 0.25)) T.render(); }
+      else if (st.k === 'taps') hkTap(g);
+      else if (st.k === 'pick') { const it = st.need.find((x) => !c.picked.includes(x)); if (it) hkPick(g, it); }
+      if (!c.busy) T.later(work, 650);
+    };
+    T.later(work, 800);
   }
   function hkPaidDone(g) {
     if (g.phase !== 'pay') return;
@@ -177,31 +486,99 @@
     T.say('Thank you!');
     T.later(() => {
       if (T.cur() !== g) return;
-      g.bubble = { who: uncle(g), text: "You're welcome. Enjoy!" };
+      g.bubble = { who: uncle(g), text: g.where === 'away' ? 'Welcome! Come again!' : "You're welcome. Enjoy!" };
       g.round += 1;
       T.render();
-      T.say("You're welcome. Enjoy!");
+      T.say(g.bubble.text);
       T.later(() => {
         if (T.cur() !== g) return;
-        if (g.round >= g.total) { T.win(g, { text: 'Yummy teamwork!', sub: 'You ordered, served and paid like real hawkers.', say: 'Well done! You were a great customer and a great uncle.' }); return; }
+        if (g.round >= g.total) { T.win(g, { text: 'Yummy teamwork!', sub: 'You cooked, packed and served like a real hawker.', say: 'Well done! You were a great uncle and a great customer.' }); return; }
         hkRound(g);
       }, 1600);
     }, 1100);
   }
   const roleName = (g, who) => (who === customer(g) ? 'Customer' : 'Uncle');
+  A.hawkerTest = { startCook, recipe }; // for the automatic checks
+
+  // ---------------------------------------------------------------- drawing the stall
+  function ticketHtml(g, mini) {
+    const st = cookStep(g);
+    const shown = st && st.dish ? st.dish : null;
+    return `<div class="hk-ticket2">
+      <div class="hk-tk-top">${ic('journal', 24)}<b>Order</b>${g.where ? `<span class="hk-tag ${g.where}">${g.where === 'here' ? ic('cutlery', 20) : `<span class="hk-tagic">${BAGSRC}</span>`}<span>${g.where === 'here' ? 'Eat here' : 'Take away'}</span></span>` : ''}</div>
+      <div class="hk-tk-list">${g.order.map((id) => `<span class="hk-tk-line ${shown === id ? 'on' : ''}">${mini ? `<span class="hk-tk-pic">${dish(id).art()}</span>` : ''}<span>${esc(dish(id).name)}</span></span>`).join('')}</div>
+      ${g.no ? `<span class="hk-tk-no">${ic('x', 18)}<span>No ${esc(itemName(g.no).toLowerCase())}</span></span>` : ''}
+    </div>`;
+  }
+  function stepsHtml(g) {
+    const c = g.cook;
+    return `<div class="hk-prog" role="img" aria-label="Job ${c.si + 1} of ${c.steps.length}">${c.steps.map((s, i) => `<i class="${i < c.si || (i === c.si && c.busy) ? 'done' : i === c.si ? 'on' : ''}"></i>`).join('')}</div>`;
+  }
+  function stationHtml(g) {
+    const c = g.cook;
+    const st = cookStep(g);
+    const mine = !(g.solo && g.turn === 'other');
+    if (!st) return '';
+    const head = `<div class="hk-job"><b>${esc(st.title)}</b>${stepsHtml(g)}</div>`;
+    if (st.k === 'chop') {
+      const K2 = A.KITCHEN;
+      return `${head}<div class="hk-cook hk-chop">${K2.chopHtml(st.item, c.n, c.cut)}</div>`;
+    }
+    if (st.k === 'rub') {
+      return `${head}<div class="hk-station"><div class="hk-rubbox ${mine ? '' : 'lumi'}" data-look="${st.look}" role="button" tabindex="0" aria-label="${esc(st.title)}. Rub or tap.">
+          <span class="hk-rubart">${rubSvg(st.look, c.p)}</span><span class="hk-tool ${RUB_TOOL[st.look] || 'spoon'}" aria-hidden="true"></span></div>
+        <div class="hk-side">${st.dish ? `<span class="hk-view">${dishSvg(st.dish, g.made[st.dish])}</span>` : ''}${A.KITCHEN.bar(c.p)}<span class="hk-hint">${ic('hand', 22)}<span>Rub round and round, or tap</span></span></div></div>`;
+    }
+    if (st.k === 'taps') {
+      const [name, art] = SRC[st.src];
+      const dots = `<span class="hk-dots">${[...Array(st.n).keys()].map((i) => `<i class="${i < c.taps ? 'on' : ''}"></i>`).join('')}</span>`;
+      const view = st.src === 'bag' ? packView(g, 'bag') : `<span class="hk-view">${dishSvg(st.dish, g.made[st.dish])}</span>`;
+      return `${head}<div class="hk-station"><button class="hk-src" data-a="tg" data-k="tap" aria-label="${esc(name)}"><span class="hk-src-art">${art}</span><span class="hk-src-name">${esc(name)}</span>${dots}</button>
+        <span class="hk-arrow2">${ic('arrow', 40)}</span>${view}</div>`;
+    }
+    // pick: tap each thing
+    const items = st.items.map((it) => {
+      const done = c.picked.includes(it);
+      const no = !st.need.includes(it);
+      const art = st.kind === 'tray' || st.kind === 'box' ? dishSvg(it, g.made[it]) : st.kind === 'lid' ? packSvg(it, false) : ITEMS[it].art;
+      const name = st.kind === 'tray' || st.kind === 'box' || st.kind === 'lid' ? dish(it).name : itemName(it);
+      return `<button class="hk-pick ${done ? 'done' : ''} ${no ? 'no' : ''}" data-a="tg" data-k="pick" data-v="${it}" aria-label="${esc(name)}${no ? ', the customer said no' : ''}" ${done ? 'disabled' : ''}>
+        <span class="hk-pick-art">${art}</span><span class="hk-pick-name">${esc(name)}</span>${done ? `<span class="hk-pick-ok">${ic('check', 20)}</span>` : ''}${no ? `<span class="hk-pick-no">${ic('x', 22)}</span>` : ''}</button>`;
+    }).join('');
+    const view = st.kind === 'top' ? `<span class="hk-view">${dishSvg(st.dish, g.made[st.dish])}</span>` : packView(g, st.kind);
+    return `${head}<div class="hk-station"><div class="hk-picks n${st.items.length}">${items}</div><span class="hk-arrow2">${ic('arrow', 40)}</span>${view}</div>`;
+  }
+  // the order being packed: on the tray, or in boxes (and then the bag)
+  function packView(g, kind) {
+    const P = g.pack;
+    if (g.where === 'here') {
+      const on = P.tray.map((id) => `<span class="hk-onTray">${dishSvg(id, g.made[id])}</span>`).join('');
+      const ex = P.extras.map((x) => `<span class="hk-ex">${ITEMS[x].art}</span>`).join('');
+      return `<div class="hk-traybox n${P.tray.length}">${on || '<span class="hk-empty">Tray</span>'}<span class="hk-exrow">${ex}</span></div>`;
+    }
+    const boxes = P.box.map((id) => `<span class="hk-box">${packSvg(id, P.lid.includes(id))}</span>`).join('');
+    const ex = P.extras.map((x) => `<span class="hk-ex">${ITEMS[x].art}</span>`).join('');
+    const inside = `<span class="hk-bagin">${boxes || '<span class="hk-empty">Takeaway</span>'}<span class="hk-exrow">${ex}</span></span>`;
+    if (kind === 'bag' || P.bag > 0) return BAG(P.bag >= 2 || (T.level() === 1 && P.bag >= 1), inside);
+    return `<div class="hk-packarea">${inside}</div>`;
+  }
   T.register({
-    id: 'hawker', name: 'Hawker uncle', icon: 'sNoodles', tint: '#FCE6D6', ink: '#B4572E', kind: 'Pretend play', sub: 'Order, cook and serve at a food stall',
+    id: 'hawker', name: 'Hawker uncle', icon: 'sNoodles', tint: '#FCE6D6', ink: '#B4572E', kind: 'Pretend play', sub: 'Cook, pack and serve at a food stall',
     ages: ['primary'], skill: 'social',
     init(g) {
-      g.total = T.level() === 3 ? 4 : 2;
-      g.phase = 'order'; g.order = []; g.served = []; g.coins = []; g.bubble = null; g.need = T.level() === 3 ? 2 : 1; g.counter = [];
-      g.turn = 'child';
+      g.total = T.level() === 1 ? 2 : 3;
+      g.phase = 'order'; g.order = []; g.coins = []; g.bubble = null; g.need = T.level() === 3 ? 2 : 1;
+      g.where = null; g.no = null; g.cook = null; g.made = {}; g.pack = { tray: [], box: [], lid: [], extras: [], bag: 0 };
+      g.turn = customer(g);
     },
     voice(g) {
       const c = customer(g);
-      if (g.phase === 'order') return c === 'child' ? `You are the customer. What would you like? Pick ${g.need > 1 ? 'two things' : 'from the menu'}.` : (T.solo() ? 'Lumi is the customer. Lumi is choosing.' : `${nm(c)} is the customer. What would you like?`);
-      if (g.phase === 'cook') { const who = g.turn === 'child' ? 'You are' : `${nm(g.turn)} is`; const st = cookStep(g); return st ? `${who} the uncle. ${st.say}` : `${who} the uncle.`; }
-      if (g.phase === 'serve') { const left = g.order.filter((x) => !g.served.includes(x)).map((x) => lc(dish(x).name)).join(' and the '); return g.turn === 'child' ? `You are the uncle. Find the ${left}.` : `${nm(g.turn)} is the uncle. Find the ${left}.`; }
+      const you = (who) => (who === 'child' ? 'You are' : `${nm(who)} is`);
+      if (g.phase === 'order') return c === 'child' ? `You are the customer. What would you like? Pick ${g.need > 1 ? 'two things' : 'from the menu'}.` : (T.solo() ? 'You are the hawker uncle! Lumi is the customer. Lumi is choosing.' : `${nm(c)} is the customer. What would you like?`);
+      if ((g.phase === 'where' || g.phase === 'extra') && g.turn !== c) return `${you(g.turn)} the uncle. Ask the customer: ${lc(ASK[g.phase])}`;
+      if (g.phase === 'where') return c === 'child' ? 'Eat here or take away? Tap one.' : `${you(c)} the customer.`;
+      if (g.phase === 'extra') return c === 'child' ? 'Anything else? You can ask for no chilli, or say that is all.' : `${you(c)} the customer.`;
+      if (g.phase === 'cook') { const st = cookStep(g); return st ? `${you(g.turn)} the uncle. ${st.say}` : `${you(g.turn)} the uncle.`; }
       if (g.phase === 'pay') return T.level() === 3 ? `That's $${hkTotal(g)}. Pay with the coins.` : 'Pay with the card. Tap the card.';
       if (g.phase === 'thanks') return 'Say thank you!';
       return '';
@@ -210,23 +587,27 @@
       const c = customer(g), u = uncle(g);
       const person = (who, side) => `<div class="hk-person ${side} ${g.turn === who ? 'on' : ''}">
           ${g.bubble && g.bubble.who === who ? `<div class="tg-say hk-bubble">${esc(g.bubble.text)}</div>` : ''}
-          ${T.avatar(who, 100)}<span class="hk-role">${roleName(g, who)}</span><span class="hk-name">${esc(nm(who))}</span></div>`;
+          ${T.avatar(who, g.phase === 'cook' ? 80 : 100)}<span class="hk-role">${roleName(g, who)}</span><span class="hk-name">${esc(nm(who))}</span></div>`;
       let mid = '';
       if (g.phase === 'order') {
         mid = `<div class="hk-board"><div class="hk-board-title">Menu</div><div class="hk-menu">${DISHES.map((d) => `<button class="hk-dish ${g.order.includes(d.id) ? 'on' : ''}" data-a="tg" data-k="order" data-v="${d.id}">
             <span class="hk-art">${d.art()}</span><b>${d.name}</b>${T.level() === 3 ? `<span class="hk-price">$${d.price}</span>` : ''}</button>`).join('')}</div></div>`;
-      } else if (g.phase === 'cook' && A.KITCHEN) {
-        const K = A.KITCHEN;
-        const c = g.cook;
-        mid = `<div class="hk-ticket">${ic('journal', 30)}<span>${g.order.map((x) => esc(dish(x).name)).join(' + ')}</span></div>
-          ${c.steps.length > 1 ? `<div class="hk-steps">${c.steps.map((x, i) => `<span class="${i < c.si ? 'done' : i === c.si ? 'on' : ''}">${i < c.si ? ic('check', 18) : ''}${esc(x.title)}</span>`).join('')}</div>` : ''}
-          <div class="hk-cook">${(() => { const st = cookStep(g); if (!st) return '<span class="hk-cook-title">Cooked!</span>'; return `<span class="hk-cook-title">${esc(st.title)}</span>${st.k === 'chop' ? K.chopHtml(st.item, c.n, c.si === c.steps.indexOf(st) ? c.cut : []) : rubHtml(st.look, c.p) + K.bar(c.p)}`; })()}</div>`;
-      } else if (g.phase === 'serve') {
-        mid = `<div class="hk-ticket">${ic('journal', 30)}<span>${g.order.map((x) => esc(dish(x).name)).join(' + ')}</span></div>
-          <div class="hk-counter">${g.counter.map((id) => g.served.includes(id) ? '<span class="hk-gap"></span>' : `<button class="hk-dish plain" data-a="tg" data-k="serve" data-v="${id}" aria-label="${esc(dish(id).name)}"><span class="hk-art">${dish(id).art()}</span><b>${dish(id).name}</b></button>`).join('')}</div>
-          <div class="hk-tray">${g.served.map((id) => `<span class="hk-art small">${dish(id).art()}</span>`).join('') || '<span class="hk-tray-note">Tray</span>'}</div>`;
+      } else if (g.phase === 'where' || g.phase === 'extra' || g.phase === 'cookwait') {
+        const asked = g.bubble && g.bubble.who === uncle(g);
+        let opts = '';
+        if ((g.phase === 'where' || g.phase === 'extra') && !asked && g.turn === uncle(g) && !(g.solo && g.turn === 'other') && g.bubble && g.bubble.who === customer(g)) {
+          opts = `<button class="hk-ask" data-a="tg" data-k="ask" data-v="${g.phase}">${ic('kTalk', 40)}<span>${esc(ASK[g.phase])}</span></button>`;
+        }
+        if (g.phase === 'where' && asked) opts = `<div class="hk-choose">${[['here', 'Eat here', 'cutlery'], ['away', 'Take away', 'bag']].map(([v, l, i]) => `<button class="hk-opt" data-a="tg" data-k="where" data-v="${v}">${v === 'away' ? `<span class="hk-optic">${BAGSRC}</span>` : ic(i, 54)}<span>${l}</span>${v === 'away' ? '<small>"Dabao"</small>' : ''}</button>`).join('')}</div>`;
+        if (g.phase === 'extra' && asked) {
+          const asks = g.order.filter((id) => NO[id] && recipe(id, T.level(), null).some((s) => s.k === 'pick' && s.items.includes(NO[id])));
+          opts = `<div class="hk-choose">${asks.map((id) => `<button class="hk-opt" data-a="tg" data-k="extra" data-v="${NO[id]}"><span class="hk-opt-art">${ITEMS[NO[id]].art}<i>${ic('x', 30)}</i></span><span>No ${esc(itemName(NO[id]).toLowerCase())}</span></button>`).join('')}<button class="hk-opt" data-a="tg" data-k="extra" data-v="none">${ic('check', 54)}<span>That's all</span></button></div>`;
+        }
+        mid = `${ticketHtml(g, true)}${opts}`;
+      } else if (g.phase === 'cook') {
+        mid = `<div class="hk-kitchen">${ticketHtml(g, false)}${stationHtml(g)}</div>`;
       } else {
-        const tray = `<div class="hk-tray">${g.order.map((id) => `<span class="hk-art small">${dish(id).art()}</span>`).join('')}</div>`;
+        const done = `<div class="hk-done">${packView(g, g.where === 'away' ? 'bag' : 'tray')}</div>`;
         let pay = '';
         if (g.phase === 'pay') {
           pay = T.level() === 3
@@ -236,40 +617,65 @@
         } else {
           pay = `<div class="tg-talk hk-talk">${[['thanks', 'Thank you', 'kHeart'], ['yummy', 'Yummy!', 'smile'], ['bye', 'Bye-bye', 'come']].map(([k, label, icon]) => `<button class="tg-word" data-a="tg" data-k="word" data-v="${k}" ${g.phase === 'bye' ? 'disabled' : ''}>${ic(icon, 46)}<span>${label}</span></button>`).join('')}</div>`;
         }
-        mid = tray + pay;
+        mid = `<div class="hk-endrow">${done}${pay}</div>`;
       }
       return `<div class="hk-awning"><span class="hk-sign">${ic('cutlery', 32)}<span>Lumi's Food Stall</span></span></div>
-        <div class="hk-row">${person(c, 'left')}<div class="hk-mid">${mid}</div>${person(u, 'right')}</div>`;
+        <div class="hk-row ${g.phase === 'cook' ? 'cooking' : ''}">${person(c, 'left')}<div class="hk-mid">${mid}</div>${person(u, 'right')}</div>`;
     },
     after(g, box) {
-      const K = A.KITCHEN;
-      if (!K || !box || g.phase !== 'cook' || g.turn !== uncle(g) || (T.solo() && g.turn !== 'child')) return; // only the uncle cooks
-      const c = g.cook;
-      if (c.step === 'chop') K.chopWire(box, (i) => hkCut(g, i));
-      else if (c.step === 'wait') return;
-      else if (c.step === 'stir') K.wokWire(box, 1400, (dp) => {
-        hkStir(g, dp);
-        const wok = box.querySelector('.ck-wok');
-        if (!wok) return;
-        wok.style.setProperty('--p', c.p);
-        const ice = wok.querySelector('.hk-ice');
-        if (ice) ice.style.transform = `scale(${(0.25 + c.p * 0.75).toFixed(2)})`;
-        else wok.querySelector('.ck-wok-in').style.transform = `rotate(${Math.round(c.p * 540)}deg)`;
-        const m = box.querySelector('.ev-meter i');
-        if (m) m.style.width = c.p * 100 + '%';
-      });
+      if (!box || g.phase !== 'cook' || g.turn !== uncle(g) || (g.solo && g.turn !== 'child')) return; // only the uncle cooks
+      const c = g.cook, st = cookStep(g);
+      if (!st || c.busy) return;
+      if (st.k === 'chop') A.KITCHEN.chopWire(box, (i) => hkCut(g, i));
+      if (st.k === 'rub') {
+        const el = box.querySelector('.hk-rubbox');
+        if (!el) return;
+        const art = el.querySelector('.hk-rubart'), tool = el.querySelector('.hk-tool');
+        const meter = box.querySelector('.ev-meter i'), view = box.querySelector('.hk-side .hk-view');
+        const scale = () => (A.stageScale ? A.stageScale() : 1);
+        let last = null;
+        const show = (e) => {
+          if (art) art.innerHTML = rubSvg(st.look, c.p);
+          if (meter) meter.style.width = Math.round(c.p * 100) + '%';
+          if (view) view.innerHTML = dishSvg(st.dish, g.made[st.dish]);
+          if (tool && e) { const r = el.getBoundingClientRect(); tool.style.left = ((e.clientX - r.left) / r.width) * 100 + '%'; tool.style.top = ((e.clientY - r.top) / r.height) * 100 + '%'; }
+        };
+        const step = (dp, e) => { if (hkRub(g, dp)) return; show(e); };
+        el.addEventListener('pointerdown', (e) => { last = { x: e.clientX, y: e.clientY }; try { el.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ } step(0.1, e); });
+        el.addEventListener('pointermove', (e) => { if (!last) return; const d = Math.hypot(e.clientX - last.x, e.clientY - last.y) / scale(); last = { x: e.clientX, y: e.clientY }; if (d > 0) step(d / 1300, e); });
+        const end = () => { last = null; };
+        el.addEventListener('pointerup', end);
+        el.addEventListener('pointercancel', end);
+        // keyboard and switch: Enter or Space is a good rub
+        el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); step(0.2); } });
+        el.addEventListener('click', (e) => { if (e.detail === 0) step(0.2); });
+      }
     },
     guide(g) {
+      const c = customer(g);
       if (g.phase === 'order') return { sel: '.hk-dish:not(.on)', say: 'Pick from the menu.' };
-      if (g.phase === 'cook') return g.cook.step === 'chop' ? { sel: '.ck-cut:not(.done)', say: 'Slice along the dotted line.' } : g.cook.step === 'stir' ? { sel: '.ck-wok', say: 'Round and round.' } : null;
-      if (g.phase === 'serve') { const id = g.order.find((x) => !g.served.includes(x)); return id ? { sel: `.hk-counter [data-v="${id}"]`, say: `Find the ${lc(dish(id).name)}.` } : null; }
+      if ((g.phase === 'where' || g.phase === 'extra') && g.turn !== c) return { sel: '.hk-ask', say: 'Ask the customer.' };
+      if (g.phase === 'where' && g.turn === c) return { sel: '.hk-opt', say: 'Eat here or take away?' };
+      if (g.phase === 'extra' && g.turn === c) return { sel: '.hk-opt', say: 'Anything else?' };
+      if (g.phase === 'cook') {
+        const st = cookStep(g);
+        if (!st || g.cook.busy) return null;
+        if (st.k === 'chop') return { sel: '.ck-cut:not(.done)', say: 'Slice along the dotted line.' };
+        if (st.k === 'rub') return { sel: '.hk-rubbox', say: 'Rub round and round.' };
+        if (st.k === 'taps') return { sel: '.hk-src', say: st.say };
+        return { sel: '.hk-pick:not(.done):not(.no)', say: st.say };
+      }
       if (g.phase === 'pay') return T.level() === 3 ? { sel: '.hk-coin', say: 'Tap the coins to pay.' } : { sel: '.hk-card', say: 'Tap the card.' };
       if (g.phase === 'thanks') return { sel: '[data-k="word"][data-v="thanks"]', say: 'Say thank you.' };
       return null;
     },
     tap(g, k, el, d) {
       if (k === 'order' && g.turn === customer(g)) hkOrder(g, d.v);
-      else if (k === 'serve' && g.turn === uncle(g)) hkServe(g, d.v, el);
+      else if (k === 'where' && g.turn === customer(g)) hkWhere(g, d.v);
+      else if (k === 'extra' && g.turn === customer(g)) hkExtra(g, d.v);
+      else if (k === 'ask' && g.turn === uncle(g)) hkAsk(g, d.v);
+      else if (k === 'tap' && g.turn === uncle(g)) hkTap(g);
+      else if (k === 'pick' && g.turn === uncle(g)) hkPick(g, d.v, el);
       else if (k === 'card' && g.turn === customer(g)) hkPaidDone(g);
       else if (k === 'coin' && g.phase === 'pay' && g.turn === customer(g)) hkCoin(g, Number(d.v), el);
       else if (k === 'word' && g.turn === customer(g)) hkThanks(g, d.v);
@@ -279,27 +685,13 @@
         const pickOne = () => { const left = DISHES.filter((d) => !g.order.includes(d.id)); hkOrder(g, rnd(left).id); };
         pickOne();
         if (g.need > 1) T.later(() => { if (T.cur() === g && g.phase === 'order') pickOne(); }, 1100);
+      } else if (g.phase === 'where') {
+        T.later(() => { if (T.cur() === g) hkWhere(g, Math.random() < 0.5 ? 'here' : 'away'); }, 600);
+      } else if (g.phase === 'extra') {
+        const asks = g.order.filter((id) => NO[id] && recipe(id, T.level(), null).some((s) => s.k === 'pick' && s.items.includes(NO[id])));
+        T.later(() => { if (T.cur() === g) hkExtra(g, Math.random() < 0.6 && asks.length ? NO[asks[0]] : 'none'); }, 600);
       } else if (g.phase === 'cook') {
-        // Lumi cooks each step in turn: chop, chop, chop, or a good stir
-        const c = g.cook;
-        const work = () => {
-          if (T.cur() !== g || g.phase !== 'cook') return;
-          if (c.step === 'wait') { T.later(work, 400); return; }
-          if (c.step === 'chop') {
-            const i = [...Array(c.n).keys()].find((k) => !c.cut.includes(k));
-            if (i != null) hkCut(g, i);
-            T.render();
-            T.later(work, 650);
-          } else if (c.step === 'stir') {
-            hkStir(g, 0.26);
-            T.render();
-            T.later(work, 450);
-          }
-        };
-        T.later(work, 700);
-      } else if (g.phase === 'serve') {
-        const step = () => { if (T.cur() !== g || g.phase !== 'serve') return; const id = g.order.find((x) => !g.served.includes(x)); if (id) { hkServe(g, id); if (g.phase === 'serve') T.later(step, 900); } };
-        step();
+        lumiWork(g);
       } else if (g.phase === 'pay') {
         if (T.level() !== 3) { hkPaidDone(g); return; }
         const step = () => { if (T.cur() !== g || g.phase !== 'pay') return; const left = hkTotal(g) - hkPaid(g); hkCoin(g, left >= 2 ? 2 : 1); if (g.phase === 'pay') T.later(step, 700); };
@@ -365,7 +757,16 @@
   }
   const sceneSize = () => ({ 1: 8, 2: 10, 3: 12 }[T.level()] || 10);
   function lay(g, ids) {
-    const spots = T.shuffle(spotsFor(g.scene)).slice(0, ids.length);
+    // spread out: two things are never so close that a finger could touch both (the picture is about 1110 x 575)
+    const spread = (list, n) => {
+      for (let gap = 118; gap >= 60; gap -= 14) {
+        const got = [];
+        list.forEach((p) => { if (got.length < n && got.every((q) => Math.hypot((p[0] - q[0]) * 11.1, (p[1] - q[1]) * 5.75) >= gap)) got.push(p); });
+        if (got.length >= n) return got;
+      }
+      return list.slice(0, n);
+    };
+    const spots = spread(T.shuffle(spotsFor(g.scene)), ids.length);
     g.items = T.shuffle(ids).map((id, i) => (id === 'sun' ? { id, x: SKY[0], y: SKY[1], r: 0 } : { id, x: spots[i][0], y: spots[i][1], r: Math.round(Math.random() * 10 - 5) }));
   }
   // a picture where the clue fits only the target; on Challenge add look-alikes (same colour or same kind)

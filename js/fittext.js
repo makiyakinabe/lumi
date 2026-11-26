@@ -48,7 +48,37 @@
       if (spill(el) <= 2 * k) return;
     }
   }
+  // The top row of a screen leaves room on the right for the Break and Pause buttons. When its buttons
+  // (Back, Say, Hint, tabs...) need more room than that, they are made a little narrower; if that is not
+  // enough, the tabs move down to a row of their own; as a last step the widest part is made smaller.
+  function topSpill(top, k) {
+    const r = top.getBoundingClientRect();
+    const lim = r.right - parseFloat(getComputedStyle(top).paddingRight) * k + 2 * k;
+    let mx = -Infinity;
+    const look = (el, depth) => {
+      const q = el.getBoundingClientRect();
+      if (q.width && q.height) mx = Math.max(mx, q.right);
+      if (depth < 2 && !/(auto|scroll|hidden)/.test(getComputedStyle(el).overflowX)) [...el.children].forEach((c) => { if (c.tagName !== 'svg') look(c, depth + 1); });
+    };
+    [...top.children].forEach((c) => look(c, 0));
+    return mx - lim;
+  }
+  function fitTop() {
+    const top = stage.querySelector('#screen .screen > .row.pad-pause');
+    if (!top) return;
+    top.classList.remove('top-tight', 'top-wrap');
+    [...top.children].forEach((c) => { if (c.dataset.topz) { c.style.zoom = ''; delete c.dataset.topz; } });
+    const k = A.stageScale ? A.stageScale() : 1;
+    if (topSpill(top, k) <= 0) return;
+    top.classList.add('top-tight');
+    if (topSpill(top, k) <= 0) return;
+    if (top.querySelector(':scope > .shelf-tabs, :scope > [role="tablist"]')) { top.classList.add('top-wrap'); if (topSpill(top, k) <= 0) return; }
+    const widest = [...top.children].sort((a, b) => b.getBoundingClientRect().width - a.getBoundingClientRect().width)[0];
+    for (let z = 0.94; widest && z >= 0.7; z -= 0.06) { widest.style.zoom = z.toFixed(2); widest.dataset.topz = '1'; if (topSpill(top, k) <= 0) return; }
+  }
+  A.fitTop = fitTop;
   function fitAll() {
+    try { fitTop(); } catch (e) { /* only a helper */ }
     try {
       stage.querySelectorAll(BOXES).forEach((el) => { if (!el.closest(SKIP) && !el.closest('[hidden]')) fitOne(el); });
     } catch (e) { /* only a helper */ }
