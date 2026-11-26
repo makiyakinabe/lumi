@@ -499,7 +499,13 @@ A fifth shelf in Games. Each game is built on a kind of play that research and p
 - **Spin the windmill** (round and round): spin the sails with a finger (or tap them). The wire to the houses glows while the sails turn, the battery fills, and each full battery lights a house on the hill.
 - **Build the train** (lining up, counting): put the carriages in order behind the engine; the train then drives off the way the engine faces. Hard counts in twos.
 
-- **Rhythm kitchen** (js/rhythm-kitchen.js; cook to the beat): a tune plays and notes slide along a track to a ring. Tap anywhere in the kitchen as each note reaches the ring and Lumi cooks in time: chop the carrot, stir the soup, flip the prata. Lunch is then served with one to three chef hats. Easy has a note every two beats; Hard is faster with quick pairs. A missed note just floats past, and lunch is always served. Space or Enter also plays, for a keyboard or switch.
+- **Rhythm kitchen** (js/rhythm-kitchen.js; cook to the beat with a crew, in the spirit of party-game rhythm kitchens):
+  - **The crew:** the child cooks in a row of four chefs in chef's hats: the child, Lumi, and Lumi's friends Momo (pink) and Kiwi (green). Each has a station on one long counter in a tiled kitchen.
+  - **How it plays:** notes slide to a ring, and the child taps anywhere on the beat. On every note the whole crew cooks together, and each chef gets a pop-up: "Perfect!", "Nice!" or "Good!" for the child, "Nice!" or "Great!" for the friends.
+  - **Courses:** chop the carrots, butter the toast, stir the soup (Medium and Hard), flip the prata, serve the plates (Hard). Each station changes as it cooks: the carrot gets shorter, the butter spreads, the soup swirls, the prata turns golden, the plate fills up.
+  - **Ta-da!** Each course ends on a gold star note, and every chef holds up what they made.
+  - **Cooking meter:** a fork-and-knife meter on the right fills with every good tap. Then lunch is set out on the counter, and the crew cheers with one to three chef hats.
+  - **Nothing is lost:** a missed note just floats past and the friends keep cooking. Space or Enter also plays, for a keyboard or switch.
 
 All six have Easy, Medium and Hard, no losing and no clock, and can be switched off one by one in Grown-ups › Activities.
 
